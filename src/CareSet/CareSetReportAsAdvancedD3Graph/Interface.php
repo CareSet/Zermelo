@@ -1,6 +1,6 @@
 <?php
 
-namespace CareSet\CareSetReportEngine;
+namespace CareSet\CareSetReportAsAdvancedD3Graph;
 
 
 class Interface
