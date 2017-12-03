@@ -1,8 +1,8 @@
 {
-    "name": "careset/caresetreportengine",
+    "name": "careset/caresetreportasdvancedd3graph",
     "autoload": {
         "psr-0" : {
-            "CareSet\\CareSetReportEngine" : "src"
+            "CareSet\\CareSetReportAsAdvancedD3Graph" : "src"
         }
     }
 }
