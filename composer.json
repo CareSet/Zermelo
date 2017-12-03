@@ -1,8 +1,8 @@
 {
-    "name": "weaverryan/derp-dangerzone",
+    "name": "careset/caresetreportengine",
     "autoload": {
         "psr-0" : {
-            "Weaverryan\\DangerZone" : "src"
+            "CareSet\\CareSetReportEngine" : "src"
         }
     }
 }
