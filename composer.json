@@ -1,8 +1,8 @@
 {
-    "name": "careset/caresetreportassigmagraph",
+    "name": "careset/caresetreportaslegacyd3graph",
     "autoload": {
         "psr-0" : {
-            "CareSet\\CareSetReportAsSigmaGraph" : "src"
+            "CareSet\\CareSetReportAsLegacyD3Graph" : "src"
         }
     }
 }
