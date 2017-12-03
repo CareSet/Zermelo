@@ -1,6 +1,6 @@
 <?php
 
-namespace CareSet\CareSetReportAsAdvancedD3Graph;
+namespace CareSet\CareSetReportAsSigmaGraph;
 
 
 class Interface
