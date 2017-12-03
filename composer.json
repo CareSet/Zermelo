@@ -1,5 +1,5 @@
 {
-    "name": "careset/caresetreportasdvancedd3graph",
+    "name": "careset/caresetreportasadvancedd3graph",
     "autoload": {
         "psr-0" : {
             "CareSet\\CareSetReportAsAdvancedD3Graph" : "src"
