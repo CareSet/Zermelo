@@ -1,12 +1,8 @@
 <?php
 
-namespace Weaverryan\DangerZone;
+namespace CareSet\CareSetReportEngine;
 
-/**
- * A terribly useful class
- *
- * See: http://knpuniversity.com/screencast/question-answer-day
- */
+
 class HalloThere
 {
     public function sayHallo()
