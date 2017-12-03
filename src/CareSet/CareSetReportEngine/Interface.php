@@ -3,7 +3,7 @@
 namespace CareSet\CareSetReportEngine;
 
 
-class HalloThere
+class Interface
 {
     public function sayHallo()
     {
