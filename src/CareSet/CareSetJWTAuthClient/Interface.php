@@ -1,6 +1,6 @@
 <?php
 
-namespace CareSet\CareSetReportAsLegacyD3Graph;
+namespace CareSet\CareSetJWTAuthClient;
 
 
 class Interface
