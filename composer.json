@@ -1,8 +1,8 @@
 {
-    "name": "careset/caresetreportaslegacyd3graph",
+    "name": "careset/caresetjwtauthclient",
     "autoload": {
         "psr-0" : {
-            "CareSet\\CareSetReportAsLegacyD3Graph" : "src"
+            "CareSet\\CareSetJWTAuthClient" : "src"
         }
     }
 }
