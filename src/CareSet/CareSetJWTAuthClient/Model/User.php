@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace CareSet\CareSetJWTAuthClient\Model;
 
 use Hash;
 use Illuminate\Notifications\Notifiable;

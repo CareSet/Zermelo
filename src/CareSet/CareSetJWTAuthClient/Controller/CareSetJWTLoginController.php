@@ -11,7 +11,7 @@ use \Firebase\JWT\BeforeValidException;
 use \Firebase\JWT\SignatureInvalidException;
 use \Firebase\JWT\ExpiredException;
 use Illuminate\Support\Facades\Auth;
-use App\User;
+use CareSet\CareSetJWTAuthClient\Model\User;
 use App\Http\Controllers\Controller;
 
 class CareSetJWTLoginController extends Controller
