@@ -14,7 +14,7 @@ Class ServiceProvider extends \Illuminate\Support\ServiceProvider
 	}
 
 
-	public function boot(\Illuminate\Routing\Router $router, \Illuminate\Contracts\Http\Kernel $kernel)
+	public function boot(\Illuminate\Routing\Router $router)
 	{
 
 		 $this->loadMigrationsFrom(__DIR__.'/migrations');
@@ -23,10 +23,12 @@ Class ServiceProvider extends \Illuminate\Support\ServiceProvider
 
 		$router->middleware('careset', \CareSet\CareSetJWTAuthClient\Middleware\JWTClientMiddleware::class);
 
+
 		Storage::MakeDirectory(base_path('keys'));		
 	    $this->publishes([
 	        __DIR__.'/config/caresetjwtclient.php' => config_path('caresetjwtclient.php'),
 	        __DIR__.'/keys/jwt_public_key.pub' => base_path('keys/jwt_public_key.pub'),
+	        __DIR__.'/Model/User.php' => base_path('App/User.php')
 	    ]);
 	}
 
