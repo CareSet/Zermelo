@@ -21,5 +21,13 @@
 	},
      "config": {
         "sort-packages": true
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "php artisan vendor:publish --provider=CareSet\\CareSetJWTAuthClient\\ServiceProvider"
+        ],
+        "post-update-cmd": [
+            "php artisan vendor:publish --provider=CareSet\\CareSetJWTAuthClient\\ServiceProvider"
+        ],
     }
 }
