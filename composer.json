@@ -28,6 +28,6 @@
         ],
         "post-update-cmd": [
             "php artisan vendor:publish --provider=CareSet\\CareSetJWTAuthClient\\ServiceProvider"
-        ],
+        ]
     }
 }
