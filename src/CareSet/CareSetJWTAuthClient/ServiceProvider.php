@@ -25,12 +25,8 @@ Class ServiceProvider extends \Illuminate\Support\ServiceProvider
 
 
 		Storage::MakeDirectory(base_path('keys'));
-		//Storage::delete(base_path('app/User.php'));
-
-	    $this->mergeConfigFrom(
-	        __DIR__.'/config/auth.php', config_path('auth.php')
-	    );
-
+		Storage::delete(base_path('app/User.php'));
+		
 	    $this->publishes([
 	        __DIR__.'/config/caresetjwtclient.php' => config_path('caresetjwtclient.php'),
 	        __DIR__.'/keys/jwt_public_key.pub' => base_path('keys/jwt_public_key.pub'),
