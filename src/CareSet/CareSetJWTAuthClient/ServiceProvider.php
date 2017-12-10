@@ -14,14 +14,14 @@ Class ServiceProvider extends \Illuminate\Support\ServiceProvider
 	}
 
 
-	public function boot(\Illuminate\Routing\Router $router)
+	public function boot(\Illuminate\Routing\Router $router, \Illuminate\Contracts\Http\Kernel $kernel)
 	{
 
 		 $this->loadMigrationsFrom(__DIR__.'/migrations');
 
 		 $this->loadRoutesFrom(__DIR__.'/routes.php');
 
-		$router->aliasMiddleware('careset', '\CareSet\CareSetJWTAuthClient\Middleware\JWTClientMiddleware');
+		$router->middleware('careset', \CareSet\CareSetJWTAuthClient\Middleware\JWTClientMiddleware::class);
 
 		Storage::MakeDirectory(base_path('keys'));		
 	    $this->publishes([
