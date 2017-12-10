@@ -12,7 +12,7 @@
     "extra": {
 	    "laravel": {
 	        "providers": [
-	            "CareSet\\CareSetJWTAuthClient\\JWTClientServiceProvider"
+	            "CareSet\\CareSetJWTAuthClient\\ServiceProvider"
 	        ]
 	    }
 	}
