@@ -1,8 +1,19 @@
 {
     "name": "careset/caresetjwtauthclient",
+    "require": {
+        "php": ">=7.0.0",
+        "firebase/php-jwt": "^5.0"
+    },
     "autoload": {
         "psr-0" : {
             "CareSet\\CareSetJWTAuthClient" : "src"
         }
-    }
+    },
+    "extra": {
+	    "laravel": {
+	        "providers": [
+	            "CareSet\\CareSetJWTAuthClient\\JWTClientServiceProvider"
+	        ]
+	    }
+	}
 }
