@@ -13,7 +13,7 @@ use \Firebase\JWT\ExpiredException;
 use Illuminate\Support\Facades\Auth;
 use \CareSet\CareSetJWTAuthClient\Model\User;
 
-class CareSetJWTLoginController extends Controller
+class CareSetJWTLoginController extends \Controller
 {
     public function callback(Request $request)
     {
