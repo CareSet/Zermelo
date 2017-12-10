@@ -1,9 +1,10 @@
 <?php
 
-
 namespace CareSet\CareSetJWTAuthClient;
 
-Class ServiceProvider extends Illuminate\Support\ServiceProvider
+use Illuminate\Support\Facades\Storage;
+
+Class ServiceProvider extends \Illuminate\Support\ServiceProvider
 {
 
 	public function register()
