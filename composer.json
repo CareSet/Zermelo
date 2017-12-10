@@ -6,7 +6,7 @@
     },
     "autoload": {
         "psr-4" : {
-            "CareSet\\CareSetJWTAuthClient" : "src\\"
+            "CareSet\\CareSetJWTAuthClient\\" : "src/"
         }
     },
     "extra": {
