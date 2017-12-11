@@ -5,5 +5,10 @@
  */
 
 return [
-        'model' => \CareSet\CareSetJWTAuthClient\Model\User::class,
-	];
+	'providers' => [
+		'users' => [
+			'driver' => 'eloquent',
+			'model' => '\CareSet\CareSetJWTAuthClient\Model\User',
+		]
+	]
+];
