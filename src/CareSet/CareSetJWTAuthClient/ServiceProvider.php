@@ -9,12 +9,10 @@ Class ServiceProvider extends \Illuminate\Support\ServiceProvider
 
 	public function register()
 	{
-
-    $this->mergeConfigFrom(
-        __DIR__.'/config/auth.php', 'auth'
-    );
+	    $this->mergeConfigFrom(
+	        __DIR__.'/config/auth.php', 'auth.providers.users'
+	    );
 	}
-
 
 	public function boot(\Illuminate\Routing\Router $router)
 	{
