@@ -10,7 +10,9 @@ Class ServiceProvider extends \Illuminate\Support\ServiceProvider
 	public function register()
 	{
 
-
+    $this->mergeConfigFrom(
+        __DIR__.'/config/auth.php', 'auth'
+    );
 	}
 
 
@@ -21,7 +23,7 @@ Class ServiceProvider extends \Illuminate\Support\ServiceProvider
 
 		 $this->loadRoutesFrom(__DIR__.'/routes.php');
 
-		//$router->middleware('careset', \CareSet\CareSetJWTAuthClient\Middleware\JWTClientMiddleware::class);
+		$router->middleware('careset', \CareSet\CareSetJWTAuthClient\Middleware\JWTClientMiddleware::class);
 
 		Storage::MakeDirectory(base_path('keys'));
 		//Storage::delete(base_path('app/User.php'));
