@@ -18,33 +18,33 @@ class CareSetJWTLoginController extends Controller
 {
     public function callback(Request $request)
     {
-    	$callback = $request->callback;
-    	$return = $request->return;
-    	$token = $request->token;
+        $callback = $request->callback;
+        $return = $request->return;
+        $token = $request->token;
 
-    	$user = JWT::decode($token,config('caresetjwtclient.public_key'),config('caresetjwtclient.algo'));
+        $user = JWT::decode($token,config('caresetjwtclient.public_key'),config('caresetjwtclient.algo'));
 
-    	$User = User::where('email',$user->email)->first();
+        $User = User::where('email',$user->email)->first();
 
-    	if(!$User)
-    	{
-			$User = User::Create([
-		        	'name'=>$user->name,
-		        	'email'=>$user->email,
-		        	'last_token'=>$token,
-		        	'is_admin'=>$user->is_admin
-		        ]);
-		} else
-		{
-			$User->update([
-		        	'name'=>$user->name,
-		        	'email'=>$user->email,
-		        	'last_token'=>$token,
-		        	'is_admin'=>$user->is_admin
-		        ]);
-			$User->save();
-			
-		}
+        if(!$User)
+        {
+            $User = User::Create([
+                    'name'=>$user->name,
+                    'email'=>$user->email,
+                    'last_token'=>$token,
+                    'is_admin'=>$user->is_admin
+                ]);
+        } else
+        {
+            $User->update([
+                    'name'=>$user->name,
+                    'email'=>$user->email,
+                    'last_token'=>$token,
+                    'is_admin'=>$user->is_admin
+                ]);
+            $User->save();
+            
+        }
 
         auth::login($User);
 
@@ -53,12 +53,11 @@ class CareSetJWTLoginController extends Controller
 
     public function logout(Request $request)
     {
-
         if (Auth::guard()->check()) {
-    		
-    		auth::logout();
-
-
+            
+            Auth::logout();
+            \Session::flush();
+     
             $url = config('caresetjwtclient.auth_logout');
             $token = config('caresetjwtclient.applicaiton_token');
             $callback  = config('caresetjwtclient.callback_url');
@@ -87,10 +86,11 @@ class CareSetJWTLoginController extends Controller
             (isset($parts['query']) ? "?{$parts['query']}" : '') . 
             (isset($parts['fragment']) ? "#{$parts['fragment']}" : '');
 
+
             return redirect($rebuild_redirect);
 
         }
 
-    	return redirect(   );
+        return redirect( '/'  );
     }
 }
