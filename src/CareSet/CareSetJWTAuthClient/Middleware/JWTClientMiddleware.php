@@ -16,7 +16,6 @@ class JWTClientMiddleware
      */
     public function handle($request, Closure $next, $guard = null)
     {
-
         if (!Auth::guard($guard)->check()) {
 
 
@@ -51,7 +50,7 @@ class JWTClientMiddleware
             return redirect($rebuild_redirect);
 
         }
-
+        $request->header('Authorization','Bearer '.Auth::guard()->user()->last_token);
         return $next($request);
     }
 
