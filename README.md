@@ -9,6 +9,7 @@ CareSet
 ```
 CARESET_TOKEN={{key goes here}}
 CARESET_JWT_LOGIN=https://auth.careset.com/auth/cs/login
+CARESET_JWT_LOGOUT=https://auth.careset.com/auth/cs/logout
 CARESET_JWT_CALLBACK={{callback goes here}}
 CARESET_JWT_RETURN={{default return url goes here}}
 ```
