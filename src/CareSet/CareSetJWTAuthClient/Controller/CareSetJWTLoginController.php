@@ -72,7 +72,7 @@ class CareSetJWTLoginController extends Controller
             }
             $parameters['token'] = $token;
             $parameters['callback'] = $callback;
-            $parameters['return'] = $request->url();
+            $parameters['return'] = $return;
 
             $parts['query'] = http_build_query($parameters);
 
