@@ -50,8 +50,9 @@ class JWTClientMiddleware
             return redirect($rebuild_redirect);
 
         }
-        $request->header('Authorization','Bearer '.Auth::guard()->user()->last_token);
-        return $next($request);
+        $response = $next($request);
+        $response->header('Authorization','Bearer '.Auth::guard()->user()->last_token);
+        return $response;
     }
 
 
