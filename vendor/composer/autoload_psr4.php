@@ -6,6 +6,5 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'Firebase\\JWT\\' => array($vendorDir . '/firebase/php-jwt/src'),
-    'CareSet\\CareSetJWTAuthClient\\' => array($baseDir . '/src'),
+    'CareSet\\CareSetReportEngine\\' => array($baseDir . '/src'),
 );
