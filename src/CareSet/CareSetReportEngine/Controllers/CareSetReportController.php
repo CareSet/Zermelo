@@ -256,8 +256,8 @@ class CaresetReportController extends Controller
             'Report_Name' => $Report->getReportName(),
             'Report_Description' => $Report->getReportDescription(),
             'selected-data-option' => $input_bolt,
-            'graphable' => self::IsReportGraphable($Report),
-            'columns' => $this->GetHeaderSummary($Report,$show_summary)
+            'columns' => $this->GetHeaderSummary($Report,$show_summary),
+            'graphable' => self::IsReportGraphable($Report)
         ];
     }
 
