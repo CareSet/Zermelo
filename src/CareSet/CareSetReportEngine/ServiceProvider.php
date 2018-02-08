@@ -17,7 +17,7 @@ Class ServiceProvider extends \Illuminate\Support\ServiceProvider
 	    $this->publishes([
 	        __DIR__.'/config/caresetreportengine.php' => config_path('caresetreportengine.php'),
 	        __DIR__.'/web.routes.php' => base_path('routes/caresetreportengine.web.example'),
-	        __DIR__.'/api.routes.php' => base_path('routes/caresetreportengine.api.example'),
+	        __DIR__.'/Views/basic.blade.php' => resource_path('views/CareSetReportEngine/basic.blade.php'),
 	    ]);
 	}
 
