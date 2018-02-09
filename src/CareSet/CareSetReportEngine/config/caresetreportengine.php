@@ -7,18 +7,23 @@
 return [
 
     /**
+     * Namespace of the report where it will attempt to load from
+     */
+    'REPORT_NAMESPACE' =>env("REPORT_NAMESPACE","App\\CareSetReports"),
+
+    /**
      * Path where the Report display.
      * This path should be inside the web route and points to CareSetReportController@ReportDisplay
      * /CareSetReport/(ReportName)
      */
-    'REPORT_PATH'=>env("REPORT_URI","/CareSetReport/"),
+    'URI_REPORT_PATH'=>env("REPORT_URI","/CareSetReport/"),
     
 
     /**
      * Path where the Report data can be retrieved from.
      * This path should be inside the api route and points to CareSetReportController@ReportModelJson
      */
-    'API_PATH'=>env("REPORT_API_URI","/api/CareSetReport/"),
+    'URI_API_PATH'=>env("REPORT_API_URI","/api/CareSetReport/"),
     
 
     /**
@@ -26,7 +31,7 @@ return [
      * This is use so it can display just the summary information for the report without retrieving the data
      * This path should be inside the api route and points to CareSetReportController@ReportModelSummaryJson
      */
-	'SUMMARY_PATH'=>env("REPORT_SUMMARY_URI","/api/CareSetReportSummary/"),
+	'URI_SUMMARY_PATH'=>env("REPORT_SUMMARY_URI","/api/CareSetReportSummary/"),
     
 
     /**
@@ -72,11 +77,11 @@ return [
     ],
 
 
-
     /**
      * The template the Report Engine will use to render the report
      * This will be called from CareSetReportController@ReportDisplay
      */
-    "TEMPLATE"=>env("REPORT_TEMPLATE","CareSetReportEngine.basic")
+    "DEFAULT_TABULAR_TEMPLATE"=>env("REPORT_TEMPLATE","CareSetReportEngine.tabular"),
+    "DEFAULT_GRAPH_TEMPLATE"=>env("REPORT_TEMPLATE","CareSetReportEngine.graph"),
 
 ];

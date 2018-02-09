@@ -4,6 +4,8 @@
 Route::get('/CareSetReportSummary/{report_name}/{parameters?}', function($report_name,$parameters="")
 {
 
+    $namespace = config("caresetreportengine.REPORT_NAMESPACE");
+
     $Parameters = ($parameters=="")?[]:explode("/",$parameters);
     $Code = null;
 
@@ -12,14 +14,20 @@ Route::get('/CareSetReportSummary/{report_name}/{parameters?}', function($report
         $Code = array_shift($Parameters);
     }
 
-    try {
-        $report = "App\\CareSetReports\\{$report_name}\\{$report_name}";
-        $Report = new $report($Code,$Parameters);
-    } catch(Exception $e)
+    if(class_exists("$namespace\\{$report_name}\\{$report_name}"))
+    {
+        $report = "$namespace\\{$report_name}\\{$report_name}";
+    }
+    else if(class_exists("$namespace\\{$report_name}"))
+    {
+        $report = "$namespace\\{$report_name}";
+    }
+    else
     {
         abort(404);
     }
 
+    $Report = new $report($Code,$Parameters);
     $Controller = new CareSet\CareSetReportEngine\Controllers\CaresetReportController;
     return $Controller->ReportModelSummaryJson($Report);
 
@@ -38,14 +46,20 @@ Route::get('/CareSetReport/{report_name}/{parameters?}', function($report_name,$
         $Code = array_shift($Parameters);
     }
 
-    try {
-        $report = "App\\CareSetReports\\{$report_name}\\{$report_name}";
-        $Report = new $report($Code,$Parameters);
-    } catch(Exception $e)
+    if(class_exists("$namespace\\{$report_name}\\{$report_name}"))
+    {
+        $report = "$namespace\\{$report_name}\\{$report_name}";
+    }
+    else if(class_exists("$namespace\\{$report_name}"))
+    {
+        $report = "$namespace\\{$report_name}";
+    }
+    else
     {
         abort(404);
     }
 
+    $Report = new $report($Code,$Parameters);
     $Controller = new CareSet\CareSetReportEngine\Controllers\CaresetReportController;
     return $Controller->ReportModelJson($Report);
 

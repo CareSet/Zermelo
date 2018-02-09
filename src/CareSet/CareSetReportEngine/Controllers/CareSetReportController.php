@@ -20,6 +20,8 @@ class CaresetReportController extends Controller
     {
 
         $uri = "/" . ltrim(Request::path(), "/ ");
+        $api_uri = "/" . trim(config("caresetreportengine.URI_API_PATH"), "/ ") . "/";
+        $summary_uri = "/" . trim(config("caresetreportengine.URI_SUMMARY_PATH"), "/ ") . "/";
 
         $input_bolt = Request::get('data-option');
         if ($input_bolt == "") $input_bolt = false;
@@ -29,13 +31,15 @@ class CaresetReportController extends Controller
         $view_data = [];
         $view_data['Report_Name'] = $Report->getReportName();
         $view_data['Report_Description'] = $Report->getReportDescription();
-        $view_data['api_url'] = config("caresetreportengine.API_PATH") . $Report->getClassName();
-        $view_data['summary_url'] = config("caresetreportengine.SUMMARY_PATH") . $Report->getClassName();
+        $view_data['api_url'] = $api_uri . $Report->getClassName();
+        $view_data['summary_url'] = $summary_uri . $Report->getClassName();
         $view_data['input_bolt'] = $input_bolt;
         $view_data['request_form_input'] = $request_form_input;
         $view_data['token'] = \Auth::guard()->user()->last_token;
 
-        return view(config("caresetreportengine.TEMPLATE"), $view_data);
+        $view = $Report->getReportView();
+        if(!$view) $view = config("caresetreportengine.DEFAULT_TABULAR_TEMPLATE");
+        return view($view, $view_data);
 
     }
 

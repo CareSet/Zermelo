@@ -41,6 +41,16 @@ abstract class CareSetReport
 
 
 
+	/**
+	 * Custom Report View template to use
+	 */
+	protected $REPORT_VIEW = null;
+
+	/**
+	 * Custom Graph View template to use
+	 */
+	protected $GRAPH_VIEW = null;
+
 
 	public function __construct($Code, array $Parameters = [], array $Input = [])
 	{
@@ -48,7 +58,7 @@ abstract class CareSetReport
 		$this->_parameters = $Parameters;
 		$this->_input = $Input;
 	}
-
+	
 	public function getCode(): ?string
 	{
 		return $this->_code;
@@ -126,6 +136,15 @@ abstract class CareSetReport
 		$reflector = new \ReflectionClass(get_class($this));
 		$fn = $reflector->getFileName();
 		return $fn;
+	}
+
+	public function getReportView()
+	{
+		return $this->REPORT_VIEW;
+	}
+	public function getGraphView()
+	{
+		return $this->GRAPH_VIEW;
 	}
 
 }

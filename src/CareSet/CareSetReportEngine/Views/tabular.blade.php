@@ -12,6 +12,7 @@
 <body>
 
 
+<div class="container">
 <div>
 <h1>{{ $Report_Name  }}</h1>
 </div>
@@ -20,12 +21,12 @@
 </div>
 
 
-<div>
+<div class="row">
+	<div class="col-xs-12">
 	<table class="table table-bordered table-condensed table-striped table-hover" id="report_datatable" style="width:100%"></table>
+	</div>
 </div>
-
-
-
+</div>
 
 </body>
 </html>
