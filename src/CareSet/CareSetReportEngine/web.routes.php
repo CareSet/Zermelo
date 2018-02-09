@@ -4,7 +4,8 @@
 
     Route::get('/CareSetReport/{report_name}/{parameters?}', function($report_name,$parameters="")
     {
-    
+        $namespace = config("caresetreportengine.REPORT_NAMESPACE");
+        
         $Parameters = ($parameters=="")?[]:explode("/",$parameters);
         $Code = null;
     

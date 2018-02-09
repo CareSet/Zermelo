@@ -12,7 +12,7 @@
 <body>
 
 
-<div class="container">
+<div class="container-fluid">
 <div>
 <h1>{{ $Report_Name  }}</h1>
 </div>
