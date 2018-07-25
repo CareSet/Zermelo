@@ -1,0 +1,253 @@
+Zermelo Reporting Engine
+========
+
+A PHP reporting engine that works especially well with Laravel, built with love at [CareSet Systems](http://careset.com)
+
+
+Core Reporting features
+------------------
+* Write SQL, automatically get a web-based report
+* Decorate each row in the report with links, buttons, JS and other bootstrap-based HTML goodness.
+* Control the entire web report using a single PHP file, which contains SQL and decorations.
+* GET/POST/JSON/URL parameters are all available as local functions/variables in the single file. This allows the SQL to be heavily modified based on the paramaters passed in to the specific report url.
+* Automatically support server side data paging
+* Any report data can be downloaded in CSV files
+* Report automatically generates JSON data source that can be used as an API
+* Supports Blade templating engine
+* Uses datatables in front end, backend supports search and sorting features. Allows single front end webpage to browse reports with millions of rows of results. Allows the initial ording of the data to happen based on the ORDER BY part of the underlying SQL.
+* Supports configurable database variables. Uses the Laravel configuration system to allow users to define which databases are used in for common SQL excercises.
+* Supports notion of "brackets/bolts". A way to abstractly model SQL, so that the same SQL structure can run against an compabitle schema (future)
+* Supports an admin-user-only interface (admin mode) with extra juice for designing and maintaining report (future)
+* In admin mode, display useful SQL errors, much the same way that laravel can be made to [use whoops for php errors](http://filp.github.io/whoops/) (future)
+* in admin mode, a link display what the incoming parameters were given to the report file, and the SQL that was the result of those inputs. This allows a report developer to precisely see what SQL is powering a data output, despite the various database/table abstraction features. (future)
+* in admin mode, a link to submit a new issue for this report, in the github file that is reponsible for this report. Uses the ability for [github issue creation links to prepopulate](https://github.com/isaacs/github/issues/99) to correctly target the right report file in the repo. (future)
+* in admin mode, a link to the JSON for the report, for convenience (future)
+* Support token based API authentication (future)
+* Supports Vue.js templating engine (future)
+* A way to get a success/fail version of every report URL (using the API token) so that you can test the stability of specific suite of reports over time using application/network uptime engines like [Nagios](https://www.nagios.org/). (future)
+
+Architecture
+------------------
+
+![Zermelo Data Flow Diagram](https://raw.githubusercontent.com/CareSet/Zermelo/master/documentation/Zermelo_Reporting_Engine_Design.png)
+
+
+How to get started using it
+-------------------------
+
+
+### Basic Installation
+1. On a working Laravel 5.5+ instance [Laravel 5.5 Installation Instructions](https://laravel.com/docs/5.5/installation) 
+    A good way to start is to user composer:
+    `composer create-project laravel/laravel zermelo-demo  "5.5.*" --prefer-dist`
+2. Add the following "repositories" section to your composer.json file (I like to put it before require) so composer can 
+find zermelo on Github.
+```
+    "repositories": [
+        {
+            "type": "git",
+            "url": "https://github.com/CareSet/Zermelo.git"
+        },
+        {
+            "type": "git",
+            "url": "https://github.com/CareSet/ZermeloBladeTabular.git"
+        }
+    ],
+```
+3. Change directory to your laravel project's root:
+    `cd zermelo-demo` (or whatever you named your project in step 1 of Basic Installation)
+    From the command prompt at your laravel project's root, type: 
+    `composer require careset/zermelo`
+4. From the command prompt at your laravel project's root, type: 
+    `php artisan install:zermelo` 
+5. Make sure your database is configured in .env or your app's database.php config. The database user will need CREATE TABLE 
+    permissions in order to create the cache database (and if installing the example data.)
+
+
+### Tabular View installation
+1. `composer require careset/zermelobladetabular`
+2. Then run:   
+    `php artisan install:zermelobladetabular`
+    This will create a zermelo directory in your resources directory containing blade view templates. 
+    This will also publish the configuration file to your app's config directory, and move assets (js, css) to public/vendor. 
+    
+
+### Configuration
+1. Edit the file `config/zermelo.php` to change core zermelo settings
+2. Edit the file `config/zermelobladetabular.php` to change settings specific to zermelo blade tabular view package.
+
+
+### Running Example
+There is a sample DB table and sample reports in the example directory or the Zermelo project. To run, import the two
+northwind database files from vendor/careset/zermelo/example/data into your configured database. Then copy the example 
+reports from vendor/careset/zermelo/example/example/reports into your app/Reports directory. You will need to create the 
+app/Reports directory if it does not exist. If your app already has an App\Reports namespace and directory, you can change the 
+REPORT_NAMESPACE config in config/zermelo.php to something else like "Zermelo" and then create an app/Zermelo directory 
+to place your example report in. Note: you will also need to change the namespace of Northwind*Reports.php files to "namespace 
+App\Zermelo;" if you change the REPORT_NAMESPACE.
+
+### To access your web routes (default):
+
+Displays tabular view
+``` [base_url]/Zermelo/[ReportClassName]```
+
+Example Report tabular view
+``` [base_url]/Zermelo/ExampleReport```
+
+### Creating Your First Report
+1. In order to get your first report, you need to create a report file. The easiest way to create an new report file
+    is to run:
+    `php artisan make:zermelo [YourNewReportName]`
+2. Edit the file `/app/Zermelo/YourNewReportName` You must fill in a reasonable GetSQL() function that returns either a 
+    single SQL text string, or an array of SQL text strings.
+3. Point your browser to https://yourapp.example.com/Zermelo/YourNewReportName
+4. Enjoy seeing your data in an automatically pagable [Datatables](https://datatables.net/) display!!
+5. Various functions and constants in the report file can dramatically change how the report is displayed on the front end. Use them to change the reports (a good first hack is to use the MapRow function to link one report to another report)
+
+
+### Example Report Model
+To see full list of functions and variables, pleasse see the ZermeloReport model - 
+https://github.com/CareSet/Zermelo/blob/master/src/CareSet/Zermelo/Models/ZermeloReport.php
+
+```php
+<?php
+
+namespace App\Zermelo;
+use CareSet\Zermelo\Models\ZermeloReport;
+
+class ExampleReport extends ZermeloReport
+{
+
+    const REPORT_NAME 	= "Example Report Name";
+    const DESCRIPTION 	= "Example Report Description";
+ 
+ 
+ 	/**
+    * Header Format 'auto-detection' can be changed per report.
+    * By default, these are the column formats - 
+    * 	public $DETAIL     = ['Sentence'];
+	* 	public $URL        = ['URL'];
+	* 	public $CURRENCY   = ['Amt','Amount','Paid','Cost'];
+	* 	public $NUMBER     = ['id','#','Num','Sum','Total','Cnt','Count'];
+	* 	public $DECIMAL    = ['Avg','Average'];
+	* 	public $PERCENT    = ['Percent','Ratio','Perentage'];
+	*
+	*	It detects the column by using 'word' matching, separated white spaces or _.
+	*	Example: TABLE_ROWS - ['TABLE','ROWS']
+	*	It will also check the full column name
+    */
+    public $NUMBER     = ['ROWS','AVG','LENGTH','DATA_FREE'];
+    
+    
+    /*
+    * By Default, any numeric field will have statistical information will be passed on. AVG/STD/MIN/MAX/SUM
+    * Any Text column will have distinct count information passed on.
+    * Any Date will have MIN/MAX/AVG
+    * This field will add a "NO_SUMMARY" field to the column header to suggest the data not be displayed
+    */
+    public $SUGGEST_NO_SUMMARY = ['ID'];
+
+
+	/**
+    * Can customize the report view based on the report
+    * By default, use the view defined in the configuration file.
+    *
+    */
+	public $REPORT_VIEW = null;
+
+
+	/**
+    * This is what builds the report. It will accept a SQL statement or an Array of sql statements.
+    * Can be used in conjunction with Inputs to determine different output based on URI parameters
+    * Additional URI parameters are passed as 
+    *	$this->getCode() - which will give the first url segment after the report name
+    *   $this->getParameters() - which will give an array of every later url segment after the getCode value
+    *   $this->getInputs() - which will give _GET parameters (etc?)
+    **/
+    public function GetSQL()
+    {
+        $sql = "SELECT * FROM information_schema.TABLES";
+    	return $sql;
+    }
+
+    /**
+    * Each row content will be passed to MapRow.
+    * Values and header names can be changed.
+    * Columns cannot be added or removed
+    * 
+    */
+    public function MapRow(array $row) :array 
+    {
+    
+    	/*
+		//this logic would ensure that every cell in the TABLE_NAME column, was converted to a link to 
+		//a table drilldown report
+		$table_name = $row['TABLE_NAME'];
+		$row[''] = "<a href='/Zermelo/TableDrillDownReport/$table_name/'>$table_name</a>";
+	
+	*/
+    
+        return $row;
+    }
+
+    /**
+    * Column Headers will be auto detected using $DETAIL,$URL,$CURRENCY,$NUMBER,$DECIMAL,$PERCENT
+    * If a column needs to be forced to a certain format, it can be changed here
+    * Tags can also be applied to each header column
+    */
+    public function OverrideHeader(array &$format, array &$tags): void
+    {
+    	//$tags['field_to_bold_in_report_display'] = 	['BOLD'];
+	//$tags['field_to_hide_by_default'] = 		['HIDDEN'];
+	//$tags['field_to_italic_in_report_display'] = 	['ITALIC'];
+	//$tags['field_to_right_align_in_report'] = 	['RIGHT'];	
+	
+	//How to set the format of the display
+	//$format['numeric_field'] = 			['NUMBER']; //TODO what does this do?
+	//$format['decimal_field'] = 			['DECIMAL']; //TODO what does this do?
+	//$format['currency_field'] = 			['CURRENCY']; //adds $ or Eurosign and right align
+	//$format['percent_field'] = 			['PERCENT']; //adds % in the right place and right align
+	//$format['url_field'] = 			['URL']; //auto-link using <a href='$url_field'>$url_field</a>
+	//$format['numeric_field'] = 			['NUMBER']; //TODO what does this do?
+	//$format['date_field'] = 			['DATE']; //future date display
+	//$format['datetime_field'] = 			['DATETIME']; //future date time display
+	//$format['time_field'] = 			['TIME']; //future time display
+    }
+
+
+    /*
+    * Get the Report Name, by default it will fetch the const REPORT_NAME.
+    * This can be overridden to custom return different Name based on Input
+    */
+    public function GetReportName(): string
+    {
+    return self::REPORT_NAME;
+    }
+
+    /*
+    * Get the Report Description, by default it will fetch the const DESCRIPTION.
+    * This can be overridden to custom return different description based on Input
+    */
+    public function getReportDescription(): ?string
+    {
+    return self::DESCRIPTION;
+    }
+
+}
+
+```
+
+
+### Why 'Zermelo'?
+------------------
+Zermelo is developed by [CareSet Systems](https://careset.com) which provides extensive reporting on CMS, Medicare and Medicaid data. We developed Zermelo to make that task easier. CareSet systems uses Set Theory, SQL and Graph technology to datamine Medicare claims data. We chose the name "CareSet" for our company to highlight our data approach (our logo has a contains a graph, which we thought was a good compromise. In any case, we thought we should celebrate a famous set theory mathematician with our name. 
+
+[Earnst Zermelo](https://en.wikipedia.org/wiki/Ernst_Zermelo) was one of the two independant mathematicians to posit the famous [Russell's Paradox](https://en.wikipedia.org/wiki/Russell%27s_paradox), the other being Russell. That paradox is the facinating question "Does a set that contains all sets that are not includes in themselves, contain itself". This paradox was a direct result of [Cantor](https://en.wikipedia.org/wiki/Georg_Cantor)'s work on Set Theory. All of which are critical chapters in the work on [Foundational Mathematics](https://en.wikipedia.org/wiki/Foundations_of_mathematics) shortly after the Turn of the 19th century.
+
+So we figured Zermelo did not get enough credit for his independant development of the paradox (and his other work generally) and also, he has a cool name that is not really used much software projects, with the exception of previous work [automating table tennis tournaments](https://www.davidmarcus.com/Zermelo.htm) or [scheduling dutch students](https://www.zermelo.nl/), which are both different Zermelo software. But no one has a reporting engine with that name. 
+
+
+
+
+
+

@@ -1,0 +1,36 @@
+{
+    "name": "careset/zermelo",	
+    "version": "0.0.1",	
+    "require": {
+        "php": ">=7.0.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "7.2.*",
+        "orchestra/testbench": "3.5.*"
+    },
+    "autoload": {
+        "psr-4" : {
+            "CareSet\\Zermelo\\" : "src/"
+        }
+    },
+    "autoload-dev": {
+      "psr-4": {
+        "CareSet\\Zermelo\\Test\\": "tests/"
+      }
+    },
+    "extra": {
+
+         "branch-alias": {
+            "dev-master": "0.0.1-dev"
+        },
+	    "laravel": {
+	        "providers": [
+	            "CareSet\\Zermelo\\ServiceProvider"
+	        ]
+	    }
+	},
+     "config": {
+        "sort-packages": true
+    }
+}
+
