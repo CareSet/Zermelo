@@ -51,12 +51,19 @@ How to get started using it
 
 ### Basic Installation
 1. Install Laravel 5.5. See [Laravel 5.5 Installation Instructions](https://laravel.com/docs/5.5/installation) 
-A good way to start is to use composer: 
+A good way to start is to use composer as root user: 
 
-`composer create-project laravel/laravel zermelo-demo  "5.5.*" --prefer-dist`
+    `composer create-project laravel/laravel zermelo-demo  "5.5.*" --prefer-dist`
 
-2. Add the following "repositories" section to your composer.json file (I like to put it before require) so composer can 
-find zermelo on Github.
+Change directory to your laravel project's root:
+    `cd zermelo-demo` (or whatever you named your project in step 1 of Basic Installation)
+    `cp .env.example .env`
+    `php artisan key:generate`
+
+2. Add the following "repositories" section to your composer.json file, which is in your project root,
+so composer can find zermelo on Github. I like to put it before require.
+    `$ vim composer.json`
+
 ```
     "repositories": [
         {
@@ -70,10 +77,7 @@ find zermelo on Github.
     ],
 ```
 
-3. Change directory to your laravel project's root:
-    `cd zermelo-demo` (or whatever you named your project in step 1 of Basic Installation)
-    
-From the command prompt at your laravel project's root, type: 
+3. From the command prompt at your laravel project's root, type: 
     `composer require careset/zermelo`
     
 4. From the command prompt at your laravel project's root, type: 
@@ -81,8 +85,16 @@ From the command prompt at your laravel project's root, type:
     
 5. Configure your database. In your project root, place your database parameters in .env or your app's config/database.php 
 config. The database user will need CREATE TABLE permissions in order to create the cache database (or if you are 
-installing the example data.)
-
+installing the example data.) The DB_DATABASE parameter is for the default database. If you are installing example data, and reports,
+you can put 'northwind_data' for the DB_DATABASE. If you have an existing database, put that in the DB_DATABASE field.
+```
+    DB_CONNECTION=mysql
+    DB_HOST=127.0.0.1
+    DB_PORT=3306
+    DB_DATABASE=northwind_data
+    DB_USERNAME=root
+    DB_PASSWORD=secret
+```
 
 ### Tabular View installation
 1. From the command prompt at your laravel project's root, type: 
@@ -95,7 +107,7 @@ This will create a zermelo directory in your resources directory containing blad
 This will also publish the configuration file to your app's config directory, and move assets (js, css) to public/vendor. 
     
 
-### Configuration
+### Configuration 
 1. Edit the file `config/zermelo.php` to change core zermelo settings
 2. Edit the file `config/zermelobladetabular.php` to change settings specific to zermelo blade tabular view package.
 
@@ -127,14 +139,17 @@ files will create two databases and their data.
 ```
     
 2. Then copy the example reports from [project-root]/vendor/careset/zermelo/examples/reports into your app/Reports directory. 
-You will need to create the app/Reports directory if it does not exist. 
-    `$ mkdir [project-root]/app/Reports`
-    `$ cp [project-root]/vendor/careset/zermelo/examples/reports/* [project-root]/app/Reports`
+You will need to create the app/Reports directory if it does not exist. From your project root:
+    `$ mkdir app/Reports`
+    `$ cp vendor/careset/zermelo/examples/reports/* app/Reports`
 
 **NOTE** If your app already has an App\Reports namespace and directory, you can change the REPORT_NAMESPACE setting in 
 config/zermelo.php to something else like "Zermelo" and then create an app/Zermelo directory 
 to place your example report in. Note: you will also need to change the namespace of Northwind*Reports.php files to "namespace 
 App\Zermelo;" if you change the REPORT_NAMESPACE.
+
+**NOTE** If you ran these commands as root user, you'll have to change the ownership of the php files so they are readable
+by the webserver.
 
 
 ### To access your web routes (default):
