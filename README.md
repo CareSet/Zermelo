@@ -36,7 +36,7 @@ How to get started using it
 -------------------------
 
 ### Prerequisites
-- PHP 7+ installed
+- PHP 7.1+ installed (required for nullable type declarations)
 - Composer Installed. See [Comopser Getting Started](https://getcomposer.org/)
 - Server requirements for Laravel 5.5:
 ```
@@ -129,7 +129,7 @@ files will create two databases and their data.
 2. Then copy the example reports from [project-root]/vendor/careset/zermelo/examples/reports into your app/Reports directory. 
 You will need to create the app/Reports directory if it does not exist. 
     `$ mkdir [project-root]/app/Reports`
-    `$ cp -r [project-root]/vendor/careset/zermelo/examples/reports/* [project-root]/app/Reports`
+    `$ cp [project-root]/vendor/careset/zermelo/examples/reports/* [project-root]/app/Reports`
 
 **NOTE** If your app already has an App\Reports namespace and directory, you can change the REPORT_NAMESPACE setting in 
 config/zermelo.php to something else like "Zermelo" and then create an app/Zermelo directory 
