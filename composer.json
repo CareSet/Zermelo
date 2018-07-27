@@ -4,19 +4,10 @@
     "require": {
         "php": ">=7.0.0"
     },
-    "require-dev": {
-        "phpunit/phpunit": "7.2.*",
-        "orchestra/testbench": "3.5.*"
-    },
     "autoload": {
         "psr-4" : {
-            "CareSet\\Zermelo\\" : "src/"
+            "CareSet\\Zermelo\\" : "src/CareSet/Zermelo"
         }
-    },
-    "autoload-dev": {
-      "psr-4": {
-        "CareSet\\Zermelo\\Test\\": "tests/"
-      }
     },
     "extra": {
 

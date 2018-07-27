@@ -25,7 +25,9 @@ class ControllerRepository
             $class = get_class($controllerInterface);
             if ( !App::runningInConsole() ) {
                 // If running in console, the config file is not read properly first, so we need to ignore this exception.
-                throw new ControllerNamespaceCollisionException( "The prefix {$prefix} is taken and can't be used in {$class}. " );
+                throw new ControllerNamespaceCollisionException( "The prefix {$prefix} is taken and can't be used in {$class}. 
+                This error may be caused because the configuration file for this controller is not being properly read and the 
+                correct prefix is not being loaded" );
             }
         }
     }
