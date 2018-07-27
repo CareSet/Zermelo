@@ -57,8 +57,12 @@ A good way to start is to use composer as root user:
 
 Change directory to your laravel project's root:
     `cd zermelo-demo` (or whatever you named your project in step 1 of Basic Installation)
-    ```cp .env.example .env```
-    ```php artisan key:generate```
+```
+    cp .env.example .env
+```
+```
+    php artisan key:generate
+```
 
 2. Add the following "repositories" section to your composer.json file, which is in your project root,
 so composer can find zermelo on Github. I like to put it before require.
@@ -119,9 +123,15 @@ the Zermelo project. To run:
 1. Import the two northwind database files from [project-root]/vendor/careset/zermelo/example/data using mysql. These 
 files will create two databases and their data. 
 
-    ```$ mysql -u root -p```
-    ```myslq> source [project-root]/vendor/careset/zermelo/examples/data/northwind_model.sql```
-    ```myslq> source [project-root]/vendor/careset/zermelo/examples/data/northwind_data.sql```
+```
+    $ mysql -u root -p
+```
+```
+    myslq> source [project-root]/vendor/careset/zermelo/examples/data/northwind_model.sql
+```
+```
+    myslq> source [project-root]/vendor/careset/zermelo/examples/data/northwind_data.sql
+```
     
 ```
     mysql> show databases;
@@ -140,8 +150,12 @@ files will create two databases and their data.
     
 2. Then copy the example reports from [project-root]/vendor/careset/zermelo/examples/reports into your app/Reports directory. 
 You will need to create the app/Reports directory if it does not exist. From your project root:
-    ```$ mkdir app/Reports```
-    ```$ cp vendor/careset/zermelo/examples/reports/* app/Reports```
+```
+    $ mkdir app/Reports
+```
+```
+    $ cp vendor/careset/zermelo/examples/reports/* app/Reports
+```
 
 **NOTE** If your app already has an App\Reports namespace and directory, you can change the REPORT_NAMESPACE setting in 
 config/zermelo.php to something else like "Zermelo" and then create an app/Zermelo directory 
@@ -169,17 +183,27 @@ List your routes:
 ```
 
 Displays tabular view
-``` [base_url]/Zermelo/[ReportClassName]```
+``` 
+    [base_url]/Zermelo/[ReportClassName]
+```
 
 Example Report tabular views
-``` [base_url]/Zermelo/NorthwindCustomerReport```
-``` [base_url]/Zermelo/NorthwindOrderReport```
-``` [base_url]/Zermelo/NorthwindProductReport```
+``` 
+    [base_url]/Zermelo/NorthwindCustomerReport
+```
+``` 
+    [base_url]/Zermelo/NorthwindOrderReport
+```
+``` 
+    [base_url]/Zermelo/NorthwindProductReport
+```
 
 ### Creating Your First Report
 1. In order to get your first report, you need to create a report file. The easiest way to create an new report file
 is to run:
-    ```php artisan make:zermelo [YourNewReportName]```
+```
+    php artisan make:zermelo [YourNewReportName]
+```
 2. Edit the file `/app/Zermelo/YourNewReportName` You must fill in a reasonable GetSQL() function that returns either a 
 single SQL text string, or an array of SQL text strings.
 3. Point your browser to https://yourapp.example.com/Zermelo/YourNewReportName
