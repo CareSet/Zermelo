@@ -57,8 +57,8 @@ A good way to start is to use composer as root user:
 
 Change directory to your laravel project's root:
     `cd zermelo-demo` (or whatever you named your project in step 1 of Basic Installation)
-    `cp .env.example .env`
-    `php artisan key:generate`
+    ```cp .env.example .env```
+    ```php artisan key:generate```
 
 2. Add the following "repositories" section to your composer.json file, which is in your project root,
 so composer can find zermelo on Github. I like to put it before require.
@@ -78,10 +78,10 @@ so composer can find zermelo on Github. I like to put it before require.
 ```
 
 3. From the command prompt at your laravel project's root, type: 
-    `composer require careset/zermelo`
+    ```composer require careset/zermelo```
     
 4. From the command prompt at your laravel project's root, type: 
-    `php artisan install:zermelo` 
+    ```php artisan install:zermelo``` 
     
 5. Configure your database. In your project root, place your database parameters in .env or your app's config/database.php 
 config. The database user will need CREATE TABLE permissions in order to create the cache database (or if you are 
@@ -98,10 +98,10 @@ you can put 'northwind_data' for the DB_DATABASE. If you have an existing databa
 
 ### Tabular View installation
 1. From the command prompt at your laravel project's root, type: 
-    `composer require careset/zermelobladetabular`
+    ```composer require careset/zermelobladetabular```
 
 2. Then run from Laravel project root:   
-    `php artisan install:zermelobladetabular`
+    ```php artisan install:zermelobladetabular```
     
 This will create a zermelo directory in your resources directory containing blade view templates. 
 This will also publish the configuration file to your app's config directory, and move assets (js, css) to public/vendor. 
@@ -119,9 +119,9 @@ the Zermelo project. To run:
 1. Import the two northwind database files from [project-root]/vendor/careset/zermelo/example/data using mysql. These 
 files will create two databases and their data. 
 
-    `$ mysql -u root -p`
-    `myslq> source [project-root]/vendor/careset/zermelo/examples/data/northwind_model.sql`
-    `myslq> source [project-root]/vendor/careset/zermelo/examples/data/northwind_data.sql`
+    ```$ mysql -u root -p```
+    ```myslq> source [project-root]/vendor/careset/zermelo/examples/data/northwind_model.sql```
+    ```myslq> source [project-root]/vendor/careset/zermelo/examples/data/northwind_data.sql```
     
 ```
     mysql> show databases;
@@ -140,8 +140,8 @@ files will create two databases and their data.
     
 2. Then copy the example reports from [project-root]/vendor/careset/zermelo/examples/reports into your app/Reports directory. 
 You will need to create the app/Reports directory if it does not exist. From your project root:
-    `$ mkdir app/Reports`
-    `$ cp vendor/careset/zermelo/examples/reports/* app/Reports`
+    ```$ mkdir app/Reports```
+    ```$ cp vendor/careset/zermelo/examples/reports/* app/Reports```
 
 **NOTE** If your app already has an App\Reports namespace and directory, you can change the REPORT_NAMESPACE setting in 
 config/zermelo.php to something else like "Zermelo" and then create an app/Zermelo directory 
@@ -179,7 +179,7 @@ Example Report tabular views
 ### Creating Your First Report
 1. In order to get your first report, you need to create a report file. The easiest way to create an new report file
 is to run:
-    `php artisan make:zermelo [YourNewReportName]`
+    ```php artisan make:zermelo [YourNewReportName]```
 2. Edit the file `/app/Zermelo/YourNewReportName` You must fill in a reasonable GetSQL() function that returns either a 
 single SQL text string, or an array of SQL text strings.
 3. Point your browser to https://yourapp.example.com/Zermelo/YourNewReportName
