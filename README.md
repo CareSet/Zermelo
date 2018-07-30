@@ -48,46 +48,18 @@ How to get started using it
     XML PHP Extension
 ```
 - MYSQL server, and user with CREATE TABLE permissions
-
+- Installed and functioning Laravel 5.5. See [Laravel 5.5 Installation Instructions](https://laravel.com/docs/5.5/installation) 
+  A good way to start is to use composer to insure you download correct verstion:
+  `composer create-project laravel/laravel zermelo-demo  "5.5.*" --prefer-dist`
+  
 ### Basic Installation
-1. Install Laravel 5.5. See [Laravel 5.5 Installation Instructions](https://laravel.com/docs/5.5/installation) 
-A good way to start is to use composer as root user: 
-
-    `composer create-project laravel/laravel zermelo-demo  "5.5.*" --prefer-dist`
-
-Change directory to your laravel project's root:
-    `cd zermelo-demo` (or whatever you named your project in step 1 of Basic Installation)
-```
-    cp .env.example .env
-```
-```
-    php artisan key:generate
-```
-
-2. Add the following "repositories" section to your composer.json file, which is in your project root,
-so composer can find zermelo on Github. I like to put it before require.
-    `$ vim composer.json`
-
-```
-    "repositories": [
-        {
-            "type": "git",
-            "url": "https://github.com/CareSet/Zermelo.git"
-        },
-        {
-            "type": "git",
-            "url": "https://github.com/CareSet/ZermeloBladeTabular.git"
-        }
-    ],
-```
-
-3. From the command prompt at your laravel project's root, type: 
+1. From the command prompt at your laravel project's root, type: 
     ```composer require careset/zermelo```
     
-4. From the command prompt at your laravel project's root, type: 
+2. From the command prompt at your laravel project's root, type: 
     ```php artisan install:zermelo``` 
     
-5. Configure your database. In your project root, place your database parameters in .env or your app's config/database.php 
+3. Configure your database if you haven't already. In your project root, place your database parameters in .env or your app's config/database.php 
 config. The database user will need CREATE TABLE permissions in order to create the cache database (or if you are 
 installing the example data.) The DB_DATABASE parameter is for the default database. If you are installing example data, and reports,
 you can put 'northwind_data' for the DB_DATABASE. If you have an existing database, put that in the DB_DATABASE field.
