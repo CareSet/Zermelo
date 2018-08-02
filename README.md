@@ -16,7 +16,9 @@ Core Reporting features
 * Supports Blade templating engine
 * Uses datatables in front end, backend supports search and sorting features. Allows single front end webpage to browse reports with millions of rows of results. Allows the initial ording of the data to happen based on the ORDER BY part of the underlying SQL.
 * Supports configurable database variables. Uses the Laravel configuration system to allow users to define which databases are used in for common SQL excercises.
-* Supports notion of "brackets/bolts". A way to abstractly model SQL, so that the same SQL structure can run against an compabitle schema. This allows a user to choose which identically structured data source(s) to use as input to the report. It also requires a admin GUI for managing the bracket/bolt options.  (future)
+* Supports notion of "brackets/bolts". A way to abstractly model SQL, so that the same SQL structure can run against an compabitle schema. This allows a user to choose which identically structured data source(s) to use as input to the report. (future)
+* The bracket/bolt system should allow a user to meaningful select from several different data meta-sources. It should also allow for classes of meta-sources (i.e. all meta-sources from the same year of data, or meta-sources from the same family of patients, etc etc) and allow selection of data sources at that class of meta-source level.
+* It also requires a admin GUI for managing the bracket/bolt options.  (future)
 * Supports an admin-user-only interface (admin mode) with extra juice for designing and maintaining report (future)
 * In admin mode, display useful SQL errors, much the same way that laravel can be made to [use whoops for php errors](http://filp.github.io/whoops/) (future)
 * SQL errors when not in admin mode should be handled gracefully, in a way that makes sense to the end user. (future)
