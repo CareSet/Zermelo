@@ -25,6 +25,10 @@ Core Reporting features
 * More generally, the back end should be able to run tests and check for pre-requsites in data before running a report, and communicate failing status (rather than a report in the wrong context) back to users. The communication should happen using a well-defined json-based error language, which should be well-displayed on the front end. (future)
 * In admin mode the well-displayed error messages should have greater context, to allow for quick debugging. 
 * Unclear how to enable "admin mode" but it will likely be using a facade of some kind, or perhaps based on the out-of-box laravel user modeling system. (future)
+* Each report may have functions that return paramaters that are "correct for testing". This function should be used by a URL oriented report checker to verify that a report returns correctly given the parameters. (future)
+* Each report may have functions that return paramaters that are "false for testing". To verify that incorrect input generates sensible errors rather than crashes (future)
+* System crashes hitting JSON url should generate "I crashed json" rather than using the default laravel crash screen. 
+* Develop an artisan command that will loop over all reports, and use curl (etc) to hit the url with the good/bad inputs that the report provides and verify that the JSON being returned is correct. (future)
 * in admin mode, a link display what the incoming parameters were given to the report file, and the SQL that was the result of those inputs. This allows a report developer to precisely see what SQL is powering a data output, despite the various database/table abstraction features. (future)
 * in admin mode, a link to submit a new issue for this report, in the github file that is reponsible for this report. Uses the ability for [github issue creation links to prepopulate](https://github.com/isaacs/github/issues/99) to correctly target the right report file in the repo. (future)
 * in admin mode, a link to the JSON for the report, for convenience (future)
