@@ -38,40 +38,6 @@ class NorthwindCustomerReport extends ZermeloReport
 
     }
 
- 	/**
-    * Header Format 'auto-detection' can be changed per report.
-    * By default, these are the column formats -
-    * 	public $DETAIL     = ['Sentence'];
-	* 	public $URL        = ['URL'];
-	* 	public $CURRENCY   = ['Amt','Amount','Paid','Cost'];
-	* 	public $NUMBER     = ['id','#','Num','Sum','Total','Cnt','Count'];
-	* 	public $DECIMAL    = ['Avg','Average'];
-	* 	public $PERCENT    = ['Percent','Ratio','Perentage'];
-	*
-	*	It detects the column by using 'word' matching, separated white spaces or _.
-	*	Example: TABLE_ROWS - ['TABLE','ROWS']
-	*	It will also check the full column name
-    */
-    public $NUMBER     = ['ROWS','AVG','LENGTH','DATA_FREE'];
-
-
-    /*
-    * By Default, any numeric field will have statistical information will be passed on. AVG/STD/MIN/MAX/SUM
-    * Any Text column will have distinct count information passed on.
-    * Any Date will have MIN/MAX/AVG
-    * This field will add a "NO_SUMMARY" field to the column header to suggest the data not be displayed
-    */
-    public $SUGGEST_NO_SUMMARY = ['ID'];
-
-
-	/**
-    * Can customize the report view based on the report
-    * By default, use the view defined in the configuration file.
-    *
-    */
-	public $REPORT_VIEW = null;
-
-
 	/**
     * This is what builds the report. It will accept a SQL statement or an Array of sql statements.
     * Can be used in conjunction with Inputs to determine different output based on URI parameters
@@ -125,6 +91,7 @@ WHERE customer.id = '$customer_id'
     	return $sql;
     }
 
+
     /**
     * Each row content will be passed to MapRow.
     * Values and header names can be changed.
@@ -144,6 +111,42 @@ WHERE customer.id = '$customer_id'
 
         return $row;
     }
+
+ 	/**
+    * Header Format 'auto-detection' can be changed per report.
+    * By default, these are the column formats -
+    * 	public $DETAIL     = ['Sentence'];
+	* 	public $URL        = ['URL'];
+	* 	public $CURRENCY   = ['Amt','Amount','Paid','Cost'];
+	* 	public $NUMBER     = ['id','#','Num','Sum','Total','Cnt','Count'];
+	* 	public $DECIMAL    = ['Avg','Average'];
+	* 	public $PERCENT    = ['Percent','Ratio','Perentage'];
+	*
+	*	It detects the column by using 'word' matching, separated white spaces or _.
+	*	Example: TABLE_ROWS - ['TABLE','ROWS']
+	*	It will also check the full column name
+    */
+    public $NUMBER     = ['ROWS','AVG','LENGTH','DATA_FREE'];
+
+
+    /*
+    * By Default, any numeric field will have statistical information will be passed on. AVG/STD/MIN/MAX/SUM
+    * Any Text column will have distinct count information passed on.
+    * Any Date will have MIN/MAX/AVG
+    * This field will add a "NO_SUMMARY" field to the column header to suggest the data not be displayed
+    */
+    public $SUGGEST_NO_SUMMARY = ['ID'];
+
+
+	/**
+    * Can customize the report view based on the report
+    * By default, use the view defined in the configuration file.
+    *
+    */
+	public $REPORT_VIEW = null;
+
+
+
 
     /**
     * Column Headers will be auto detected using $DETAIL,$URL,$CURRENCY,$NUMBER,$DECIMAL,$PERCENT

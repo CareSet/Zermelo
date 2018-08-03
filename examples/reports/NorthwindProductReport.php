@@ -6,43 +6,19 @@ use CareSet\Zermelo\Models\ZermeloReport;
 class NorthwindProductReport extends ZermeloReport
 {
 
-    const REPORT_NAME 	= "Northwind Product Report";
-    const DESCRIPTION 	= "Example Report Description";
-
-
- 	/**
-    * Header Format 'auto-detection' can be changed per report.
-    * By default, these are the column formats -
-    * 	public $DETAIL     = ['Sentence'];
-	* 	public $URL        = ['URL'];
-	* 	public $CURRENCY   = ['Amt','Amount','Paid','Cost'];
-	* 	public $NUMBER     = ['id','#','Num','Sum','Total','Cnt','Count'];
-	* 	public $DECIMAL    = ['Avg','Average'];
-	* 	public $PERCENT    = ['Percent','Ratio','Perentage'];
-	*
-	*	It detects the column by using 'word' matching, separated white spaces or _.
-	*	Example: TABLE_ROWS - ['TABLE','ROWS']
-	*	It will also check the full column name
+    /*
+    * Get the Report Name
     */
-    public $NUMBER     = ['ROWS','AVG','LENGTH','DATA_FREE'];
-
+    public function GetReportName(): string {
+	return('Northwind Product Report');
+    }
 
     /*
-    * By Default, any numeric field will have statistical information will be passed on. AVG/STD/MIN/MAX/SUM
-    * Any Text column will have distinct count information passed on.
-    * Any Date will have MIN/MAX/AVG
-    * This field will add a "NO_SUMMARY" field to the column header to suggest the data not be displayed
+    * Get the Report Description, can be html
     */
-    public $SUGGEST_NO_SUMMARY = ['ID'];
-
-
-	/**
-    * Can customize the report view based on the report
-    * By default, use the view defined in the configuration file.
-    *
-    */
-	public $REPORT_VIEW = null;
-
+    public function getReportDescription(): ?string {
+    	return('The list of all northwind products');
+    }
 
 	/**
     * This is what builds the report. It will accept a SQL statement or an Array of sql statements.
@@ -79,6 +55,41 @@ class NorthwindProductReport extends ZermeloReport
         return $row;
     }
 
+ 	/**
+    * Header Format 'auto-detection' can be changed per report.
+    * By default, these are the column formats -
+    * 	public $DETAIL     = ['Sentence'];
+	* 	public $URL        = ['URL'];
+	* 	public $CURRENCY   = ['Amt','Amount','Paid','Cost'];
+	* 	public $NUMBER     = ['id','#','Num','Sum','Total','Cnt','Count'];
+	* 	public $DECIMAL    = ['Avg','Average'];
+	* 	public $PERCENT    = ['Percent','Ratio','Perentage'];
+	*
+	*	It detects the column by using 'word' matching, separated white spaces or _.
+	*	Example: TABLE_ROWS - ['TABLE','ROWS']
+	*	It will also check the full column name
+    */
+    public $NUMBER     = ['ROWS','AVG','LENGTH','DATA_FREE'];
+
+
+    /*
+    * By Default, any numeric field will have statistical information will be passed on. AVG/STD/MIN/MAX/SUM
+    * Any Text column will have distinct count information passed on.
+    * Any Date will have MIN/MAX/AVG
+    * This field will add a "NO_SUMMARY" field to the column header to suggest the data not be displayed
+    */
+    public $SUGGEST_NO_SUMMARY = ['ID'];
+
+
+	/**
+    * Can customize the report view based on the report
+    * By default, use the view defined in the configuration file.
+    *
+    */
+	public $REPORT_VIEW = null;
+
+
+
     /**
     * Column Headers will be auto detected using $DETAIL,$URL,$CURRENCY,$NUMBER,$DECIMAL,$PERCENT
     * If a column needs to be forced to a certain format, it can be changed here
@@ -104,22 +115,5 @@ class NorthwindProductReport extends ZermeloReport
     }
 
 
-    /*
-    * Get the Report Name, by default it will fetch the const REPORT_NAME.
-    * This can be overridden to custom return different Name based on Input
-    */
-    public function GetReportName(): string
-    {
-    return self::REPORT_NAME;
-    }
-
-    /*
-    * Get the Report Description, by default it will fetch the const DESCRIPTION.
-    * This can be overridden to custom return different description based on Input
-    */
-    public function getReportDescription(): ?string
-    {
-    return self::DESCRIPTION;
-    }
 
 }
