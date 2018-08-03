@@ -6,9 +6,37 @@ use CareSet\Zermelo\Models\ZermeloReport;
 class NorthwindCustomerReport extends ZermeloReport
 {
 
-    const REPORT_NAME 	= "Northwind Customer Report";
-    const DESCRIPTION 	= "This report shows details about NorthWind customer(s)";
+    /*
+    * Get the Report Name
+    */
+    public function GetReportName(): string
+    {
+	return('NorthWind Customer Report');
+    }
 
+    /*
+    * Get the Report Description, can return html
+    */
+    public function getReportDescription(): ?string
+    {
+	$customer_id = $this->getCode();
+
+	if(!is_numeric($customer_id)){
+		//this means that there was no customer_id passed in on the url...
+		//so we have a SQL that will return all of the customers information
+		return('This is a list of all of Northwinds Customers');
+	}else{
+		//we have only one customer here... so we will only see one customer.
+		//we need to give users a way to get back to the list of all customers...
+		$html = "
+<p>This is a filtered report, showing just one NorthWind Customer</p>
+<a class='btn btn-primary btn-small' href='/Zermelo/NorthwindCustomerReport/' role='button'>Show All Customers</a>
+<br><br>
+";
+		return($html);
+	}	
+
+    }
 
  	/**
     * Header Format 'auto-detection' can be changed per report.
@@ -142,22 +170,5 @@ WHERE customer.id = '$customer_id'
     }
 
 
-    /*
-    * Get the Report Name, by default it will fetch the const REPORT_NAME.
-    * This can be overridden to custom return different Name based on Input
-    */
-    public function GetReportName(): string
-    {
-    return self::REPORT_NAME;
-    }
-
-    /*
-    * Get the Report Description, by default it will fetch the const DESCRIPTION.
-    * This can be overridden to custom return different description based on Input
-    */
-    public function getReportDescription(): ?string
-    {
-    return self::DESCRIPTION;
-    }
 
 }
