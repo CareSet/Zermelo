@@ -48,11 +48,11 @@ How to get started using it
 -------------------------
 
 ### Prerequisites
-- PHP 7.1+ installed (required for nullable type declarations)
+- PHP 7.1.+ installed, 7.2.+ preferred (required for nullable type declarations, and soon encrypted zip files)
 - Composer Installed. See [Comopser Getting Started](https://getcomposer.org/)
 - Server requirements for Laravel 5.5:
 ```
-    PHP >= 7.0.0
+    PHP >= 7.1.0
     OpenSSL PHP Extension
     PDO PHP Extension
     Mbstring PHP Extension
