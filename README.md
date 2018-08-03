@@ -65,11 +65,15 @@ How to get started using it
   `composer create-project laravel/laravel zermelo-demo  "5.5.*" --prefer-dist`
   
 ### Basic Installation
-1. From the command prompt at your laravel project's root, type: 
-    ```composer require careset/zermelo```
+1. From the command prompt at your laravel project's root install the following commands: 
+
+    ```composer require careset/zermelo``` 
     
-2. From the command prompt at your laravel project's root, type: 
     ```php artisan install:zermelo``` 
+    
+    ```composer require careset/zermelobladetabular```
+    
+    ```php artisan install:zermelobladetabular```
     
 3. Configure your database if you haven't already. In your project root, place your database parameters in .env or your app's config/database.php 
 config. The database user will need CREATE TABLE permissions in order to create the cache database (or if you are 
@@ -83,19 +87,6 @@ you can put 'northwind_data' for the DB_DATABASE. If you have an existing databa
     DB_USERNAME=root
     DB_PASSWORD=secret
 ```
-
-### Tabular View installation
-1. From the command prompt at your laravel project's root, type:
-
-    ```composer require careset/zermelobladetabular```
-
-2. Then run from Laravel project root:
-
-    ```php artisan install:zermelobladetabular```
-    
-This will create a zermelo directory in your resources directory containing blade view templates. 
-This will also publish the configuration file to your app's config directory, and move assets (js, css) to public/vendor. 
-    
 
 ### Configuration 
 1. Edit the file `config/zermelo.php` to change core zermelo settings
