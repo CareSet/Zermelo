@@ -78,14 +78,23 @@ How to get started using it
 3. Configure your database if you haven't already. In your project root, place your database parameters in .env or your app's config/database.php 
 config. The database user will need CREATE TABLE permissions in order to create the cache database (or if you are 
 installing the example data.) The DB_DATABASE parameter is for the default database. If you are installing example data, and reports,
-you can put 'northwind_data' for the DB_DATABASE. If you have an existing database, put that in the DB_DATABASE field.
+you can put 'northwind_data' for the DB_DATABASE. If you have an existing database, put that in the DB_DATABASE field. You should replace the username and password below with sensible values. If this is foreign to you, you should read [How to secure you MySQL installation](https://dev.mysql.com/doc/mysql-security-excerpt/5.7/en/security.html)
+
 ```
     DB_CONNECTION=mysql
     DB_HOST=127.0.0.1
     DB_PORT=3306
     DB_DATABASE=northwind_data
-    DB_USERNAME=root
-    DB_PASSWORD=secret
+    DB_USERNAME=your_chosen_username
+    DB_PASSWORD=randomly_generate_a_password_and_put_it_here
+```
+
+4. Create the _cache database and give your database user access to. The SQL commands for this are:
+
+```
+CREATE DATABASE _cache;
+GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER ON `_cache`.* TO 'your_chosen_username'@'%'
+
 ```
 
 ### Configuration 
