@@ -85,10 +85,12 @@ you can put 'northwind_data' for the DB_DATABASE. If you have an existing databa
 ```
 
 ### Tabular View installation
-1. From the command prompt at your laravel project's root, type: 
+1. From the command prompt at your laravel project's root, type:
+
     ```composer require careset/zermelobladetabular```
 
-2. Then run from Laravel project root:   
+2. Then run from Laravel project root:
+
     ```php artisan install:zermelobladetabular```
     
 This will create a zermelo directory in your resources directory containing blade view templates. 
