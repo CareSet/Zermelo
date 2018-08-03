@@ -46,13 +46,12 @@ How to get started using it
 ### Basic Installation
 1. From the command prompt at your laravel project's root install the following commands: 
 
-    ```composer require careset/zermelo``` 
-    
-    ```php artisan install:zermelo``` 
-    
-    ```composer require careset/zermelobladetabular```
-    
-    ```php artisan install:zermelobladetabular```
+```
+composer require careset/zermelo
+php artisan install:zermelo
+composer require careset/zermelobladetabular
+php artisan install:zermelobladetabular
+```
     
 3. Configure your database if you haven't already. In your project root, place your database parameters in .env or your app's config/database.php 
 config. The database user will need CREATE TABLE permissions in order to create the cache database (or if you are 
