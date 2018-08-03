@@ -54,10 +54,22 @@ class NorthwindOrderReport extends ZermeloReport
     **/
     public function GetSQL()
     {
-        $sql = "SELECT order_id, product_id, customer_id, shipName, shipCity
-                FROM northwind_data.order O
-                JOIN northwind_data.orderDetail OD 
-                ON OD.order_id = O.id";
+        $sql = "
+SELECT 
+	order_id, 
+	product_id, 
+	companyName AS company_name,
+	shipName, 
+	shipCity,
+	customer_id 
+FROM northwind_data.order
+JOIN northwind_data.orderDetail ON 
+	orderDetail.order_id = 
+	order.id
+JOIN northwind_model.customer ON 
+	customer.id =
+	order.customer_id
+";
     	return $sql;
     }
 
@@ -71,8 +83,9 @@ class NorthwindOrderReport extends ZermeloReport
     {
 		//this logic would ensure that every cell in the TABLE_NAME column, was converted to a link to
 		//a table drilldown report
-		$row_name = $row['customer_id'];
-		$row['customer_id'] = "<a href='/Zermelo/NorthwindCustomerReport/$row_name/'>$row_name</a>";
+		$customer_id = $row['customer_id'];
+		$company_name = $row['company_name'];
+		$row['company_name'] = "<a href='/Zermelo/NorthwindCustomerReport/$customer_id/'>$company_name</a>";
 
         return $row;
     }
@@ -84,6 +97,11 @@ class NorthwindOrderReport extends ZermeloReport
     */
     public function OverrideHeader(array &$format, array &$tags): void
     {
+
+	//in this example, we use customer_id for building the url, but it makes the report busy...
+	//so we hide it by default
+	$tags['customer_id'] = 				['HIDDEN'];
+
     	//$tags['field_to_bold_in_report_display'] = 	['BOLD'];
 	//$tags['field_to_hide_by_default'] = 		['HIDDEN'];
 	//$tags['field_to_italic_in_report_display'] = 	['ITALIC'];

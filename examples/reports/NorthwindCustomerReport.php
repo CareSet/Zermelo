@@ -7,7 +7,7 @@ class NorthwindCustomerReport extends ZermeloReport
 {
 
     const REPORT_NAME 	= "Northwind Customer Report";
-    const DESCRIPTION 	= "Description of Northwind Customer Report";
+    const DESCRIPTION 	= "This report shows details about NorthWind customer(s)";
 
 
  	/**
@@ -54,9 +54,46 @@ class NorthwindCustomerReport extends ZermeloReport
     **/
     public function GetSQL()
     {
-        $sql = "SELECT companyName, lastName, firstName, emailAddress, 
-                  jobTitle, businessPhone, homePhone, mobilePhone 
-                FROM northwind_model.customer";
+
+	$customer_id = $this->getCode();
+
+	if(!is_numeric($customer_id)){
+		//this means that there was no customer_id passed in on the url...
+		//so we have a SQL that will return all of the customers information
+        $sql = "
+SELECT 
+	customer.id AS customer_id, 
+	companyName, 
+	lastName, 
+	firstName, 
+	emailAddress, 
+	jobTitle, 
+	businessPhone, 
+	homePhone, 
+	mobilePhone
+FROM northwind_model.customer
+";
+
+	}else{
+		//here we know that $customer_id is numeric, and we should search the database for a mathing customer
+        $sql = "
+SELECT
+	customer.id AS customer_id, 
+	companyName, 
+	lastName, 
+	firstName, 
+	emailAddress, 
+	jobTitle, 
+	businessPhone, 
+	homePhone, 
+	mobilePhone
+FROM northwind_model.customer
+WHERE customer.id = '$customer_id'
+";
+
+	}
+
+
     	return $sql;
     }
 
