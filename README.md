@@ -51,6 +51,7 @@ composer require careset/zermelo
 php artisan install:zermelo
 composer require careset/zermelobladetabular
 php artisan install:zermelobladetabular
+mkdir app/Reports
 ```
     
 3. Configure your database if you haven't already. In your project root, place your database parameters in .env or your app's config/database.php 
@@ -114,9 +115,7 @@ files will create two databases and their data.
     
 2. Then copy the example reports from [project-root]/vendor/careset/zermelo/examples/reports into your app/Reports directory. 
 You will need to create the app/Reports directory if it does not exist. From your project root:
-```
-    $ mkdir app/Reports
-```
+
 ```
     $ cp vendor/careset/zermelo/examples/reports/* app/Reports
 ```
