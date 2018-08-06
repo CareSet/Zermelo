@@ -55,7 +55,7 @@ JOIN northwind_model.customer ON
     * Columns cannot be added or removed
     *
     */
-    public function MapRow(array $row) :array
+    public function MapRow(array $row, int $row_number) :array
     {
 		//this logic would ensure that every cell in the TABLE_NAME column, was converted to a link to
 		//a table drilldown report

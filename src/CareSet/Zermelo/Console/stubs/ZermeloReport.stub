@@ -42,7 +42,7 @@ class {{ report_name }} extends ZermeloReport
     * You can decorate fields with html, with bootstrap css styling
     *
     */
-    public function MapRow(array $row) :array
+    public function MapRow(array $row, int $row_number) :array
     {
 
     	/*

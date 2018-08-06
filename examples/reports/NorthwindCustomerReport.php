@@ -98,7 +98,7 @@ WHERE customer.id = '$customer_id'
     * Columns cannot be added or removed
     *
     */
-    public function MapRow(array $row) :array
+    public function MapRow(array $row, int $row_number) :array
     {
 
     	/*

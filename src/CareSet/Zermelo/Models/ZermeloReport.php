@@ -238,7 +238,7 @@ abstract class ZermeloReport
 	 * @param array $row
 	 * @return void
 	 */
-	public function MapRow(array $row)
+	public function MapRow(array $row, int $row_number)
 	{
 		return $row;
 	}
