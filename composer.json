@@ -1,6 +1,18 @@
 {
     "name": "careset/zermelo",	
-    "version": "0.0.4",
+    "description": "Zermelo, a PHP reporting engine for Laravel",
+    "type": "library",
+    "license": "Apache-2.0",
+     "keywords": [
+                "laravel",
+                "reporting",
+                "reports",
+		"report",
+		"datatables",
+		"d3",
+		"vega"
+    ],
+    "version": "0.0.5",
     "require": {
         "php": ">=7.0.0"
     },
