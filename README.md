@@ -29,9 +29,9 @@ How to get started using it
 ### Prerequisites
 - PHP 7.1.+ installed, 7.2.+ preferred (required for nullable type declarations, and soon encrypted zip files)
 - Composer Installed. See [Comopser Getting Started](https://getcomposer.org/)
-- Server requirements for Laravel 5.5:
+- Server requirements for Laravel 5.6:
 ```
-    PHP >= 7.1.0
+    PHP >= 7.1.3
     OpenSSL PHP Extension
     PDO PHP Extension
     Mbstring PHP Extension
@@ -39,10 +39,18 @@ How to get started using it
     XML PHP Extension
 ```
 - MYSQL server, and user with CREATE TABLE permissions
-- Installed and functioning Laravel 5.5. See [Laravel 5.5 Installation Instructions](https://laravel.com/docs/5.5/installation) 
-  A good way to start is to use composer to insure you download correct verstion:
-  `composer create-project laravel/laravel zermelo-demo  "5.5.*" --prefer-dist`
+
+  Optionally use Laravel's Homestead VM and Vagrant to create a VM with all the correct dependencies. See [Laravel Homestead Installation](https://laravel.com/docs/5.6/homestead)
   
+- Installed and functioning Laravel 5.6. See [Laravel 5.6 Installation Instructions](https://laravel.com/docs/5.6/installation) 
+  A good way to start is to use composer to insure you download correct verstion:
+  ```
+  composer create-project laravel/laravel zermelo-demo  "5.6.*" --prefer-dist
+  ```
+  Now rename the .env.example file to .env and generate a application key:
+  ```
+  php artisan key:generate
+  ```  
 ### Basic Installation
 1. From the command prompt at your laravel project's root install the following commands: 
 
