@@ -95,7 +95,7 @@ abstract class AbstractZermeloInstallCommand extends Command
         $filename = basename( $this->config_file );
 
         if ( file_exists( config_path( $filename ) ) && ! $this->option('force') ) {
-            if (! $this->confirm("The [{$filename}] view already exists. Do you want to replace it?")) {
+            if (! $this->confirm("The [{$filename}] config already exists. Do you want to replace it?")) {
                 return;
             }
         }
@@ -113,22 +113,24 @@ abstract class AbstractZermeloInstallCommand extends Command
             File::makeDirectory( public_path('vendor/CareSet' ) );
         }
 
-        $new_files = File::allFiles( $this->asset_path );
-        $new_pathnames = [];
-        foreach ( $new_files as $new_file ) {
-            $relativePathname = $new_file->getRelativePathname();
-            $new_pathnames[]= $relativePathname;
-            if ( file_exists( public_path('vendor/CareSet').'/'.$relativePathname ) && ! $this->option('force')) {
-                if ( !$this->confirm("The [{$relativePathname}] asset already exists. Do you want to replace it?")) {
-                    continue;
+        if ( $this->asset_path ) {
+            $new_files = File::allFiles( $this->asset_path );
+            $new_pathnames = [];
+            foreach ( $new_files as $new_file ) {
+                $relativePathname = $new_file->getRelativePathname();
+                $new_pathnames[] = $relativePathname;
+                if ( file_exists( public_path( 'vendor/CareSet' ) . '/' . $relativePathname ) && !$this->option( 'force' ) ) {
+                    if ( !$this->confirm( "The [{$relativePathname}] asset already exists. Do you want to replace it?" ) ) {
+                        continue;
+                    }
                 }
-            }
 
-            // If we say yes, or we're running in "force" mode, copy asset
-            copy(
-                $this->asset_path.'/' .$relativePathname,
-                public_path('vendor/CareSet').'/'.$relativePathname
-            );
+                // If we say yes, or we're running in "force" mode, copy asset
+                copy(
+                    $this->asset_path . '/' . $relativePathname,
+                    public_path( 'vendor/CareSet' ) . '/' . $relativePathname
+                );
+            }
         }
 
 //      This is not safe because we may delete an asset from another view package.

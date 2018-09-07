@@ -2,82 +2,110 @@
 
 namespace CareSet\Zermelo\Models;
 
-use CareSet\Zermelo\Generators\ReportGenerator;
-use CareSet\Zermelo\Interfaces\CacheInterface;
-use CareSet\Zermelo\Models\ZermeloReport;
+use Carbon\Carbon;
+use CareSet\Zermelo\Interfaces\ReportInterface;
 use Illuminate\Support\Facades\DB;
 
-class DatabaseCache implements CacheInterface
+class DatabaseCache implements ReportInterface
 {
-    protected $cache_table_stub = null;
-    protected $cache_table = null;
-    protected $cache_db = null;
-    protected $cacheable = false;
     protected $exists = false;
+    protected $doClearCache = false;
+    protected $generatedThisRequest = false;
+    protected $columns = [];
+    protected $cache_table = null;
+    protected $report = null;
+    protected $key = null;
 
-    public function init( ZermeloReport $Report ): bool
+    public function __construct( ZermeloReport $report )
     {
-        $report_name = trim($Report->getClassName());
-        $Parameters = $Report->getParameters();
-        $Code = $Report->getCode();
+        $this->report = $report;
 
-        $cache_key = md5($Report->getClassName() . "-" . $Code . "-" . $Report->GetBoltId() . "-" . implode("-", $Parameters));
-        $this->cache_table_stub = "Report_{$cache_key}";
-        $this->cache_db = config("zermelo.CACHE_DB");
-        $this->cache_table = "{$this->cache_db}.{$this->cache_table_stub}";
+        $clear_cache = $report->getInput( 'clear_cache' ) ? true : false;
+        $this->setDoClearCache( $clear_cache );
 
-        DB::statement(DB::raw("CREATE DATABASE IF NOT EXISTS " . config("zermelo.CACHE_DB") . ";"));
-        DB::statement(DB::raw("SET SESSION group_concat_max_len = 1000000;"));
+        $this->key = $this->keygen();
+        $this->cache_table = ZermeloDatabase::connection()->table("{$this->key}");
 
-        /*
-        Check to see if the cache table already exists, if it does not, create it
-         */
-        $this->exists = count(DB::select("SELECT table_name FROM information_schema.tables WHERE table_schema=? and table_name = ?", [config("zermelo.CACHE_DB"), $this->cache_table_stub])) > 0;
-        $this->cacheable = config("zermelo.CACHABLE");
+        if ( $this->exists() === false ||
+            $report->isCacheEnabled() === false ||
+            $this->getDoClearCache() == true ||
+            $this->isCacheExpired() === true ) {
+            $this->createTable();
+            $this->generatedThisRequest = true;
+        }
+
+        $this->columns = ZermeloDatabase::getTableColumnDefinition( $this->getTableName() );
 
         return true;
     }
 
-    public function getCacheDB()
+    public function keygen()
     {
-        return $this->cache_db;
+        // Get the report key, can be a maximum of 64 chars
+        //   md5 = 32
+        // + "_" = 1
+        // + max( ReportClassName, 31 )
+        // < 64
+        $key = substr( $this->report->getClassName(), 0, max( strlen( $this->report->getClassName() ), 31 ) ) ."_".md5($this->report->getClassName() . "-" . $this->report->getCode() . "-" . $this->report->GetBoltId() . "-" . implode("-", $this->report->getParameters() ) );
+        return $key;
     }
 
-    public function getCacheTableStub()
+    public function getTable()
     {
-        return $this->cache_table_stub;
+        return $this->cache_table;
+    }
+
+    public function getTableName()
+    {
+        return $this->cache_table->from;
+    }
+
+    public function getReport()
+    {
+        return $this->report;
     }
 
     public function exists(): bool
     {
-        return $this->exists;
+        $hasTable = ZermeloDatabase::hasTable( $this->cache_table->from );
+        return $hasTable;
     }
 
-    public function isCacheable(): bool
+    public function setDoClearCache( $doClearCache )
     {
-        return $this->cacheable;
+        $this->doClearCache = $doClearCache;
     }
 
-    /**
-     * CachedReport
-     * This takes a ZermeloReport and create a cache table inside $cache_table with the result.
-     *
-     * @param string $cache_table
-     * @param ZermeloReport $Report
-     * @return bool
-     */
-    public function CacheReport( ZermeloReport $Report ): bool
+    public function getDoClearCache()
     {
+        return $this->doClearCache;
+    }
 
-        $input_bolt = $Report->getParameter('data-option' );
-        if ($input_bolt == "") {
-            $input_bolt = false;
+    public function isCacheExpired()
+    {
+        $expired = false;
+        $nowTimestamp= Carbon::now()->timestamp;
+        $expireTimestamp = Carbon::parse( $this->getExpireTime() )->timestamp;
+        if ( $nowTimestamp > $expireTimestamp ) {
+            $expired = true;
         }
 
-        $Report->SetBolt($input_bolt);
-        $request_form_input = $Report->getInput();
+        return $expired;
+    }
 
-        $sql = $Report->getSQL();
+    public function MapRow( array $row, int $row_number )
+    {
+        return $this->report->MapRow( $row, $row_number );
+    }
+
+    public function OverrideHeader( array &$format, array &$tags ): void
+    {
+        $this->report->OverrideHeader( $format, $tags );
+    }
+
+    public function getIndividualQueries()
+    {
+        $sql = $this->report->getSQL();
 
         if (!$sql) {
             return false;
@@ -99,114 +127,97 @@ class DatabaseCache implements CacheInterface
                     $all_queries[] = trim($single_query);
                 }
             }
-
         }
 
-        /*
-        On first run,
-        we need to create the table instead of inserting into the table,
-        if not cachable, then create a temporary table.
-         */
-        $first_loop = true;
+        return $all_queries;
+    }
 
-        foreach ($all_queries as $s) {
-            $s = trim($s);
+    public function getColumns()
+    {
+        return $this->columns;
+    }
 
-            if (strpos(strtoupper($s), "SELECT", 0) === 0) {
-                if ($first_loop) {
-                    $first_loop = false;
+    /**
+     * If the table exists, drop it and create it from the queries
+     * in the report.
+     */
+    public function createTable()
+    {
+        if ( $this->exists() ) {
+            ZermeloDatabase::drop($this->cache_table->from);
+        }
 
-                    DB::statement(DB::raw("DROP TABLE IF EXISTS {$this->cache_table}"));
-                    DB::statement(DB::raw("CREATE TABLE {$this->cache_table} AS {$s}"));
+        foreach ( $this->getIndividualQueries() as $index => $query ) {
+
+            if ( strpos( strtoupper( $query ), "SELECT", 0 ) === 0 ) {
+                if ( $index == 0 ) {
+                    ZermeloDatabase::connection()->statement(DB::raw("CREATE TABLE {$this->cache_table->from} AS {$query}"));
                 } else {
-                    DB::statement(DB::raw("INSERT INTO {$this->cache_table} {$s}"));
+                    ZermeloDatabase::connection()->statement(DB::raw("INSERT INTO {$this->cache_table->from} {$query}"));
                 }
             } else {
-                DB::statement(DB::raw($s));
+                ZermeloDatabase::connection()->statement(DB::raw($query));
             }
         }
 
         /*
         Lets try to be clever and attempt to index any 'subject' we have on the table.
          */
-        if (config("zermelo.AUTO_INDEX")) {
-            $data_row = DB::table($this->cache_table)->first();
-            if ($data_row) {
-                $data_row = json_decode(json_encode($data_row), true);
-                $columns = array_keys($data_row);
+        if ( config("zermelo.AUTO_INDEX" ) ) {
+            $data_row = $this->cache_table->first();
+            if ( $data_row ) {
+                $data_row = json_decode( json_encode( $data_row ), true );
+                $columns = array_keys( $data_row );
 
                 $to_index = [];
-                foreach ($columns as $column) {
-                    if (AbstractGenerator::isColumnInKeyArray($column, $Report->SUBJECTS)) {
+                foreach ( $columns as $column ) {
+                    if ( ZermeloDatabase::isColumnInKeyArray( $column, $this->report->SUBJECTS ) ) {
                         $to_index[] = "ADD INDEX(`{$column}`)";
                     }
                 }
-                if (!empty($to_index)) {
-                    $to_index = "ALTER TABLE {$this->cache_table} " . implode(",", $to_index) . ";";
-                    DB::statement($to_index);
+                if ( !empty( $to_index ) ) {
+                    $to_index = "ALTER TABLE {$this->getTableName()} " . implode( ",", $to_index ) . ";";
+                    ZermeloDatabase::connection()->statement( $to_index );
                 }
 
             }
         }
-
-        return true;
-
     }
 
     /**
-     * CheckUpdateCacheForReport
-     * Determine if a report should be updated based on the file being updated or the cache timeout being expired
+     *  Get the formatted time when this cache was last created
      *
-     * @param ZermeloReport $Report
-     * @return bool
+     * @return false|string
      */
-    public function CheckUpdateCacheForReport(ZermeloReport $Report): bool
+    public function getLastGenerated()
     {
-        $Parameters = $Report->getParameters();
-        $Code = $Report->getCode();
-        $report_name = $Report->getClassName();
-
-        $cache_key = md5($Report->getClassName() . "-" . $Code . "-" . $Report->GetBoltId() . "-" . implode("-", $Parameters));
-        $cache_table_stub = "Report_{$cache_key}";
-
-        /*
-        Check to see if the report is pass its age, but only if the option is enabled
-         */
-        if (config("zermelo.CACHE_TIMEOUT") * 1 > 0) {
-            $stats = DB::select("SELECT CURRENT_TIMESTAMP, CREATE_TIME,
+        $stats = DB::select("SELECT CURRENT_TIMESTAMP, CREATE_TIME,
                                     TIMESTAMPDIFF(MINUTE,CREATE_TIME, CURRENT_TIMESTAMP) as age
-                                FROM information_schema.tables WHERE table_schema=? and table_name = ?", [config("zermelo.CACHE_DB"), $cache_table_stub]);
+                                FROM information_schema.tables WHERE table_schema=? and table_name = ?", [config("zermelo.ZERMELO_DB"), $this->getTableName() ]);
 
-            if (!$stats) {
-                return true;
-            }
-
-            $stats = $stats[0];
-
-            $age = $stats->age;
-            if ($age > config("zermelo.CACHE_TIMEOUT") * 1) {
-                return true;
-            }
-        }
-
-        /*
-        Check to see if the report file has been updated since the caching as occured.
-        This is get the UTC time
-         */
-        $modified_at = new \DateTime();
-        $modified_at = $modified_at->setTimestamp(filemtime($Report->getFileLocation()));
-        $modified_at_utc_iso = $modified_at->format("Y-m-d H:i:s");
-
-        $result = DB::select("select
-                    ? > (CONVERT_TZ(UPDATE_TIME, @@session.time_zone, '+00:00') ) as cache_outdated
-                    FROM information_schema.tables WHERE table_schema = ? AND table_name = ?", [$modified_at_utc_iso, config("zermelo.CACHE_DB"), $cache_table_stub]);
-
-        if (!$result) {
+        if (!$stats) {
             return true;
         }
 
-        $result = $result[0]->cache_outdated;
+        $stats = $stats[0];
 
-        return $result == 1;
+        return $stats->CREATE_TIME;
+    }
+
+    public function getExpireTime()
+    {
+        $expireTime = false;
+        if ( $this->report->isCacheEnabled() ) {
+
+            $expireTimeCarbon = Carbon::parse( $this->getLastGenerated() )->addSeconds( $this->report->howLongToCacheInSeconds() );
+            $expireTime = date( 'Y-m-d H:i:s', $expireTimeCarbon->timestamp );
+        }
+
+        return $expireTime;
+    }
+
+    public function getGeneratedThisRequest()
+    {
+        return $this->generatedThisRequest;
     }
 }

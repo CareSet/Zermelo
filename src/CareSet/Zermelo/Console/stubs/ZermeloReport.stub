@@ -127,18 +127,14 @@ class {{ report_name }} extends ZermeloReport
     * the results in a dynamically creqted table in the _cache database.
     * But it also creates hard to debug update errors that are very confusing when changing GetSQL() contents. 
     */
-   public function isCacheEnabled(){
-	return(false);
-   }
+	public $CACHE_ENABLED = true;
+
 
 	/**
     * How much time should pass (in seconds) before you update your _cache table for this report?
     * this only has an effect when isCacheEnabled is turned on. 
     */
-   public function howLongToCacheInSeconds(){
-	return(600); //ten minutes by default
-   }
-   
+	public $HOW_LONG_TO_CACHE_IN_SECONDS = 600;
 
 
 }

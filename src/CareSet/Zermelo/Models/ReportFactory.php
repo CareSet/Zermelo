@@ -11,48 +11,42 @@ class ReportFactory
     /**
      * @param Request $request
      * @param $report_name
-     * @param $parameters
+     * @param $parameter_string
      * @return ZermeloReport
      *
      * Build a ZermeloReport from a request
      */
-    public static function build( Request $request ) : ZermeloReport
+    public static function build( Request $request, $report_name, $parameter_string ) : ZermeloReport
     {
-        $report_name = $request->report_name;
-        $parameters = $request->parameters;
+        $parameters = ($parameter_string=="")?[]:explode("/", $parameter_string );
+
+        // The code is the first parameter, saved on it's own for convenience
+        $Code = null;
+        if ( count( $parameters ) > 0) {
+            $Code = array_shift($parameters);
+        }
+
+        // Request form input is non-cacheable input, aux parameters
+        $request_form_input = json_decode(json_encode($request->all()),true);
+        if ( !is_array( $request_form_input ) )  {
+            $request_form_input = [];
+        }
+
+        // Get the report name and namespace
         $namespace = config("zermelo.REPORT_NAMESPACE");
 
-        $Parameters = ($parameters=="")?[]:explode("/",$parameters);
-        $Code = null;
-
-
-        $request_form_input = json_decode(json_encode($request->all()),true);
-
-        if(!is_array($request_form_input)) $request_form_input = [];
-
-        if(count($Parameters) > 0)
-        {
-            $Code = array_shift($Parameters);
-        }
-        if(class_exists("$namespace\\{$report_name}\\{$report_name}"))
-        {
+        // Find the report Class
+        if ( class_exists("$namespace\\{$report_name}\\{$report_name}" ) ) {
             $report = "$namespace\\{$report_name}\\{$report_name}";
-        }
-        else if(class_exists("$namespace\\{$report_name}"))
-        {
+        } else if ( class_exists("$namespace\\{$report_name}" ) ) {
             $report = "$namespace\\{$report_name}";
-        }
-        else
-        {
-            return false;
+        }  else {
+            throw new \Exception( "Report {$report_name} could not be found. Check the report class name in your URL and namespace." );
         }
 
-
-        $Report = new $report($Code,$Parameters,$request_form_input);
+        // Create a new instance of our report, loaded with request parameters
+        $Report = new $report( $Code, $parameters, $request_form_input );
         if ( $Report instanceof ZermeloReport ) {
-
-
-            $Report->setRequestFormInput( $request->all() );
 
             $input_bolt = $Report->getParameter( 'data-option' );
             if ( $input_bolt == "" ) {

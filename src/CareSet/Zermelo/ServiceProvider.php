@@ -6,9 +6,15 @@ use CareSet\Zermelo\Console\ZermeloInstallCommand;
 use CareSet\Zermelo\Console\ZermeloMakeDemoCommand;
 use CareSet\Zermelo\Console\ZermeloMakeReportCommand;
 use CareSet\Zermelo\Interfaces\ControllerInterface;
+use CareSet\Zermelo\Models\DatabaseCache;
 use CareSet\Zermelo\Models\ReportFactory;
+use CareSet\Zermelo\Models\ZermeloDatabase;
 use CareSet\Zermelo\Models\ZermeloReport;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
+use Symfony\Component\VarDumper\Cloner\Data;
 
 Class ServiceProvider extends \Illuminate\Support\ServiceProvider
 {
@@ -24,13 +30,6 @@ Class ServiceProvider extends \Illuminate\Support\ServiceProvider
     {
         // Create the presenter repository singleton
         $this->app->singleton( 'CareSet\Zermelo\Models\ControllerRepository' );
-
-        $this->app->bind(ZermeloReport::class, function ($app) use ($request) {
-
-            // I use $app->make so processor classes dependancies gets resolved and injected.
-            $report = ReportFactory::build( $request );
-            return $report;
-        });
     }
 
 	public function boot( Router $router )
@@ -62,6 +61,12 @@ Class ServiceProvider extends \Illuminate\Support\ServiceProvider
             );
         }
 
+        // Register the cache database connection if we have a zermelo db
+        $zermelo_db = config( 'zermelo.ZERMELO_DB' );
+        if ( ZermeloDatabase::doesDatabaseExist( $zermelo_db ) ) {
+            ZermeloDatabase::configure( $zermelo_db );
+        }
+
         // Get the array of controllers form the controller repo
         $controllerRepo = $this->app->make( 'CareSet\Zermelo\Models\ControllerRepository' );
 
@@ -69,9 +74,10 @@ Class ServiceProvider extends \Illuminate\Support\ServiceProvider
         foreach ( $controllerRepo->all() as $prefix => $controller ) {
             if ( $controller instanceof ControllerInterface ) {
                 $module_route = $controller->prefix();
-                $router->get( "/$module_route/{report_name}/{parameters?}", function ( ZermeloReport $report ) use ( $controller ) {
+                $router->get( "/$module_route/{report_name}/{parameters?}", function ( Request $request, $report_name, $parameters = "" ) use ( $controller ) {
+                    $report = ReportFactory::build( $request, $report_name, $parameters );
                     return $controller->show( $report );
-                } );
+                } )->where( ['parameters' => '.*'] );
             }
         }
 	}

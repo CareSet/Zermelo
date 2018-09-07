@@ -19,6 +19,11 @@ abstract class AbstractPresenter
         $this->_report = $report;
     }
 
+    public function getRequestFormInput()
+    {
+        return $this->_report->getRequestFormInput();
+    }
+
     public function getReport()
     {
         return $this->_report;

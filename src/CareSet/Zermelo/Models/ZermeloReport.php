@@ -5,7 +5,6 @@ use \Request;
 
 abstract class ZermeloReport
 {
-
 	/**
 	 * $_code
 	 * Holds first optional parameter after the URI
@@ -41,9 +40,16 @@ abstract class ZermeloReport
 	 */
 	private $_bolt_id = false;
 
+	private $_isCacheEnabled = null;
 
-	private $_request_form_input = null;
+	private $_howLongToCacheInSeconds = null;
 
+    /**
+     * @var bool
+     */
+    public $CACHE_ENABLED = false;
+
+    protected $HOW_LONG_TO_CACHE_IN_SECONDS = 600;
 
 	/**
 	 * $VALID_COLUMN_FORMAT
@@ -151,7 +157,43 @@ abstract class ZermeloReport
 		$this->_code = $Code;
 		$this->_parameters = $Parameters;
 		$this->_input = $Input;
+		$this->setIsCacheEnabled( $this->CACHE_ENABLED );
+		$this->setHowLongToCacheInSeconds( $this->HOW_LONG_TO_CACHE_IN_SECONDS );
 	}
+
+    /**
+     * Should we enable the cache on this table?
+     * This will improve the performance of very large and complex queries by only running the SQL once and then storing
+     * the results in a dynamically creqted table in the _cache database.
+     * But it also creates hard to debug update errors that are very confusing when changing GetSQL() contents.
+     */
+    public function isCacheEnabled()
+	{
+        return $this->_isCacheEnabled;
+    }
+
+    public function setIsCacheEnabled( $isCacheEnabled )
+	{
+		$this->_isCacheEnabled = $isCacheEnabled;
+	}
+
+
+    /**
+     * How much time should pass (in seconds) before you update your _cache table for this report?
+     * this only has an effect when isCacheEnabled is turned on.
+     */
+    public function howLongToCacheInSeconds()
+	{
+        return $this->_howLongToCacheInSeconds; //ten minutes by default
+    }
+
+    /**
+	 * @param null $howLongToCacheInSeconds
+	 */
+    public function setHowLongToCacheInSeconds( $howLongToCacheInSeconds )
+    {
+        $this->_howLongToCacheInSeconds = $howLongToCacheInSeconds;
+    }
 	
 	/**
 	 * getCode
@@ -300,14 +342,21 @@ abstract class ZermeloReport
 		$this->_request_form_input = $request_form_input;
 	}
 
+    /**
+     * @param bool $json
+     * @return array|string
+	 *
+	 * If json is true, return JSON, otherwise return parameter string
+     */
 	public function getRequestFormInput( $json = true )
 	{
 		if ( $json ) {
-			return json_encode($this->_request_form_input);
+			return json_encode($this->_input);
 		}
 
-		return $this->_request_form_input;
+		return http_build_query( $this->_input );
 	}
+
 
 
 	/**
