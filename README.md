@@ -40,9 +40,10 @@ How to get started using it
 ```
 - MYSQL server, and user with CREATE TABLE permissions
 
-  Optionally use Laravel's Homestead VM and Vagrant to create a VM with all the correct dependencies. See [Laravel Homestead Installation](https://laravel.com/docs/5.6/homestead)
+  Optionally you can use Laravel's Homestead VM and Vagrant to create a VM with all the correct dependencies. See [Laravel Homestead Installation](https://laravel.com/docs/5.6/homestead)
   
-- Installed and functioning Laravel 5.6. See [Laravel 5.6 Installation Instructions](https://laravel.com/docs/5.6/installation) 
+- Installed and functioning Laravel 5.6. See [Laravel 5.6 Installation Instructions](https://laravel.com/docs/5.6/installation)
+
   A good way to start is to use composer to insure you download correct verstion:
   ```
   composer create-project laravel/laravel zermelo-demo  "5.6.*" --prefer-dist
@@ -80,15 +81,33 @@ you can put 'northwind_data' for the DB_DATABASE. If you have an existing databa
 
 ```
 CREATE DATABASE _cache;
-GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER ON `_cache`.* TO 'your_chosen_username'@'%'
+GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER ON `_cache`.* TO 'your_chosen_username'@'%';
 
 ```
-
-### Configuration 
+### Configuration ( TDM NOTE: This is in the wrong place.  No need to talk about changing the settings at this level)
 1. Edit the file `config/zermelo.php` to change core zermelo settings
 2. Edit the file `config/zermelobladetabular.php` to change settings specific to zermelo blade tabular view package.
 
+### To access your web routes (default):
 
+List your routes:
+```
+    $ php artisan route:list
+    +--------+----------+------------------------------------------------+------+---------+--------------+
+    | Domain | Method   | URI                                            | Name | Action  | Middleware   |
+    +--------+----------+------------------------------------------------+------+---------+--------------+
+    |        | GET|HEAD | /                                              |      | Closure | web          |
+    |        | GET|HEAD | Zermelo/{report_name}/{parameters?}            |      | Closure |              |
+    |        | GET|HEAD | api/Zermelo/{report_name}/{parameters?}        |      | Closure |              |
+    |        | GET|HEAD | api/ZermeloSummary/{report_name}/{parameters?} |      | Closure |              |
+    |        | GET|HEAD | api/user                                       |      | Closure | api,auth:api |
+    +--------+----------+------------------------------------------------+------+---------+--------------+
+```
+
+Displays tabular view
+``` 
+    [base_url]/Zermelo/[ReportClassName]
+```
 ### Running Example
 There is a sample DB table and sample reports based on the Northwind customer database in the example directory of 
 the Zermelo project. To run:
@@ -136,28 +155,6 @@ App\Zermelo;" if you change the REPORT_NAMESPACE.
 **NOTE** If you ran these commands as root user, you'll have to change the ownership of the php files so they are readable
 by the webserver.
 
-
-### To access your web routes (default):
-
-List your routes:
-```
-    $ php artisan route:list
-    +--------+----------+------------------------------------------------+------+---------+--------------+
-    | Domain | Method   | URI                                            | Name | Action  | Middleware   |
-    +--------+----------+------------------------------------------------+------+---------+--------------+
-    |        | GET|HEAD | /                                              |      | Closure | web          |
-    |        | GET|HEAD | Zermelo/{report_name}/{parameters?}            |      | Closure |              |
-    |        | GET|HEAD | api/Zermelo/{report_name}/{parameters?}        |      | Closure |              |
-    |        | GET|HEAD | api/ZermeloSummary/{report_name}/{parameters?} |      | Closure |              |
-    |        | GET|HEAD | api/user                                       |      | Closure | api,auth:api |
-    +--------+----------+------------------------------------------------+------+---------+--------------+
-```
-
-Displays tabular view
-``` 
-    [base_url]/Zermelo/[ReportClassName]
-```
-
 Example Report tabular views
 ``` 
     [base_url]/Zermelo/NorthwindCustomerReport
@@ -168,6 +165,9 @@ Example Report tabular views
 ``` 
     [base_url]/Zermelo/NorthwindProductReport
 ```
+
+### Errors
+If the reports don't run take a look at: `[project-root]/storage/logs/laravel.log` for errors
 
 ### Creating Your First Report
 1. In order to get your first report, you need to create a report file. The easiest way to create an new report file
