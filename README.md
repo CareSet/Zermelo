@@ -28,7 +28,7 @@ How to get started using it
 
 ### Prerequisites
 - PHP 7.1.+ installed, 7.2.+ preferred (required for nullable type declarations, and soon encrypted zip files)
-- Composer Installed. See [Comopser Getting Started](https://getcomposer.org/)
+- Composer Installed. See [Composer Getting Started](https://getcomposer.org/)
 - Server requirements for Laravel 5.6:
 ```
     PHP >= 7.1.3
@@ -58,11 +58,19 @@ How to get started using it
     ```
     composer require careset/zermelo
     php artisan install:zermelo
+    ```
+    This will install the base reporting engine.
+    ```
     composer require careset/zermelobladetabular
     php artisan install:zermelobladetabular
+    ```
+    This will create a zermelo directory in your resources directory containing blade view templates. This will also publish the configuration file to your app's config directory, and move assets (js, css) to public/vendor.
+
+    ```
     mkdir app/Reports
     ```
-    
+   This will be the directory where your reports will be created. 
+  
 1. Configure your database if you haven't already. In your project root, place your database parameters in .env or your app's config/database.php 
 config. The database user will need CREATE TABLE permissions in order to create the cache database (or if you are 
 installing the example data.) The DB_DATABASE parameter is for the default database. If you are installing example data, and reports,
