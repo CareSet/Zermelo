@@ -53,7 +53,7 @@ How to get started using it
 - Now rename the .env.example file to .env and generate a application key:
   ```
   cd zermelo-demo
-  cp .env example .env
+  cp .env.example .env
   php artisan key:generate
   ```  
 ### Basic Installation
