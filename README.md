@@ -42,14 +42,18 @@ How to get started using it
   
 - Installed and functioning Laravel 5.6. See [Laravel 5.6 Installation Instructions](https://laravel.com/docs/5.6/installation)
 
-  A good way to start is to use composer to insure you download correct verstion:
+- Optionally you can use Laravel's Homestead VM and Vagrant to create a VM with all the correct dependencies. See [Laravel Homestead Installation](https://laravel.com/docs/5.6/homestead)
+
+  A good way to start is to use composer to insure you download correct version, do this inside the Homestead Box (vagrant ssh) if you are using Homestead.
+  
   ```
   composer create-project laravel/laravel zermelo-demo  "5.6.*" --prefer-dist
   ```
-- Optionally you can use Laravel's Homestead VM and Vagrant to create a VM with all the correct dependencies. See [Laravel Homestead Installation](https://laravel.com/docs/5.6/homestead)
 
 - Now rename the .env.example file to .env and generate a application key:
   ```
+  cd zermelo-demo
+  cp .env example .env
   php artisan key:generate
   ```  
 ### Basic Installation
