@@ -14,7 +14,7 @@
     ],
     "require": {
         "php": ">=7.0.0",
-      "careset/zermelobladetabular": "latest"
+      "careset/zermelobladetabular": ">=0.0.1"
     },
     "autoload": {
         "psr-4" : {
