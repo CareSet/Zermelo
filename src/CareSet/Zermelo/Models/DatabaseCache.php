@@ -20,7 +20,7 @@ class DatabaseCache implements ReportInterface
     {
         $this->report = $report;
 
-        $clear_cache = $report->getInput( 'clear_cache' ) ? true : false;
+        $clear_cache = $report->getInput( 'clear_cache' ) == true ? true : false;
         $this->setDoClearCache( $clear_cache );
 
         $this->key = $this->keygen();

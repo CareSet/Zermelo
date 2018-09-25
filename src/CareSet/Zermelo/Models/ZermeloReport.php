@@ -43,7 +43,7 @@ abstract class ZermeloReport
 	private $_isCacheEnabled = null;
 
 	private $_howLongToCacheInSeconds = null;
-	
+
 
     /**
      * Should we enable the cache on this table?
