@@ -50,31 +50,13 @@ How to get started using it
   composer create-project laravel/laravel zermelo-demo  "5.6.*" --prefer-dist
   ```
 
-- Now rename the .env.example file to .env and generate a application key:
+- Now rename the .env.example file to .env and generate a application key (NOTE: you may not have to do this step if your user has proper permissions):
   ```
   cd zermelo-demo
   cp .env.example .env
   php artisan key:generate
   ```  
 ### Basic Installation
-1. From the command prompt at your laravel project's root install the following commands: 
-
-    ```
-    composer require careset/zermelo
-    php artisan install:zermelo
-    ```
-    This will install the base reporting engine.
-    ```
-    composer require careset/zermelobladetabular
-    php artisan install:zermelobladetabular
-    ```
-    This will create a zermelo directory in your resources directory containing blade view templates. This will also publish the configuration file to your app's config directory, and move assets (js, css) to public/vendor.
-
-    ```
-    mkdir app/Reports
-    ```
-   This will be the directory where your reports will be created. 
-  
 1. Configure your database if you haven't already. In your project root, place your database parameters in .env or your app's config/database.php 
 config. The database user will need CREATE TABLE permissions in order to create the cache database (or if you are 
 installing the example data.) The DB_DATABASE parameter is for the default database. If you are installing example data, and reports,
@@ -89,13 +71,23 @@ you can put 'northwind_data' for the DB_DATABASE. If you have an existing databa
     DB_PASSWORD=randomly_generate_a_password_and_put_it_here
     ```
 
-1. Create the _cache database and give your database user access to. The SQL commands for this are:
+2. From the command prompt at your laravel project's root install the following commands: 
 
     ```
-    CREATE DATABASE _cache;
-    GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER ON `_cache`.* TO 'your_chosen_username'@'%';
+    composer require careset/zermelo
+    php artisan install:zermelo
+    ```
+    This will install the base reporting engine and tabular view package.
+    ```
+    php artisan install:zermelobladetabular
+    ```
+    This will create a zermelo directory in your resources directory containing blade view templates. This will also publish the configuration file to your app's config directory, and move assets (js, css) to public/vendor.
 
     ```
+    mkdir app/Reports
+    ```
+   This will be the directory where your reports will be created. 
+  
 
 ### To access your web routes (default):
 

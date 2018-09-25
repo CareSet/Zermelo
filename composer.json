@@ -13,7 +13,8 @@
 		"vega"
     ],
     "require": {
-        "php": ">=7.0.0"
+        "php": ">=7.0.0",
+      "careset/zermelobladetabular": "latest"
     },
     "autoload": {
         "psr-4" : {
