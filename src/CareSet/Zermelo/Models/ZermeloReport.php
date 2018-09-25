@@ -43,12 +43,21 @@ abstract class ZermeloReport
 	private $_isCacheEnabled = null;
 
 	private $_howLongToCacheInSeconds = null;
+	
 
     /**
-     * @var bool
+     * Should we enable the cache on this table?
+     * This will improve the performance of very large and complex queries by only running the SQL once and then storing
+     * the results in a dynamically creqted table in the _cache database.
+     * But it also creates hard to debug update errors that are very confusing when changing GetSQL() contents.
      */
-    public $CACHE_ENABLED = false;
+    protected $CACHE_ENABLED = true;
 
+
+    /**
+     * How much time should pass (in seconds) before you update your _cache table for this report?
+     * this only has an effect when isCacheEnabled is turned on.
+     */
     protected $HOW_LONG_TO_CACHE_IN_SECONDS = 600;
 
 	/**
