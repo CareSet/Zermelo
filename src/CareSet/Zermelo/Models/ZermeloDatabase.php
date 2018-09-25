@@ -56,7 +56,11 @@ class ZermeloDatabase
     public static function doesDatabaseExist( $database )
     {
         $query = "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME =  ?";
-        $db = DB::select( $query, [ $database ] );
+        try {
+            $db = DB::select( $query, [ $database ] );
+        } catch ( \Exception $e ) {
+            $db = null;
+        }
         if ( empty( $db ) ) {
             return false;
         } else {

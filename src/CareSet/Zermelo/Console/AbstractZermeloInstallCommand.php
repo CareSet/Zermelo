@@ -109,8 +109,8 @@ abstract class AbstractZermeloInstallCommand extends Command
 
     protected function exportAssets()
     {
-        if ( !File::exists( public_path('vendor/CareSet' ) ) ) {
-            File::makeDirectory( public_path('vendor/CareSet' ) );
+        if ( !File::exists( public_path( 'vendor/CareSet' ) ) ) {
+            File::makeDirectory( public_path( 'vendor/CareSet' ), 0755, true );
         }
 
         if ( $this->asset_path ) {
@@ -125,6 +125,11 @@ abstract class AbstractZermeloInstallCommand extends Command
                     }
                 }
 
+                $dirname = pathinfo( public_path( 'vendor/CareSet' ) . '/' . $relativePathname, PATHINFO_DIRNAME );
+                if ( !File::exists( $dirname ) ) {
+                    File::makeDirectory( $dirname, 0755, true );
+                }
+
                 // If we say yes, or we're running in "force" mode, copy asset
                 copy(
                     $this->asset_path . '/' . $relativePathname,
@@ -132,19 +137,5 @@ abstract class AbstractZermeloInstallCommand extends Command
                 );
             }
         }
-
-//      This is not safe because we may delete an asset from another view package.
-//
-//        // If we say yes, or we're running in "force" mode, delete stale assets.
-//        $existing_files = File::allFiles( public_path('vendor/CareSet') );
-//        foreach ( $existing_files as $existing_file ) {
-//            $relativePathname = $existing_file->getRelativePathname();
-//            if ( !in_array( $relativePathname, $new_pathnames ) ) {
-//                if ( $this->option('force') ||
-//                    $this->confirm("The [{$relativePathname}] asset may no longer needed. Do you want to remove it?")) {
-//                    unlink( public_path('vendor/CareSet' ).'/'.$relativePathname );
-//                }
-//            }
-//        }
     }
 }
