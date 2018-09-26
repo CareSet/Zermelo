@@ -47,8 +47,11 @@ class ZermeloInstallCommand extends AbstractZermeloInstallCommand
     public function runZermeloMigration( $zermelo_db_name )
     {
         // Create the database
-        DB::statement( DB::raw( "DROP DATABASE IF EXISTS ".$zermelo_db_name.";" ) );
-        DB::statement( DB::raw( "CREATE DATABASE ".$zermelo_db_name.";" ) );
+        if ( ZermeloDatabase::doesDatabaseExist( $zermelo_db_name ) ) {
+            DB::connection()->statement( DBDB::connection()->raw( "DROP DATABASE IF EXISTS " . $zermelo_db_name . ";" ) );
+        }
+
+        DB::connection()->statement( DB::connection()->raw( "CREATE DATABASE `".$zermelo_db_name."`;" ) );
 
         // Write the database name to the master config
         config( ['zermelo.ZERMELO_DB' => $zermelo_db_name ] );
