@@ -84,8 +84,10 @@ class DatabaseCache implements ReportInterface
     public function isCacheExpired()
     {
         $expired = false;
-        $nowTimestamp= Carbon::now()->timestamp;
-        $expireTimestamp = Carbon::parse( $this->getExpireTime() )->timestamp;
+        $now = Carbon::now();
+        $nowTimestamp = $now->timestamp;
+        $expiredTime = $this->getExpireTime();
+        $expireTimestamp = Carbon::parse( $expiredTime )->timestamp;
         if ( $nowTimestamp > $expireTimestamp ) {
             $expired = true;
         }
@@ -199,9 +201,16 @@ class DatabaseCache implements ReportInterface
             return true;
         }
 
+        $tz = DB::select('SELECT TIME_FORMAT( TIMEDIFF(NOW(), UTC_TIMESTAMP), "%H:%i" ) as TZ;');
+
         $stats = $stats[0];
 
-        return $stats->CREATE_TIME;
+        $time = $stats->CREATE_TIME;
+
+        $carbonTime = Carbon::createFromFormat('Y-m-d H:i:s', $time, $tz[0]->TZ  );
+        $carbonTime->setTimezone( config('app.timezone' ) );
+        $lastGeneratedTime = $carbonTime->toDateTimeString();
+        return $lastGeneratedTime;
     }
 
     public function getExpireTime()
