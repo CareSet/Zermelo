@@ -48,7 +48,7 @@ class ZermeloInstallCommand extends AbstractZermeloInstallCommand
     {
         // Create the database
         if ( ZermeloDatabase::doesDatabaseExist( $zermelo_db_name ) ) {
-            DB::connection()->statement( DBDB::connection()->raw( "DROP DATABASE IF EXISTS " . $zermelo_db_name . ";" ) );
+            DB::connection()->statement( DB::connection()->raw( "DROP DATABASE IF EXISTS " . $zermelo_db_name . ";" ) );
         }
 
         DB::connection()->statement( DB::connection()->raw( "CREATE DATABASE `".$zermelo_db_name."`;" ) );
