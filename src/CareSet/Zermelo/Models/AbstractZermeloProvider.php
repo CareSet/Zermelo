@@ -17,7 +17,7 @@ abstract class AbstractZermeloProvider extends ServiceProvider
 {
     protected $controllers = [];
 
-    public function register()
+    public function boot()
     {
         foreach ( $this->controllers as $controllerClass ) {
             $controller = $this->app->make( $controllerClass );

@@ -22,19 +22,6 @@ Class ServiceProvider extends \Illuminate\Support\ServiceProvider
 	{
         require_once __DIR__ . '/helpers.php';
 
-        // I call the method like this for the request to be injected in the registerPresenter method.
-        $this->app->call([$this, 'registerOnRequest']);
-	}
-
-    public function registerOnRequest( \Illuminate\Http\Request $request )
-    {
-        // Create the presenter repository singleton
-        $this->app->singleton( 'CareSet\Zermelo\Models\ControllerRepository' );
-    }
-
-	public function boot( Router $router )
-	{
-
         /*
          * Register our zermelo view make command which:
          *  - Copies views
@@ -46,11 +33,11 @@ Class ServiceProvider extends \Illuminate\Support\ServiceProvider
             ZermeloMakeReportCommand::class
         ]);
 
-	    /*
-	     * Merge with main config so parameters are accessable.
-	     * Try to load config from the app's config directory first,
-	     * then load from the package.
-	     */
+        /*
+         * Merge with main config so parameters are accessable.
+         * Try to load config from the app's config directory first,
+         * then load from the package.
+         */
         if ( file_exists(  config_path( 'zermelo.php' ) ) ) {
             $this->mergeConfigFrom(
                 config_path( 'zermelo.php' ), 'zermelo'
@@ -67,6 +54,18 @@ Class ServiceProvider extends \Illuminate\Support\ServiceProvider
             ZermeloDatabase::configure( $zermelo_db );
         }
 
+        // I call the method like this for the request to be injected in the registerPresenter method.
+        $this->app->call([$this, 'registerOnRequest']);
+	}
+
+    public function registerOnRequest( \Illuminate\Http\Request $request )
+    {
+        // Create the presenter repository singleton
+        $this->app->singleton( 'CareSet\Zermelo\Models\ControllerRepository' );
+    }
+
+	public function boot( Router $router )
+	{
         // Get the array of controllers form the controller repo
         $controllerRepo = $this->app->make( 'CareSet\Zermelo\Models\ControllerRepository' );
 
