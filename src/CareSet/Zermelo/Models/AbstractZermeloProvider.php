@@ -17,8 +17,12 @@ abstract class AbstractZermeloProvider extends ServiceProvider
 {
     protected $controllers = [];
 
-    public function boot()
+    abstract protected function onBeforeRegister();
+
+    public function register()
     {
+        $this->onBeforeRegister();
+
         foreach ( $this->controllers as $controllerClass ) {
             $controller = $this->app->make( $controllerClass );
             if ( $controller instanceof ControllerInterface ) {
@@ -26,7 +30,6 @@ abstract class AbstractZermeloProvider extends ServiceProvider
             } else {
                 throw new Exception( "$controllerClass cannot be made." );
             }
-
         }
     }
 
