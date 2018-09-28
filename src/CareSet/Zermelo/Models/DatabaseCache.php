@@ -206,8 +206,12 @@ class DatabaseCache implements ReportInterface
         $stats = $stats[0];
 
         $time = $stats->CREATE_TIME;
+        $offset = $tz[0]->TZ;
+        if ( $offset == '00:00' ) {
+            $offset = "+$offset";
+        }
 
-        $carbonTime = Carbon::createFromFormat('Y-m-d H:i:s', $time, $tz[0]->TZ  );
+        $carbonTime = Carbon::createFromFormat('Y-m-d H:i:s', $time, $offset  );
         $carbonTime->setTimezone( config('app.timezone' ) );
         $lastGeneratedTime = $carbonTime->toDateTimeString();
         return $lastGeneratedTime;

@@ -50,6 +50,7 @@ class ZermeloDatabase
 
     public static function connection()
     {
+        //
         return DB::connection( self::connectionName() );
     }
 
