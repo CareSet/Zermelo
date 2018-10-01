@@ -23,7 +23,8 @@ class DatabaseCache implements ReportInterface
         $clear_cache = $report->getInput( 'clear_cache' ) == true ? true : false;
         $this->setDoClearCache( $clear_cache );
 
-        $this->key = $this->keygen();
+        // Generate the prefix, but make sure it's not longer than 32 chars
+        $this->key = $this->keygen( $this->report->getClassName() );
         $this->cache_table = ZermeloDatabase::connection()->table("{$this->key}");
 
         if ( $this->exists() === false ||
@@ -39,14 +40,18 @@ class DatabaseCache implements ReportInterface
         return true;
     }
 
-    public function keygen()
+    public function keygen( $prefix = "" )
     {
+        $shortenedPrefix = $prefix;
+        if ( strlen( $shortenedPrefix ) > 31 ) {
+            $shortenedPrefix = substr( $shortenedPrefix, 0, max( strlen( $shortenedPrefix ), 31 ) );
+        }
         // Get the report key, can be a maximum of 64 chars
         //   md5 = 32
         // + "_" = 1
         // + max( ReportClassName, 31 )
         // < 64
-        $key = substr( $this->report->getClassName(), 0, max( strlen( $this->report->getClassName() ), 31 ) ) ."_".md5($this->report->getClassName() . "-" . $this->report->getCode() . "-" . $this->report->GetBoltId() . "-" . implode("-", $this->report->getParameters() ) );
+        $key = $shortenedPrefix."_".md5($this->report->getClassName() . "-" . $this->report->getCode() . "-" . $this->report->GetBoltId() . "-" . implode("-", $this->report->getParameters() ) );
         return $key;
     }
 
