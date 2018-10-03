@@ -50,12 +50,6 @@ How to get started using it
   composer create-project laravel/laravel zermelo-demo  "5.6.*" --prefer-dist
   ```
 
-- Now rename the .env.example file to .env and generate a application key (NOTE: you may not have to do this step if your user has proper permissions):
-  ```
-  cd zermelo-demo
-  cp .env.example .env
-  php artisan key:generate
-  ```  
 ### Basic Installation
 1. Configure your database if you haven't already. In your project root, place your database parameters in .env or your app's config/database.php 
 config. The database user will need CREATE TABLE permissions in order to create the cache database (or if you are 
@@ -71,7 +65,7 @@ you can put 'northwind_data' for the DB_DATABASE. If you have an existing databa
     DB_PASSWORD=randomly_generate_a_password_and_put_it_here
     ```
 
-2. From the command prompt at your laravel project's root install the following commands: 
+1. From the command prompt at your laravel project's root install the following commands: 
 
     ```
     composer require careset/zermelo
@@ -117,7 +111,7 @@ the Zermelo project. To run:
 files will create two databases and their data. 
 
     ```
-    $ mysql -u root -p
+    $ sudo mysql -u root -p
     ```
     ```
     myslq> source [project-root]/vendor/careset/zermelo/examples/data/northwind_model.sql
