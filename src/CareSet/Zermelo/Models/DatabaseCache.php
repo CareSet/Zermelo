@@ -20,7 +20,7 @@ class DatabaseCache implements ReportInterface
     {
         $this->report = $report;
 
-        $clear_cache = $report->getInput( 'clear_cache' ) == true ? true : false;
+        $clear_cache = filter_var($report->getInput( 'clear_cache' ),FILTER_VALIDATE_BOOLEAN) == true ? true : false;
         $this->setDoClearCache( $clear_cache );
 
         // Generate the prefix, but make sure it's not longer than 32 chars
