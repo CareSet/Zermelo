@@ -10,7 +10,7 @@ class NorthwindOrderReport extends ZermeloReport
     * Get the Report Name
     */
     public function GetReportName(): string {
-	return('Northwind Orders Report');
+	return('Zermelo Demo: Northwind Orders Report');
     }
 
     /*
