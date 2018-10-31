@@ -8,12 +8,12 @@ Core Reporting features
 ------------------
 * Write SQL, automatically get a web-based report
 * Decorate each row in the report with links, buttons, JS and other bootstrap-based HTML goodness.
-* Control the entire web report using a single PHP file, which contains SQL and decorations.
+* Control the entire web report using a single PHP file, which contains SQL and web interface decorations.
 * GET/POST/JSON/URL parameters are all available as local functions/variables in the single file. This allows the SQL to be heavily modified based on the paramaters passed in to the specific report url.
-* Automatically support server side data paging
-* Any report data can be downloaded in CSV files
+* Automatically support server side data paging, allows engine to report against very large databases
+* Any report data can be downloaded in CSV file(s)
 * Report automatically generates JSON data source that can be used as an API
-* Supports Laravel's Blade templating engine out of the box
+* Supports Laravel's Blade templating engine out of the box (with more effort supports any front end templating engine).
 
 We have a [feature roadmap](FullFeature.md) if you want to see where we are going
 
@@ -37,10 +37,10 @@ Look in [Basic Installation](documentation/BasicInstall.md) for complete install
 For a quick start, assuming your Laravel instance already has access to the DB that it needs
 
 ```bash
-    composer require careset/zermelo
-    php artisan install:zermelo
-    php artisan install:zermelobladetabular
-    mkdir app/Reports
+    $ composer require careset/zermelo
+    $ php artisan install:zermelo
+    $ php artisan install:zermelobladetabular
+    $ mkdir app/Reports
 ```
 This will install and configure zermelo, and create an app/Reports for you to add reports too.
 
@@ -107,14 +107,15 @@ class ExampleReport extends ZermeloReport
     * Get the Report Name
     */
     public function GetReportName(): string {
-        return("{{ report_name}} ");
+        return("Enter your report name here");
     }
 
     /*
     * Get the Report Description, bootstrap styled html is OK
     */
-    public function getReportDescription(): ?string {
-        return("{{ report_name}} ");
+    public function GetReportDescription(): ?string {
+	$desc = "This is your report description <b> HTML is fine here </b>";
+        return($desc);
     }
 
         /**
@@ -160,7 +161,7 @@ class ExampleReport extends ZermeloReport
     }
 
     /**
-    * If a column needs to be forced to a certain format (i.e. auto-detection gets it wrong), it can be changed here
+    * If a column needs to be forced to a certain format (i.e.ear auto-detection gets it wrong), it can be changed here
     * Tags can also be applied to each header column
     */
     public function OverrideHeader(array &$format, array &$tags): void
@@ -239,7 +240,6 @@ class ExampleReport extends ZermeloReport
 
 
 ```
-
 
 ### Why 'Zermelo'?
 ------------------

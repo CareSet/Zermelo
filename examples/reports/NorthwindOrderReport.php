@@ -16,7 +16,7 @@ class NorthwindOrderReport extends ZermeloReport
     /*
     * Get the Report Description, can be html
     */
-    public function getReportDescription(): ?string {
+    public function GetReportDescription(): ?string {
 	return('Description of Northwind Orders Report');
     }
 

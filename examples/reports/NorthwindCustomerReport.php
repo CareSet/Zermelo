@@ -17,7 +17,7 @@ class NorthwindCustomerReport extends ZermeloReport
     /*
     * Get the Report Description, can return html
     */
-    public function getReportDescription(): ?string
+    public function GetReportDescription(): ?string
     {
 	$customer_id = $this->getCode();
 

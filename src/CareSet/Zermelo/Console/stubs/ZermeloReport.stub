@@ -16,7 +16,7 @@ class {{ report_name }} extends ZermeloReport
     /*
     * Get the Report Description, bootstrap styled html is OK
     */
-    public function getReportDescription(): ?string {
+    public function GetReportDescription(): ?string {
 	$desc = "ENTER YOUR REPORT DESCRIPTION, OR CUSTOMIZE WITH OTHER HTML HERE!!"; 
 	return($desc);
     }
