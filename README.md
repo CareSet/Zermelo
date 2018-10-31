@@ -52,7 +52,7 @@ How to get started using it
 
 ### Basic Installation
 1. Configure your database if you haven't already. In your project root, place your database parameters in .env or your app's config/database.php 
-config. The database user will need CREATE TABLE permissions in order to create the cache database (or if you are 
+config. The database user will need CREATE TABLE permissions in order to create the \_zermelo database (or if you are 
 installing the example data.) The DB_DATABASE parameter is for the default database. If you are installing example data, and reports,
 you can put 'northwind_data' for the DB_DATABASE. If you have an existing database, put that in the DB_DATABASE field. You should replace the username and password below with sensible values. If this is foreign to you, you should read [How to secure you MySQL installation](https://dev.mysql.com/doc/mysql-security-excerpt/5.7/en/security.html)
 
