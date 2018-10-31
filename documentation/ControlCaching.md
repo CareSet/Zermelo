@@ -8,10 +8,11 @@ Controlling Caching
 ------------------
 
 Caching is controlled using theses two variables on your subclass of ZermeloReport
-
+```
 public $CACHE_ENABLED = true; // Set to true to enable cache, false to disable cache
-
 public $HOW_LONG_TO_CACHE_IN_SECONDS = 600; // How long in seconds to keep the report in cache
+// note that $HOW_LONG_TO_CACHE_IN_SECONDS does nothing if $CACHE_ENABLED = false;
+```
 
 Cache Indicator
 ------------------
