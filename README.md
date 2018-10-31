@@ -19,7 +19,7 @@ We have a [feature roadmap](FullFeature.md) if you want to see where we are goin
 
 ScreenShot that explains everything
 --------------------------
-
+![Zermelo Data Flow Diagram](https://raw.githubusercontent.com/CareSet/Zermelo/master/documentation/ZermeloScreenShot.png)
 
 
 
