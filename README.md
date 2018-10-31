@@ -30,7 +30,7 @@ How to get started using it
 You will need a modern LAMP server with at least php 7.2 and at leat Laravel 5.5
 [Complete Prerequisites](documentation/Prerequisites.md)
 
-### Installation
+### Quick Start
 
 Look in [Basic Installation](documentation/BasicInstall.md) for complete installation instructions
 
@@ -66,22 +66,27 @@ This is a good place to start if you are just exploring the system. Read, [Runni
 ### Configuration Notes 
 1. Edit the file `config/zermelo.php` to change core zermelo settings
 1. Edit the file `config/zermelobladetabular.php` to change settings specific to zermelo blade tabular view package.
-1. If your app already has an App\Reports namespace and directory, you can change the REPORT_NAMESPACE setting in 
+1. If your app already has an App\Reports namespace and directory, you can change the REPORT\_NAMESPACE setting in 
 config/zermelo.php to something else like "Zermelo" and then create an app/Zermelo directory 
-to place your example report in. Note: you will also need to change the namespace of Northwind*Reports.php files to "namespace 
-App\Zermelo;" if you change the REPORT_NAMESPACE.
+to place your example report in. Note: you will also need to change the namespace of Northwind\*Reports.php files to "namespace 
+App\Zermelo;" if you change the REPORT\_NAMESPACE.
 1. If you ran these commands as root user, you'll have to change the ownership of the php files so they are readable
 by the webserver.
 1. If the reports don't run take a look at: `[project-root]/storage/logs/laravel.log` for errors
 
 ### Creating Your First Report
 1. In order to get your first report, you need to create a report file. The easiest way to create an new report file
-is to run: `php artisan make:zermelo [YourNewReportName]`
-1. Edit the file `/app/Zermelo/YourNewReportName` You must fill in a reasonable GetSQL() function that returns either a 
+is to run: 
+
+`php artisan make:zermelo [YourNewReportName]`
+
+To understand what this does, take a look at the example report model below.
+
+2. Edit the new file `/app/Zermelo/YourNewReportName` You must fill in a reasonable GetSQL() function that returns either a 
 single SQL text string, or an array of SQL text strings.
-1. Point your browser to https://yourapp.example.com/Zermelo/YourNewReportName
-1. Enjoy seeing your data in an automatically pagable [Datatables](https://datatables.net/) display!!
-1. Various functions and constants in the report file can dramatically change how the report is displayed on the front end. Use them to change the reports (a good first hack is to use the MapRow function to link one report to another report)
+3. Point your browser to https://yourapp.example.com/Zermelo/YourNewReportName
+4. Enjoy seeing your data in an automatically pagable [Datatables](https://datatables.net/) display!!
+5. Various functions and constants in the report file can dramatically change how the report is displayed on the front end. Use them to change the reports (a good first hack is to use the MapRow function to link one report to another report)
 
 
 ### Example Report Model
@@ -89,35 +94,112 @@ To see full list of functions and variables, pleasse see the ZermeloReport model
 https://github.com/CareSet/Zermelo/blob/master/src/CareSet/Zermelo/Models/ZermeloReport.php
 
 ```php
+
 <?php
 
-namespace App\Zermelo;
+namespace App\Reports;
 use CareSet\Zermelo\Models\ZermeloReport;
 
 class ExampleReport extends ZermeloReport
 {
 
-    const REPORT_NAME 	= "Example Report Name";
-    const DESCRIPTION 	= "Example Report Description";
- 
- 
- 	/**
+    /*
+    * Get the Report Name
+    */
+    public function GetReportName(): string {
+        return("{{ report_name}} ");
+    }
+
+    /*
+    * Get the Report Description, bootstrap styled html is OK
+    */
+    public function getReportDescription(): ?string {
+        return("{{ report_name}} ");
+    }
+
+        /**
+    * This is what builds the report. It will accept a SQL statement or an Array of sql statements.
+    * Can be used in conjunction with Inputs to determine different output based on URI parameters
+    * Additional URI parameters are passed as
+    *   $this->getCode() - which will give the first url segment after the report name
+    *   $this->getParameters() - which will give an array of every later url segment after the getCode value
+    *   $this->getInputs() - which will give _GET parameters (etc?)
+    **/
+    public function GetSQL()
+    {
+        //replace with your own SQL
+        $sql = "SELECT * FROM information_schema.TABLES";
+        return $sql;
+    }
+
+    /**
+    * Each row content will be passed to MapRow.
+    * Values and header names can be changed.
+    * Columns cannot be added or removed
+    * You can decorate fields with html, with bootstrap css styling
+    *
+    */
+    public function MapRow(array $row, int $row_number) :array
+    {
+
+        /*
+                //this logic would ensure that every cell in the TABLE_NAME column, was converted to a link to
+                //a table drilldown report
+                $table_name = $row['TABLE_NAME'];
+
+                $row['TABLE_NAME'] = "Gotta Love Those Row Decorations: $table_name";
+
+                //this will make table name a link to another report
+                //$row['TABLE_NAME'] = "<a href='/Zermelo/TableDrillDownReport/$table_name/'>$table_name</a>";
+
+                //this will do the same thing, but styling the link as a bootstrap button.
+                //$row['TABLE_NAME'] = "<a class='btn btn-primary btn-sm' href='/Zermelo/TableDrillDownReport/$table_name/'>$table_name</a>";
+        */
+
+        return $row;
+    }
+
+    /**
+    * If a column needs to be forced to a certain format (i.e. auto-detection gets it wrong), it can be changed here
+    * Tags can also be applied to each header column
+    */
+    public function OverrideHeader(array &$format, array &$tags): void
+    {
+        //$tags['field_to_bold_in_report_display'] =    ['BOLD'];
+        //$tags['field_to_hide_by_default'] =           ['HIDDEN'];
+        //$tags['field_to_italic_in_report_display'] =  ['ITALIC'];
+        //$tags['field_to_right_align_in_report'] =     ['RIGHT'];
+
+        //How to set the format of the display
+        //$format['numeric_field'] =                    ['NUMBER']; //TODO what does this do?
+        //$format['decimal_field'] =                    ['DECIMAL']; //TODO what does this do?
+        //$format['currency_field'] =                   ['CURRENCY']; //adds $ or Eurosign and right align
+        //$format['percent_field'] =                    ['PERCENT']; //adds % in the right place and right align
+        //$format['url_field'] =                        ['URL']; //auto-link using <a href='$url_field'>$url_field</a>
+        //$format['numeric_field'] =                    ['NUMBER']; //TODO what does this do?
+        //$format['date_field'] =                       ['DATE']; //future date display
+        //$format['datetime_field'] =                   ['DATETIME']; //future date time display
+        //$format['time_field'] =                       ['TIME']; //future time display
+    }
+
+        /**
     * Header Format 'auto-detection' can be changed per report.
-    * By default, these are the column formats - 
-    * 	public $DETAIL     = ['Sentence'];
-	* 	public $URL        = ['URL'];
-	* 	public $CURRENCY   = ['Amt','Amount','Paid','Cost'];
-	* 	public $NUMBER     = ['id','#','Num','Sum','Total','Cnt','Count'];
-	* 	public $DECIMAL    = ['Avg','Average'];
-	* 	public $PERCENT    = ['Percent','Ratio','Perentage'];
-	*
-	*	It detects the column by using 'word' matching, separated white spaces or _.
-	*	Example: TABLE_ROWS - ['TABLE','ROWS']
-	*	It will also check the full column name
+    * it is based on seeing the strings below in a field name... it will then assume it should be styled accordinly
+    * By default, these are the column formats -
+    *   public $DETAIL     = ['Sentence'];
+        *       public $URL        = ['URL'];
+        *       public $CURRENCY   = ['Amt','Amount','Paid','Cost'];
+        *       public $NUMBER     = ['id','#','Num','Sum','Total','Cnt','Count'];
+        *       public $DECIMAL    = ['Avg','Average'];
+        *       public $PERCENT    = ['Percent','Ratio','Perentage'];
+        *
+        *       It detects the column by using 'word' matching, separated white spaces or _.
+        *       Example: TABLE_ROWS - ['TABLE','ROWS']
+        *       It will also check the full column name
     */
     public $NUMBER     = ['ROWS','AVG','LENGTH','DATA_FREE'];
-    
-    
+
+
     /*
     * By Default, any numeric field will have statistical information will be passed on. AVG/STD/MIN/MAX/SUM
     * Any Text column will have distinct count information passed on.
@@ -127,92 +209,34 @@ class ExampleReport extends ZermeloReport
     public $SUGGEST_NO_SUMMARY = ['ID'];
 
 
-	/**
-    * Can customize the report view based on the report
-    * By default, use the view defined in the configuration file.
+        /**
+    * Want to use your own blade file for the report front-end?
+    * You can customize the report view based on the report
+    * When this is set to null, the report will use the view defined in the configuration file.
     *
     */
-	public $REPORT_VIEW = null;
+        public $REPORT_VIEW = null;
 
 
-	/**
-    * This is what builds the report. It will accept a SQL statement or an Array of sql statements.
-    * Can be used in conjunction with Inputs to determine different output based on URI parameters
-    * Additional URI parameters are passed as 
-    *	$this->getCode() - which will give the first url segment after the report name
-    *   $this->getParameters() - which will give an array of every later url segment after the getCode value
-    *   $this->getInputs() - which will give _GET parameters (etc?)
-    **/
-    public function GetSQL()
-    {
-        $sql = "SELECT * FROM information_schema.TABLES";
-    	return $sql;
-    }
-
-    /**
-    * Each row content will be passed to MapRow.
-    * Values and header names can be changed.
-    * Columns cannot be added or removed
-    * 
+        /**
+    * Should we enable the cache on this table?
+    * This will improve the performance of very large and complex queries by only running the SQL once and then storing
+    * the results in a dynamically creqted table in the _cache database.
+    * But it also creates hard to debug update errors that are very confusing when changing GetSQL() contents.
     */
-    public function MapRow(array $row) :array 
-    {
-    
-    	/*
-		//this logic would ensure that every cell in the TABLE_NAME column, was converted to a link to 
-		//a table drilldown report
-		$table_name = $row['TABLE_NAME'];
-		$row[''] = "<a href='/Zermelo/TableDrillDownReport/$table_name/'>$table_name</a>";
-	
-	*/
-    
-        return $row;
-    }
+        protected $CACHE_ENABLED = true;
 
-    /**
-    * Column Headers will be auto detected using $DETAIL,$URL,$CURRENCY,$NUMBER,$DECIMAL,$PERCENT
-    * If a column needs to be forced to a certain format, it can be changed here
-    * Tags can also be applied to each header column
+
+        /**
+    * How much time should pass (in seconds) before you update your _cache table for this report?
+    * this only has an effect when isCacheEnabled is turned on.
     */
-    public function OverrideHeader(array &$format, array &$tags): void
-    {
-    	//$tags['field_to_bold_in_report_display'] = 	['BOLD'];
-	//$tags['field_to_hide_by_default'] = 		['HIDDEN'];
-	//$tags['field_to_italic_in_report_display'] = 	['ITALIC'];
-	//$tags['field_to_right_align_in_report'] = 	['RIGHT'];	
-	
-	//How to set the format of the display
-	//$format['numeric_field'] = 			['NUMBER']; //TODO what does this do?
-	//$format['decimal_field'] = 			['DECIMAL']; //TODO what does this do?
-	//$format['currency_field'] = 			['CURRENCY']; //adds $ or Eurosign and right align
-	//$format['percent_field'] = 			['PERCENT']; //adds % in the right place and right align
-	//$format['url_field'] = 			['URL']; //auto-link using <a href='$url_field'>$url_field</a>
-	//$format['numeric_field'] = 			['NUMBER']; //TODO what does this do?
-	//$format['date_field'] = 			['DATE']; //future date display
-	//$format['datetime_field'] = 			['DATETIME']; //future date time display
-	//$format['time_field'] = 			['TIME']; //future time display
-    }
+        protected $HOW_LONG_TO_CACHE_IN_SECONDS = 600;
 
-
-    /*
-    * Get the Report Name, by default it will fetch the const REPORT_NAME.
-    * This can be overridden to custom return different Name based on Input
-    */
-    public function GetReportName(): string
-    {
-    return self::REPORT_NAME;
-    }
-
-    /*
-    * Get the Report Description, by default it will fetch the const DESCRIPTION.
-    * This can be overridden to custom return different description based on Input
-    */
-    public function getReportDescription(): ?string
-    {
-    return self::DESCRIPTION;
-    }
 
 }
+
+
 
 ```
 
