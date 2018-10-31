@@ -19,12 +19,20 @@ Cache Indicator
 
 There is a cache icon in the report toolbar. A tooltip displays the time the cache was last generated and the time the cache will expire. Click the cache icon to engage a dropdown with a menu item "clear cache" to force regenerateion of the cache and reload the report.
 
+The basic sequence for serving a report on the back end is: 
 
-Blue == Cache was generated last request
+* SQL in the report is run, and a table in the \_zermelo cache directory holds the results.
+* A request comes in and either the request is served from the cache, or the SQL is re-run. 
+* The request will be re-run, if the cache is "expired" or if caching is turned off. 
 
-Red == You are working with cached data
 
-Flashing Yellow == Cache is about to expire
+Blue == The data you are seeing was loaded from a cache that was refreshed, immediately before it was sent to your browser
 
-Yellow == you are looking at expired data
+Red == The data you are seeing was loaded from the cache, that was not refreshed immediately before it was sent to your browser.
+
+Yellow == The data you are seeing was loaded from the cache, and, if you asked it to, the server would now refresh the cache from the query. So if you want to load new data, just refresh the report
+
+Flashing Yellow == Cache is about to expire, which means that the data was in the 'red' state, but is about to be in the 'yellow' state. 
+
+
 
