@@ -30,108 +30,38 @@ How to get started using it
 You will need a modern LAMP server with at least php 7.2 and at leat Laravel 5.5
 [Complete Prerequisites](documentation/Prerequisites.md)
 
-### Basic Installation
-1. Configure your database if you haven't already. In your project root, place your database parameters in .env or your app's config/database.php 
-config. The database user will need CREATE TABLE permissions in order to create the \_zermelo database (or if you are 
-installing the example data.) The DB_DATABASE parameter is for the default database. If you are installing example data, and reports,
-you can put 'northwind_data' for the DB_DATABASE. If you have an existing database, put that in the DB_DATABASE field. You should replace the username and password below with sensible values. If this is foreign to you, you should read [How to secure you MySQL installation](https://dev.mysql.com/doc/mysql-security-excerpt/5.7/en/security.html)
+### Installation
 
-    ```
-    DB_CONNECTION=mysql
-    DB_HOST=127.0.0.1
-    DB_PORT=3306
-    DB_DATABASE=northwind_data
-    DB_USERNAME=your_chosen_username
-    DB_PASSWORD=randomly_generate_a_password_and_put_it_here
-    ```
+Look in [Basic Installation](documentation/BasicInstall.md) for complete installation instructions
 
-1. From the command prompt at your laravel project's root install the following commands: 
+For a quick start, assuming your Laravel instance already has access to the DB that it needs
 
     ```
     composer require careset/zermelo
     php artisan install:zermelo
-    ```
-    This will install the base reporting engine and tabular view package.
-    ```
     php artisan install:zermelobladetabular
-    ```
-    This will create a zermelo directory in your resources directory containing blade view templates. This will also publish the configuration file to your app's config directory, and move assets (js, css) to public/vendor.
-
-    ```
     mkdir app/Reports
     ```
-   This will be the directory where your reports will be created. 
-  
+This will install and configure zermelo, and create an app/Reports for you to add reports too.
 
-### To access your web routes (default):
+Next, you should test your routes...
 
-List your routes:
 ```
-    $ php artisan route:list
-    +--------+----------+------------------------------------------------+------+---------+--------------+
-    | Domain | Method   | URI                                            | Name | Action  | Middleware   |
-    +--------+----------+------------------------------------------------+------+---------+--------------+
-    |        | GET|HEAD | /                                              |      | Closure | web          |
+    $ php artisan route:list | grep Zermelo
     |        | GET|HEAD | Zermelo/{report_name}/{parameters?}            |      | Closure |              |
     |        | GET|HEAD | api/Zermelo/{report_name}/{parameters?}        |      | Closure |              |
     |        | GET|HEAD | api/ZermeloSummary/{report_name}/{parameters?} |      | Closure |              |
-    |        | GET|HEAD | api/user                                       |      | Closure | api,auth:api |
-    +--------+----------+------------------------------------------------+------+---------+--------------+
 ```
 
-Displays tabular view
+And then check using your browser
+
 ``` 
     [base_url]/Zermelo/[ReportClassName]
 ```
 ### Running Example
-There is a sample DB table and sample reports based on the Northwind customer database in the example directory of 
-the Zermelo project. To run:
+We provide example reports, and the schema and data needed to run those reports. 
+This is a good place to start if you are just exploring the system. Read, [Running the Examples](documentation/RunExample.md)
 
-1. Import the two northwind database files from [project-root]/vendor/careset/zermelo/example/data using mysql. These 
-files will create two databases and their data. 
-
-    ```
-    $ sudo mysql -u root -p
-    ```
-    ```
-    myslq> source [project-root]/vendor/careset/zermelo/examples/data/northwind_model.sql
-    ```
-    ```
-    myslq> source [project-root]/vendor/careset/zermelo/examples/data/northwind_data.sql
-    ```
-    ```
-    mysql> show databases;
-    +--------------------+
-    | Database           |
-    +--------------------+
-    | information_schema |
-    | mysql              |
-    | northwind_data     |
-    | northwind_model    |
-    | performance_schema |
-    | sys                |
-    +--------------------+
-    6 rows in set (0.00 sec)
-
-    ```
-
-1. Then copy the example reports from [project-root]/vendor/careset/zermelo/examples/reports into your app/Reports directory. 
-You will need to create the app/Reports directory if it does not exist. From your project root:
-
-    ```
-    $ cp vendor/careset/zermelo/examples/reports/* app/Reports
-    ```
-
-Example Report tabular views
-``` 
-    [base_url]/Zermelo/NorthwindCustomerReport
-```
-``` 
-    [base_url]/Zermelo/NorthwindOrderReport
-```
-``` 
-    [base_url]/Zermelo/NorthwindProductReport
-```
 
 ### Configuration Notes 
 1. Edit the file `config/zermelo.php` to change core zermelo settings
