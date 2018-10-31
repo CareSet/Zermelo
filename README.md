@@ -17,10 +17,16 @@ Core Reporting features
 
 We have a [feature roadmap](FullFeature.md) if you want to see where we are going
 
+ScreenShot that explains everything
+--------------------------
+
+
+
+
 Architecture
 ------------------
 
-![Zermelo Data Flow Diagram](https://raw.githubusercontent.com/CareSet/Zermelo/master/documentation/Zermelo_Reporting_Engine_Design.png)
+Read the [Architecture documentation](documentation/Architecture.md)
 
 
 How to get started using it
