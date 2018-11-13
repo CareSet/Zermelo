@@ -28,6 +28,9 @@ return [
      */
     'RESTRICT_TAGS'=>env("REPORT_STRICT_TAGS",true),
 
+    // Any middleware you want to run on zermelo routes (ie: 'auth')
+    'MIDDLEWARE' => [],
+
     /**
      * List of valid tags to be used with RESTRICT_TAGS
      */

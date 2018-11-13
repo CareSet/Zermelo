@@ -73,10 +73,12 @@ Class ServiceProvider extends \Illuminate\Support\ServiceProvider
         foreach ( $controllerRepo->all() as $prefix => $controller ) {
             if ( $controller instanceof ControllerInterface ) {
                 $module_route = $controller->prefix();
+                $middleware = array_merge(['web'], config('zermelo.MIDDLEWARE', []));
                 $router->get( "/$module_route/{report_name}/{parameters?}", function ( Request $request, $report_name, $parameters = "" ) use ( $controller ) {
                     $report = ReportFactory::build( $request, $report_name, $parameters );
                     return $controller->show( $report );
-                } )->where( ['parameters' => '.*'] );
+                })->where( ['parameters' => '.*'] )
+                    ->middleware($middleware);
             }
         }
 	}
