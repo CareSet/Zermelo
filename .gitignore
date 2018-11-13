@@ -1,2 +1,44 @@
-**/.DS_Store
 
+#CareSet defaults
+*.yaml
+notgit/
+
+#cruft blocks
+.DS_Store
+Thumbs.db
+.cache
+.project
+.settings
+.tmproj
+*.esproj
+nbproject
+
+# Numerous always-ignore extensions
+*.diff
+*.err
+*.orig
+*.log
+*.rej
+*.swo
+*.swp
+*.vi
+*.csv
+*~
+*.sass-cache
+
+.env
+composer.lock
+ 
+#ignore vagrant
+.vagrant/
+
+#ignore local data files
+*.data
+
+#ignore log files
+/log/*.txt
+/log/*.log
+/cronlog/*
+
+#json auth files like from google.
+*.auth.json

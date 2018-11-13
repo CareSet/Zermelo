@@ -322,14 +322,15 @@ abstract class ZermeloReport
 		return $me::REPORT_NAME;
 	}
 	/**
-	 * getReportDescription
+	 * GetReportDescription
 	 * Return the description of the report,
 	 * By default, this will return the const $DESCRIPTION.
 	 * This function can be used to change the report description based on $code,$parameters,$input
+	 * This supports returning HTML
 	 *
-	 * @return void
+	 * @return string
 	 */
-	public function getReportDescription(): ?string
+	public function GetReportDescription(): ?string
 	{
 		$me = get_called_class();
 		return $me::DESCRIPTION;

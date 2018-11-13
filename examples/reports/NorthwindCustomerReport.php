@@ -11,13 +11,13 @@ class NorthwindCustomerReport extends ZermeloReport
     */
     public function GetReportName(): string
     {
-	return('NorthWind Customer Report');
+	return('Zermelo Demo: NorthWind Customer Report');
     }
 
     /*
     * Get the Report Description, can return html
     */
-    public function getReportDescription(): ?string
+    public function GetReportDescription(): ?string
     {
 	$customer_id = $this->getCode();
 

@@ -10,13 +10,13 @@ class NorthwindProductReport extends ZermeloReport
     * Get the Report Name
     */
     public function GetReportName(): string {
-	return('Northwind Product Report');
+	return('Zermelo Demo: Northwind Product Report');
     }
 
     /*
     * Get the Report Description, can be html
     */
-    public function getReportDescription(): ?string {
+    public function GetReportDescription(): ?string {
     	return('The list of all northwind products');
     }
 
