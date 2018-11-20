@@ -40,7 +40,7 @@ class DatabaseCache implements ReportInterface
         return true;
     }
 
-    public function keygen( $prefix = "" )
+    protected function keygen( $prefix = "" )
     {
         $shortenedPrefix = $prefix;
         if ( strlen( $shortenedPrefix ) > 31 ) {
@@ -53,6 +53,11 @@ class DatabaseCache implements ReportInterface
         // < 64
         $key = $shortenedPrefix."_".md5($this->report->getClassName() . "-" . $this->report->getCode() . "-" . $this->report->GetBoltId() . "-" . implode("-", $this->report->getParameters() ) );
         return $key;
+    }
+
+    public function getKey()
+    {
+        return $this->key;
     }
 
     public function getTable()

@@ -6,6 +6,7 @@ use CareSet\Zermelo\Console\ZermeloInstallCommand;
 use CareSet\Zermelo\Console\ZermeloMakeDemoCommand;
 use CareSet\Zermelo\Console\ZermeloMakeReportCommand;
 use CareSet\Zermelo\Interfaces\ControllerInterface;
+use CareSet\Zermelo\Interfaces\DownloadableInterface;
 use CareSet\Zermelo\Models\DatabaseCache;
 use CareSet\Zermelo\Models\ReportFactory;
 use CareSet\Zermelo\Models\ZermeloDatabase;
@@ -77,6 +78,16 @@ Class ServiceProvider extends \Illuminate\Support\ServiceProvider
                 $router->get( "/$module_route/{report_name}/{parameters?}", function ( Request $request, $report_name, $parameters = "" ) use ( $controller ) {
                     $report = ReportFactory::build( $request, $report_name, $parameters );
                     return $controller->show( $report );
+                })->where( ['parameters' => '.*'] )
+                    ->middleware($middleware);
+            }
+
+            if ( $controller instanceof DownloadableInterface ) {
+                $module_route = $controller->prefix();
+                $middleware = array_merge(['web'], config('zermelo.MIDDLEWARE', []));
+                $router->get( "/download/Zermelo/{report_name}/{parameters?}", function ( Request $request, $report_name, $parameters = "" ) use ( $controller ) {
+                    $report = ReportFactory::build( $request, $report_name, $parameters );
+                    return $controller->download( $report );
                 })->where( ['parameters' => '.*'] )
                     ->middleware($middleware);
             }
