@@ -241,7 +241,7 @@ class ExampleReport extends ZermeloReport
     * the results in a dynamically creqted table in the _cache database.
     * But it also creates hard to debug update errors that are very confusing when changing GetSQL() contents.
     */
-        protected $CACHE_ENABLED = true;
+        protected $CACHE_ENABLED = false;
 
 
         /**
