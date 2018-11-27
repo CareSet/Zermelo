@@ -201,7 +201,9 @@ class ExampleReport extends ZermeloReport
 
         /**
     * Header Format 'auto-detection' can be changed per report.
-    * it is based on seeing the strings below in a field name... it will then assume it should be styled accordinly
+    * it is based on seeing the strings below in a field name... it will then assume it should be styled accordingly
+    * So it a column label is 'very_good_num' or 'this num' will be matched by 'num' but 'number' will not work.
+    * so it is matched on ignore case on a column name segment, not on substring...
     * By default, these are the column formats -
     *   public $DETAIL     = ['Sentence'];
         *       public $URL        = ['URL'];
