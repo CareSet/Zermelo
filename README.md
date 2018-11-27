@@ -197,6 +197,9 @@ class ExampleReport extends ZermeloReport
         //$format['date_field'] =                       ['DATE']; //future date display
         //$format['datetime_field'] =                   ['DATETIME']; //future date time display
         //$format['time_field'] =                       ['TIME']; //future time display
+	//$format['row_summary_field'] =		['DETAIL']; // this field will be shown with a + sign in the column. 
+									//pressing the plus will create a new row in the table
+									//that shows the actual contents of this column.
     }
 
         /**
