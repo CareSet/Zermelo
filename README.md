@@ -188,7 +188,7 @@ class ExampleReport extends ZermeloReport
         //$tags['field_to_right_align_in_report'] =     ['RIGHT'];
 
         //How to set the format of the display
-        //$format['numeric_field'] =                    ['NUMBER']; //TODO what does this do?
+        //$format['numeric_field'] =                    'NUMBER'; //TODO what does this do?
         //$format['decimal_field'] =                    ['DECIMAL']; //TODO what does this do?
         //$format['currency_field'] =                   ['CURRENCY']; //adds $ or Eurosign and right align
         //$format['percent_field'] =                    ['PERCENT']; //adds % in the right place and right align
