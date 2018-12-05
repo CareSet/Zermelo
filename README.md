@@ -66,11 +66,6 @@ Next, you should test your routes...
     |        | GET|HEAD | api/ZermeloSummary/{report_name}/{parameters?} |      | Closure |              |
 ```
 
-And then check using your browser
-
-``` 
-    [base_url]/Zermelo/[ReportClassName]
-```
 ### Running Example
 We provide example reports, and the schema and data needed to run those reports. 
 This is a good place to start if you are just exploring the system. Read, [Running the Examples](documentation/RunExample.md)
