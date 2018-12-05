@@ -182,21 +182,20 @@ class ExampleReport extends ZermeloReport
     */
     public function OverrideHeader(array &$format, array &$tags): void
     {
-        //$tags['field_to_bold_in_report_display'] =    ['BOLD'];
-        //$tags['field_to_hide_by_default'] =           ['HIDDEN'];
-        //$tags['field_to_italic_in_report_display'] =  ['ITALIC'];
-        //$tags['field_to_right_align_in_report'] =     ['RIGHT'];
+    	//$tags['field_to_bold_in_report_display'] = 	['BOLD'];
+        //$tags['field_to_hide_by_default'] = 		['HIDDEN'];
+        //$tags['field_to_italic_in_report_display'] = 	['ITALIC'];
+        //$tags['field_to_right_align_in_report'] = 	['RIGHT'];
 
         //How to set the format of the display
-        //$format['numeric_field'] =                    ['NUMBER']; //TODO what does this do?
-        //$format['decimal_field'] =                    ['DECIMAL']; //TODO what does this do?
-        //$format['currency_field'] =                   ['CURRENCY']; //adds $ or Eurosign and right align
-        //$format['percent_field'] =                    ['PERCENT']; //adds % in the right place and right align
-        //$format['url_field'] =                        ['URL']; //auto-link using <a href='$url_field'>$url_field</a>
-        //$format['numeric_field'] =                    ['NUMBER']; //TODO what does this do?
-        //$format['date_field'] =                       ['DATE']; //future date display
-        //$format['datetime_field'] =                   ['DATETIME']; //future date time display
-        //$format['time_field'] =                       ['TIME']; //future time display
+        //$format['numeric_field'] = 			'NUMBER'; // Formats number in table using commas, and right-aligns
+        //$format['decimal_field'] = 			'DECIMAL'; // Formats decimal to 4 places, and right-aligns
+        //$format['currency_field'] = 	    'CURRENCY'; // adds $ or Eurosign and right align
+        //$format['percent_field'] = 			'PERCENT'; // adds % in the right place and right align
+        //$format['url_field'] = 			    'URL'; // auto-link using <a href='$url_field'>$url_field</a>
+        //$format['date_field'] = 			'DATE'; // future date display
+        //$format['datetime_field'] = 		'DATETIME'; //future date time display
+        //$format['time_field'] = 			'TIME'; // future time display
     }
 
         /**
