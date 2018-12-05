@@ -140,7 +140,7 @@ class ExampleReport extends ZermeloReport
     * Additional URI parameters are passed as
     *   $this->getCode() - which will give the first url segment after the report name
     *   $this->getParameters() - which will give an array of every later url segment after the getCode value
-    *   $this->getInputs() - which will give _GET parameters (etc?)
+    *   $this->getInput() - which will give _GET parameters (etc?)
     **/
     public function GetSQL()
     {
@@ -196,11 +196,16 @@ class ExampleReport extends ZermeloReport
         //$format['date_field'] = 			'DATE'; // future date display
         //$format['datetime_field'] = 		'DATETIME'; //future date time display
         //$format['time_field'] = 			'TIME'; // future time display
+        //$format['row_summary_field'] =		['DETAIL']; // this field will be shown with a + sign in the column. 
+                                        //pressing the plus will create a new row in the table
+                                        //that shows the actual contents of this column.
     }
 
         /**
     * Header Format 'auto-detection' can be changed per report.
-    * it is based on seeing the strings below in a field name... it will then assume it should be styled accordinly
+    * it is based on seeing the strings below in a field name... it will then assume it should be styled accordingly
+    * So it a column label is 'very_good_num' or 'this num' will be matched by 'num' but 'number' will not work.
+    * so it is matched on ignore case on a column name segment, not on substring...
     * By default, these are the column formats -
     *   public $DETAIL     = ['Sentence'];
         *       public $URL        = ['URL'];
@@ -240,7 +245,7 @@ class ExampleReport extends ZermeloReport
     * the results in a dynamically creqted table in the _cache database.
     * But it also creates hard to debug update errors that are very confusing when changing GetSQL() contents.
     */
-        protected $CACHE_ENABLED = true;
+        protected $CACHE_ENABLED = false;
 
 
         /**
