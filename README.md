@@ -27,13 +27,10 @@ Architecture
 ------------------
 
 Read the [Architecture documentation](documentation/Architecture.md)
-Zermelo is doing the hard work of translating "mere SQL" into something that
-can be consistently and performantly loaded into a single browser session. 
-Zermelo understands how to push the hard work to the MariaDB/MySQL server, ensuring that the browser gets its data in dribbles. 
-the backend is having to do a huge amount of work in order make that happen. 
+Zermelo is doing the hard work of translating "mere SQL" into something that can be consistently and performantly loaded into a single browser session. 
+Zermelo understands how to push the hard work to the MariaDB/MySQL server, ensuring that the browser gets its data in dribbles. The backend is having to do a huge amount of work in order make that happen. 
 
-There are some queries that will legitimately take hours for the backend to run, even when the resulting data is only a few hundred rows
-of results. In order to support these heavy loads, Zermelo understands how to cache results. 
+There are some queries that will legitimately take hours for the backend to run, even when the resulting data is only a few hundred rows of results. In order to support these heavy loads, Zermelo understands how to cache results. 
 It always caches the results, but for most queries, it always refreshes the cache on every browser call. 
 
 You, the user, get to control how this works. Look at the [Controlling the Cache](documentation/ControlCaching.md) documentation to see how.
@@ -43,7 +40,7 @@ How to get started using it
 -------------------------
 
 ### Prerequisites
-You will need a modern LAMP server with at least php 7.2 and at leat Laravel 5.5
+You will need a modern LAMP server with at least php 7.2 and at least Laravel 5.5
 [Complete Prerequisites](documentation/Prerequisites.md)
 
 ### Quick Start
@@ -106,7 +103,7 @@ single SQL text string, or an array of SQL text strings.
 
 
 ### Example Report Model
-To see full list of functions and variables, pleasse see the ZermeloReport model - 
+To see full list of functions and variables, please see the ZermeloReport model - 
 https://github.com/CareSet/Zermelo/blob/master/src/CareSet/Zermelo/Models/ZermeloReport.php
 
 ```php
