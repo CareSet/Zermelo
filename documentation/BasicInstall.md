@@ -49,9 +49,5 @@ List your routes:
     |        | GET|HEAD | api/ZermeloSummary/{report_name}/{parameters?} |      | Closure |              |
 ```
 
-## test your instance in using your browser
+## Set up a sample reports to test browser
 
-Displays tabular view
-``` 
-    [base_url]/Zermelo/[ReportClassName]
-```
