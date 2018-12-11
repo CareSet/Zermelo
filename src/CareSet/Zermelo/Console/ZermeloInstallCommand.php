@@ -5,7 +5,9 @@ namespace CareSet\Zermelo\Console;
 use CareSet\Zermelo\Models\DatabaseCache;
 use CareSet\Zermelo\Models\ZermeloDatabase;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 
 class ZermeloInstallCommand extends AbstractZermeloInstallCommand
 {
@@ -20,10 +22,12 @@ class ZermeloInstallCommand extends AbstractZermeloInstallCommand
         // Do view, config and asset installing first
         parent::handle();
 
+        $config_changes = false;
         // If the user specifies a database name, user that, otherwise
         // use the default database name
         if ( $this->option( 'database' ) ) {
             $zermelo_db_name = $this->option( 'database' );
+            $config_changes = true;
         } else {
             $zermelo_db_name = config( 'zermelo.ZERMELO_DB' );
         }
@@ -42,14 +46,27 @@ class ZermeloInstallCommand extends AbstractZermeloInstallCommand
         }
 
         if ( ! $this->option('force') ) {
-            if ( !$this->confirm("Would you like to use your previously installed Bootstrap CSS file?" )) {
-                $bootstrap_css_location = $this->ask("Please paste the path of your bootstrap CSS file relative to public:");
+            if ( $this->confirm("Would you like to use your previously installed Bootstrap CSS file?" )) {
+                $bootstrap_css_location = $this->ask("Please paste the path of your bootstrap CSS file relative to public");
                 // Write the bootstrap CSS location to the master config
-                config( ['zermelo.BOOTSTRAP_CSS_LOCATION' => $bootstrap_css_location ] );
+                config( [ 'zermelo.BOOTSTRAP_CSS_LOCATION' => $bootstrap_css_location ] );
+                $config_changes = true;
+            }
+        }
+
+        // Write the runtime config changes
+        if ( $config_changes ) {
+            $array = Config::get( 'zermelo' );
+            $data = var_export( $array, 1 );
+            if ( File::put( config_path( 'zermelo.php' ), "<?php\n return $data ;" ) ) {
+                $this->info( "Wrote new config file" );
+            } else {
+                $this->error("There were config changes, but there was an error writing config file.");
             }
         }
 
         return true;
+
     }
 
     public function runZermeloMigration( $zermelo_db_name )
