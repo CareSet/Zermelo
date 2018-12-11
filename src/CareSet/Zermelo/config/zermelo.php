@@ -41,6 +41,10 @@ return [
         'RIGHT'
     ],
 
+    /**
+     * Bootstrap CSS file, you may overwrite the default here.
+     */
+    'BOOTSTRAP_CSS_LOCATION' => 'vendor/CareSet/bootstrap/css/bootstrap.min.css',
 
     /**
      * Database path where all the cache table will be stored.

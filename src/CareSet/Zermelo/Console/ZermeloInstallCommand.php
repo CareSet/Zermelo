@@ -41,6 +41,14 @@ class ZermeloInstallCommand extends AbstractZermeloInstallCommand
             $this->runZermeloMigration( $zermelo_db_name );
         }
 
+        if ( ! $this->option('force') ) {
+            if ( !$this->confirm("Would you like to use your previously installed Bootstrap CSS file?" )) {
+                $bootstrap_css_location = $this->ask("Please paste the path of your bootstrap CSS file relative to public:");
+                // Write the bootstrap CSS location to the master config
+                config( ['zermelo.BOOTSTRAP_CSS_LOCATION' => $bootstrap_css_location ] );
+            }
+        }
+
         return true;
     }
 
