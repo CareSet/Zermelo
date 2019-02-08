@@ -183,7 +183,7 @@ class DatabaseCache implements ReportInterface
 
                 $to_index = [];
                 foreach ( $columns as $column ) {
-                    if ( ZermeloDatabase::isColumnInKeyArray( $column, $this->report->SUBJECTS ) ) {
+                    if ( ZermeloDatabase::isColumnInKeyArray( $column, $this->report->INDICIES ) ) {
                         $to_index[] = "ADD INDEX(`{$column}`)";
                     }
                 }

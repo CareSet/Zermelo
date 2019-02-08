@@ -5,20 +5,21 @@ namespace CareSet\Zermelo;
 use CareSet\Zermelo\Console\ZermeloInstallCommand;
 use CareSet\Zermelo\Console\ZermeloMakeDemoCommand;
 use CareSet\Zermelo\Console\ZermeloMakeReportCommand;
-use CareSet\Zermelo\Interfaces\ControllerInterface;
-use CareSet\Zermelo\Interfaces\DownloadableInterface;
-use CareSet\Zermelo\Models\DatabaseCache;
-use CareSet\Zermelo\Models\ReportFactory;
 use CareSet\Zermelo\Models\ZermeloDatabase;
-use CareSet\Zermelo\Models\ZermeloReport;
-use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
-use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\DB;
-use Symfony\Component\VarDumper\Cloner\Data;
+use Illuminate\Support\Facades\Route;
 
 Class ServiceProvider extends \Illuminate\Support\ServiceProvider
 {
+    protected function presentations()
+    {
+        return [];
+    }
+
+    /*
+     * Registration happens before boot, so this is where we gather static configuration
+     * and register things to be used later.
+     */
 	public function register()
 	{
         require_once __DIR__ . '/helpers.php';
@@ -54,43 +55,75 @@ Class ServiceProvider extends \Illuminate\Support\ServiceProvider
         if ( ZermeloDatabase::doesDatabaseExist( $zermelo_db ) ) {
             ZermeloDatabase::configure( $zermelo_db );
         }
-
-        // I call the method like this for the request to be injected in the registerPresenter method.
-        $this->app->call([$this, 'registerOnRequest']);
 	}
-
-    public function registerOnRequest( \Illuminate\Http\Request $request )
-    {
-        // Create the presenter repository singleton
-        $this->app->singleton( 'CareSet\Zermelo\Models\ControllerRepository' );
-    }
 
 	public function boot( Router $router )
 	{
-        // Get the array of controllers form the controller repo
-        $controllerRepo = $this->app->make( 'CareSet\Zermelo\Models\ControllerRepository' );
+        // routes
+        $this->registerApiRoutes();
 
-        // Create the controller route dynamically using the ControllerInterface
-        foreach ( $controllerRepo->all() as $prefix => $controller ) {
-            if ( $controller instanceof ControllerInterface ) {
-                $module_route = $controller->prefix();
-                $middleware = array_merge(['web'], config('zermelo.MIDDLEWARE', []));
-                $router->get( "/$module_route/{report_name}/{parameters?}", function ( Request $request, $report_name, $parameters = "" ) use ( $controller ) {
-                    $report = ReportFactory::build( $request, $report_name, $parameters );
-                    return $controller->show( $report );
-                })->where( ['parameters' => '.*'] )
-                    ->middleware($middleware);
-            }
-
-            if ( $controller instanceof DownloadableInterface ) {
-                $module_route = $controller->prefix();
-                $middleware = array_merge(['web'], config('zermelo.MIDDLEWARE', []));
-                $router->get( "/download/Zermelo/{report_name}/{parameters?}", function ( Request $request, $report_name, $parameters = "" ) use ( $controller ) {
-                    $report = ReportFactory::build( $request, $report_name, $parameters );
-                    return $controller->download( $report );
-                })->where( ['parameters' => '.*'] )
-                    ->middleware($middleware);
-            }
-        }
+        // Boot our reports
+        $this->registerReports();
 	}
+
+    /**
+     * Register the application's Zermelo reports.
+     *
+     * @return void
+     */
+    protected function registerReports()
+    {
+        Zermelo::reportsIn(app_path('Reports'));
+    }
+
+    /**
+     * Load the given routes file if routes are not already cached.
+     *
+     * @param  string  $path
+     * @return void
+     */
+    protected function loadRoutesFrom($path)
+    {
+        if (! $this->app->routesAreCached()) {
+            require $path;
+        }
+    }
+
+    /**
+     * Register the package routes.
+     *
+     * @return void
+     */
+    protected function registerApiRoutes()
+    {
+        Route::group( $this->routeConfiguration(), function () {
+
+            $tabular_api_prefix = config('zermelo.TABULAR_API_PREFIX');
+            Route::group( ['prefix' => $tabular_api_prefix ], function() {
+                $this->loadRoutesFrom(__DIR__.'/routes/api.tabular.php');
+            });
+
+            $graph_api_prefix = config('zermelo.GRAPH_API_PREFIX');
+            Route::group( ['prefix' => $graph_api_prefix ], function() {
+                $this->loadRoutesFrom(__DIR__.'/routes/api.graph.php');
+            });
+
+        });
+    }
+
+    /**
+     * Get the Nova route group configuration array.
+     *
+     * @return array
+     */
+    protected function routeConfiguration()
+    {
+        return [
+            'namespace' => 'CareSet\Zermelo\Http\Controllers',
+            'domain' => config('zermelo.domain', null),
+            'as' => 'zermelo.api.',
+            'prefix' => config( 'zermelo.URI_API_PREFIX' ),
+            'middleware' => 'api',
+        ];
+    }
 }

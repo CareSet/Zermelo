@@ -1,6 +1,7 @@
 <?php
 
 namespace CareSet\Zermelo\Models;
+use Illuminate\Support\Str;
 use \Request;
 
 abstract class ZermeloReport
@@ -60,92 +61,14 @@ abstract class ZermeloReport
      */
     protected $HOW_LONG_TO_CACHE_IN_SECONDS = 600;
 
-	/**
-	 * $VALID_COLUMN_FORMAT
-	 * Valid Format a column header can be. This is used to validate OverrideHeader
-	 *
-	 * @var array
-	 */
-	public $VALID_COLUMN_FORMAT = ['TEXT','DETAIL','URL','CURRENCY','NUMBER','DECIMAL','DATE','DATETIME','TIME','PERCENT'];
 
-
-	/**
-	 * $DETAIL
-	 * Header stub that will determine if a header is a 'SENTENCE' format
-	 *
-	 * @var array
-	 */
-	public $DETAIL     = ['Sentence'];
-
-	/**
-	 * $URL
-	 * Header stub that will determine if a header is a 'URL' format
-	 *
-	 * @var array
-	 */
-	public $URL        = ['URL'];
-
-	/**
-	 * $CURRENCY
-	 * Header stub that will determine if a header is a 'CURRENCY' format
-	 *
-	 * @var array
-	 */
-	public $CURRENCY   = ['Amt','Amount','Paid','Cost'];
-
-	/**
-	 * $NUMBER
-	 * Header stub that will determine if a header is a 'NUMBER' format
-	 *
-	 * @var array
-	 */
-	public $NUMBER     = ['id','#','Num','Sum','Total','Cnt','Count'];
-
-	/**
-	 * $DECIMAL
-	 * Header stub that will determine if a header is a 'DECIMAL' format
-	 *
-	 * @var array
-	 */
-	public $DECIMAL    = ['Avg','Average'];
-
-	/**
-	 * $PERCENT
-	 * Header stub that will determine if a header is a 'PERCENTAGE' format
-	 *
-	 * @var array
-	 */
-	public $PERCENT    = ['Percent','Ratio','Perentage'];
-
-	
-	/**
-	 * $SUGGEST_NO_SUMMARY
-	 * This will mark the column that should not be used for statistical summary.
-	 * Any column found with a a 'NO_SUMMARY' flag attached to its column header
-	 *
-	 * @var array
-	 */
-	public $SUGGEST_NO_SUMMARY = [];
-
-	/**
-	 * $SUBJECTS
-	 * What the engine should consider as the 'noun' or 'subject'.
-	 * This field will determine which field to be used as nodes on a graph
-	 * 
-	 * @var array
-	 */
-	public $SUBJECTS = [];
-
-	/**
-	 * $WEIGHTS
-	 * What the engine should consider the weight between the subjects.
-	 * This field is used to generate 'links' and link size between each nodes.
-	 * 
-	 * @var array
-	 */
-	public $WEIGHTS = [];
-
-
+    /**
+     * $INDICIES
+     * The system will attempt to create an index out of these columns when creating the cache
+     *
+     * @var array
+     */
+    public $INDICIES = [];
 
 	/**
 	 * __construct
@@ -169,6 +92,18 @@ abstract class ZermeloReport
 		$this->setIsCacheEnabled( $this->CACHE_ENABLED );
 		$this->setHowLongToCacheInSeconds( $this->HOW_LONG_TO_CACHE_IN_SECONDS );
 	}
+
+
+    /**
+     * Get the URI key for the resource.
+     *
+     * @return string
+     */
+    public static function uriKey()
+    {
+    	return class_basename(get_called_class());
+        // return Str::plural(Str::snake(class_basename(get_called_class()), '-'));
+    }
 
     /**
      * Should we enable the cache on this table?
