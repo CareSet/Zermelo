@@ -9,7 +9,7 @@ use CareSet\Zermelo\Models\ZermeloDatabase;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Route;
 
-Class ServiceProvider extends \Illuminate\Support\ServiceProvider
+Class ZermeloServiceProvider extends \Illuminate\Support\ServiceProvider
 {
     protected function presentations()
     {
