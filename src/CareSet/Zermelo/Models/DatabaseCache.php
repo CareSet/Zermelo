@@ -155,17 +155,20 @@ class DatabaseCache implements ReportInterface
      */
     public function createTable()
     {
+        // Clone the cache table, to avoid query modifications that may affect future queries
+        $temp_cache_table = clone $this->cache_table;
+
         if ( $this->exists() ) {
-            ZermeloDatabase::drop($this->cache_table->from);
+            ZermeloDatabase::drop($temp_cache_table->from);
         }
 
         foreach ( $this->getIndividualQueries() as $index => $query ) {
 
             if ( strpos( strtoupper( $query ), "SELECT", 0 ) === 0 ) {
                 if ( $index == 0 ) {
-                    ZermeloDatabase::connection()->statement(DB::raw("CREATE TABLE {$this->cache_table->from} AS {$query}"));
+                    ZermeloDatabase::connection()->statement(DB::raw("CREATE TABLE {$temp_cache_table->from} AS {$query}"));
                 } else {
-                    ZermeloDatabase::connection()->statement(DB::raw("INSERT INTO {$this->cache_table->from} {$query}"));
+                    ZermeloDatabase::connection()->statement(DB::raw("INSERT INTO {$temp_cache_table->from} {$query}"));
                 }
             } else {
                 ZermeloDatabase::connection()->statement(DB::raw($query));
@@ -176,7 +179,7 @@ class DatabaseCache implements ReportInterface
         Lets try to be clever and attempt to index any 'subject' we have on the table.
          */
         if ( config("zermelo.AUTO_INDEX" ) ) {
-            $data_row = $this->cache_table->first();
+            $data_row = $temp_cache_table->first();
             if ( $data_row ) {
                 $data_row = json_decode( json_encode( $data_row ), true );
                 $columns = array_keys( $data_row );

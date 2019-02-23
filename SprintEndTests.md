@@ -13,6 +13,8 @@ master branch.
   * verify that the view actually works in a web-browser and gives the right results.
   * (Soon) copy the test reports into the reports directory, verify that all tests reports work
   
+* Make sure CSV download works with Cache on and off
+  
 In the event that the ReadMe and the results do not line up, either change the ReadMe to reflect how things "now work" or
 fix the code to work the way the ReadMe says. 
 
