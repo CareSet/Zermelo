@@ -178,9 +178,21 @@ class DatabaseCache implements ReportInterface
         if ( config("zermelo.AUTO_INDEX" ) ) {
             $data_row = $this->cache_table->first();
             if ( $data_row ) {
-                $data_row = json_decode( json_encode( $data_row ), true );
-                $columns = array_keys( $data_row );
-
+		$old_data_row = $data_row;
+		$encoded_json = json_encode($data_row);
+		$first_error = json_last_error_msg();
+                $data_row = json_decode( $encoded_json, true );
+		if(is_array($data_row)){
+                	$columns = array_keys( $data_row );
+		}else{
+			echo "<h1> Badly formed UTF-8 characters detected in the data (probably) here is the raw data to help fill it out";
+			//well damn.. what is it then..
+			echo "<pre> $encoded_json $first_error";
+			var_export($data_row);
+			var_export(json_last_error_msg());
+			dd($old_data_row);
+			
+		}
                 $to_index = [];
                 foreach ( $columns as $column ) {
                     if ( ZermeloDatabase::isColumnInKeyArray( $column, $this->report->INDICIES ) ) {
