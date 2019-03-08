@@ -133,9 +133,10 @@ class ExampleReport extends ZermeloReport
     *   $this->getCode() - which will give the first url segment after the report name
     *   $this->getParameters() - which will give an array of every later url segment after the getCode value
     *   $this->getInput() - which will give _GET parameters (etc?)
+    * 	$this->setInput($key,$new_value) - a way to override _GET parameters (i.e. for initializing a sort for instance)
     **/
     public function GetSQL()
-    {
+    { 
         //replace with your own SQL
         $sql = "SELECT * FROM information_schema.TABLES";
         return $sql;
