@@ -240,6 +240,40 @@ abstract class ZermeloReport
 	{
 		return $this->_parameters;
 	}
+
+
+	/**
+	 * setInputDefault
+	 * This will set an input value unless one has already been set, allows report to define things like default sorts (etc) 
+	 * But if the user changes things, it will be allowed to override.
+	 * @return void
+	 */
+	public function setInputDefault($key, $new_value)
+	{
+
+		if(isset($this->_input[$key])){
+			return(false);
+		}else{		
+			$this->_input[$key] = $new_value;
+			return(true);
+		}
+	}
+
+	
+	
+	/**
+	 * setInput
+ 	 * a useful but dangerous function that allows for specific reports to override the input that comes from a user before it is used.
+	 *
+	 * @return void
+	 */
+	public function setInput($key, $new_value)
+	{
+		$this->_input[$key] = $new_value;
+		return(true);
+	}
+
+
 	/**
 	 * getInput
 	 * Retrieve optional inputs used by model
