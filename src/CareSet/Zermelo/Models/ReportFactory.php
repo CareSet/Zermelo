@@ -3,6 +3,7 @@ namespace CareSet\Zermelo\Models;
 
 use CareSet\Zermelo\Http\Requests\ZermeloRequest;
 use CareSet\Zermelo\Interfaces\CacheInterface;
+use CareSet\Zermelo\Services\SocketService;
 use Illuminate\Http\Request;
 
 class ReportFactory
@@ -31,6 +32,6 @@ class ReportFactory
             $request_form_input = [];
         }
 
-        return new $reportClass( $code, $parameters, $request_form_input );
+        return new $reportClass( $code, $parameters, $request_form_input, new SocketService() );
     }
 }

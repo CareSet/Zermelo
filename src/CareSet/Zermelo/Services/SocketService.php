@@ -8,7 +8,13 @@
 
 namespace CareSet\Zermelo\Services;
 
+use CareSet\Zermelo\Models\Socket;
+use CareSet\Zermelo\Models\Wrench;
+
 class SocketService
 {
-
+    public function fetchWrenchForKey( $key )
+    {
+        return new Socket();
+    }
 }

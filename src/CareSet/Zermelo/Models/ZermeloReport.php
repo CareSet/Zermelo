@@ -1,6 +1,7 @@
 <?php
 
 namespace CareSet\Zermelo\Models;
+use CareSet\Zermelo\Services\SocketService;
 use Illuminate\Support\Str;
 use \Request;
 
@@ -45,6 +46,8 @@ abstract class ZermeloReport
 
 	private $_howLongToCacheInSeconds = null;
 
+	private $_socketService = null;
+
 
     /**
      * Should we enable the cache on this table?
@@ -84,15 +87,21 @@ abstract class ZermeloReport
 	 * @param array $Input - Additional optional parameters, usually through Request type input
 	 * @return void
 	 */
-	public function __construct(?string $Code, array $Parameters = [], array $Input = [])
+	public function __construct(?string $Code, array $Parameters = [], array $Input = [], SocketService $socketService)
 	{
 		$this->_code = $Code;
 		$this->_parameters = $Parameters;
 		$this->_input = $Input;
 		$this->setIsCacheEnabled( $this->CACHE_ENABLED );
 		$this->setHowLongToCacheInSeconds( $this->HOW_LONG_TO_CACHE_IN_SECONDS );
+
+		$this->_socketService = $socketService;
 	}
 
+	public function getSocket( string $wrenchName )
+	{
+		$socket = $this->_socketService->fetchWrenchForKey( $wrenchName );
+	}
 
     /**
      * Get the URI key for the resource.

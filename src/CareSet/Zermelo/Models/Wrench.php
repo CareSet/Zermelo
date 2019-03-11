@@ -8,10 +8,14 @@
 
 namespace CareSet\Zermelo\Models;
 
-
 use Illuminate\Database\Eloquent\Model;
 
 class Wrench extends Model
 {
     protected $table = 'wrench';
+
+    public function sockets()
+    {
+        return $this->hasMany('socket');
+    }
 }
