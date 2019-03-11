@@ -253,6 +253,14 @@ class ExampleReport extends ZermeloReport
 
 ```
 
+### TROUBLESHOOTING
+------------------
+
+I'm seeing a 404 error when I browse to my report url.
+* Check URL, use `php atisan route:list` to make sure your route is there
+* Make sure your report file is in the proper directory in App and is properly namespaced.
+* Make sure your report class is a subclass of ZermeloReport, or else it will not be picked up by the engine
+
 ### Why 'Zermelo'?
 ------------------
 Zermelo has been developed by [CareSet Systems](https://careset.com) which provides extensive reporting on CMS, Medicare and Medicaid data. We developed Zermelo to make that task easier. CareSet systems uses Set Theory, SQL and Graph technology to datamine Medicare claims data. We chose the name "CareSet" for our company to highlight our data approach (our logo has a contains a graph, which we thought was a good compromise. In any case, we thought we should celebrate a famous set theory mathematician with our name. 
