@@ -122,7 +122,7 @@ Class ZermeloServiceProvider extends \Illuminate\Support\ServiceProvider
             'namespace' => 'CareSet\Zermelo\Http\Controllers',
             'domain' => config('zermelo.domain', null),
             'as' => 'zermelo.api.',
-            'prefix' => config( 'zermelo.URI_API_PREFIX' ),
+            'prefix' => config( 'zermelo.API_PREFIX' ),
             'middleware' => 'api',
         ];
     }
