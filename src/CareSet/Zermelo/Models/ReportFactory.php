@@ -32,6 +32,16 @@ class ReportFactory
             $request_form_input = [];
         }
 
-        return new $reportClass( $code, $parameters, $request_form_input, new SocketService() );
+        $socketService = new SocketService();
+        if ( isset($request_form_input['sockets']) ) {
+            $socketService->setSocketsFromApiInput( $request_form_input[ 'sockets' ] );
+        }
+
+        $reportObject = new $reportClass( $code, $parameters, $request_form_input, $socketService );
+
+        // Call GetSQL() in order to initilaize socket-wrench system for UI
+        $reportObject->GetSQL();
+
+        return $reportObject;
     }
 }

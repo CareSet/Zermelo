@@ -18,6 +18,13 @@ function graph_api_prefix()
     return $api_prefix;
 }
 
+function zermelo_db()
+{
+    $db = config("zermelo.ZERMELO_DB" );
+    return $db;
+}
+
+
 function bootstap_css()
 {
     if ( config('zermelo.BOOTSTRAP_CSS_LOCATION') ) {

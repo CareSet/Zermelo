@@ -9,9 +9,7 @@
 namespace CareSet\Zermelo\Models;
 
 
-use Illuminate\Database\Eloquent\Model;
-
-class SocketUser extends Model
+class SocketUser extends AbstractZermeloModel
 {
     protected $table = 'socket_user';
 }

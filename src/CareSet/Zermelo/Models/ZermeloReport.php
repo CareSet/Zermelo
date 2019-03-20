@@ -3,6 +3,7 @@
 namespace CareSet\Zermelo\Models;
 use CareSet\Zermelo\Services\SocketService;
 use Illuminate\Support\Str;
+use Mockery\Exception;
 use \Request;
 
 abstract class ZermeloReport
@@ -48,6 +49,8 @@ abstract class ZermeloReport
 
 	private $_socketService = null;
 
+	private $_activeWrenches = []; // Array wrenches that are "in use" for this report
+	private $_activeSockets = []; // Array of sockets that are "currently selected" for the active wrenches
 
     /**
      * Should we enable the cache on this table?
@@ -98,10 +101,50 @@ abstract class ZermeloReport
 		$this->_socketService = $socketService;
 	}
 
-	public function getSocket( string $wrenchName )
+    /**
+     * @param string|null $wrenchName
+	 *
+	 * Get the user-selected socket for this wrench, or the default
+	 * if a user_socket is not set.
+	 *
+	 * The last setting is saved before we get here in the ReportBuilder
+     */
+	public function getSocket( string $wrenchName = null )
 	{
-		$socket = $this->_socketService->fetchWrenchForKey( $wrenchName );
+		$socket = null;
+		if ( $wrenchName ) {
+
+            // Get the user selected socket for this wrench
+            $socket = $this->_socketService->fetchSocketForWrenchKey( $wrenchName );
+
+            if ( $socket === null ) {
+                throw new Exception("No socket for wrench name $wrenchName");
+            }
+
+            $this->_activeSockets[$socket->id]= $socket;
+
+            // Then, make sure we make socket options available to view
+            if ( $socket->wrench ) {
+                $this->_activeWrenches[] = $socket->wrench;
+            }
+
+        } else {
+			throw new Exception("No wrench name provided");
+		}
+
+        return $socket->wrench_value;
 	}
+
+	public function isActiveSocket($id)
+	{
+		return isset($this->_activeSockets[$id]);
+	}
+
+	public function getActiveWrenches()
+	{
+		return $this->_activeWrenches;
+	}
+
 
     /**
      * Get the URI key for the resource.

@@ -98,6 +98,9 @@ Class ZermeloServiceProvider extends \Illuminate\Support\ServiceProvider
     {
         Route::group( $this->routeConfiguration(), function () {
 
+            // Load the core zermelo api routes including sockets
+            $this->loadRoutesFrom(__DIR__.'/routes/api.zermelo.php');
+
             $tabular_api_prefix = config('zermelo.TABULAR_API_PREFIX');
             Route::group( ['prefix' => $tabular_api_prefix ], function() {
                 $this->loadRoutesFrom(__DIR__.'/routes/api.tabular.php');

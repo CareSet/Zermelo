@@ -8,10 +8,7 @@
 
 namespace CareSet\Zermelo\Models;
 
-
-use Illuminate\Database\Eloquent\Model;
-
-class Socketsource extends Model
+class Socketsource extends AbstractZermeloModel
 {
     protected $table = 'socketsource';
 }

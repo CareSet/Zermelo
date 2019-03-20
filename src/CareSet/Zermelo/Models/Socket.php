@@ -8,10 +8,12 @@
 
 namespace CareSet\Zermelo\Models;
 
-
-use Illuminate\Database\Eloquent\Model;
-
-class Socket extends Model
+class Socket extends AbstractZermeloModel
 {
     protected $table = 'socket';
+
+    public function wrench()
+    {
+        return $this->belongsTo( Wrench::class );
+    }
 }
