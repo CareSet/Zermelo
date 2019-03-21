@@ -7,6 +7,7 @@ use CareSet\Zermelo\Console\ZermeloMakeDemoCommand;
 use CareSet\Zermelo\Console\ZermeloMakeReportCommand;
 use CareSet\Zermelo\Models\ZermeloDatabase;
 use Illuminate\Routing\Router;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
 
 Class ZermeloServiceProvider extends \Illuminate\Support\ServiceProvider
