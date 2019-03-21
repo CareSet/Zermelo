@@ -14,7 +14,7 @@ class ZermeloInstallCommand extends AbstractZermeloInstallCommand
     protected $config_file = __DIR__.'/../config/zermelo.php';
 
     protected $signature = 'install:zermelo
-                    {--database : Pass in the database name}
+                    {--database= : Pass in the database name}
                     {--force : Overwrite existing views and database by default}';
 
     public function handle()
