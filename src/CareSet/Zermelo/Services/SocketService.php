@@ -51,20 +51,24 @@ class SocketService
     public function fetchSocketForWrenchKey( $key )
     {
         $wrench = Wrench::where( 'wrench_lookup_string', $key )->first();
-        $foundSocket = null;
-        foreach ( $this->activeSockets as $activeSocket ) {
-            if ( $wrench->id === $activeSocket->wrench_id ) {
-                $foundSocket = $activeSocket;
-                break;
+        if ( $wrench !== null ) {
+            $foundSocket = null;
+            foreach ( $this->activeSockets as $activeSocket ) {
+                if ( $wrench->id === $activeSocket->wrench_id ) {
+                    $foundSocket = $activeSocket;
+                    break;
+                }
             }
-        }
 
-        // If there's no active socket for this wrench, fetch the default
-        if ( $foundSocket === null ) {
-            $foundSocket = Socket::where([
-                'wrench_id' => $wrench->id,
-                'is_default_socket' => 1
-            ])->first();
+            // If there's no active socket for this wrench, fetch the default
+            if ( $foundSocket === null ) {
+                $foundSocket = Socket::where([
+                    'wrench_id' => $wrench->id,
+                    'is_default_socket' => 1
+                ])->first();
+            }
+        } else {
+            throw new \Exception("No Wrench found for lookup string=`$key`");
         }
 
         return $foundSocket;
