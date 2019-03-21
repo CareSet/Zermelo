@@ -1,9 +1,9 @@
 <?php
 
 namespace App\Reports;
-use CareSet\Zermelo\Models\ZermeloReport;
+use CareSet\Zermelo\Reports\Tabular\AbstractTabularReport;
 
-class TagsReport extends ZermeloReport
+class TagsReport extends AbstractTabularReport
 {
 
     /*
