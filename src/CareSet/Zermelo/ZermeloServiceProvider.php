@@ -74,7 +74,7 @@ Class ZermeloServiceProvider extends \Illuminate\Support\ServiceProvider
      */
     protected function registerReports()
     {
-        $reportDir = app_path( 'Reports' );
+        $reportDir = report_path();
         if ( File::isDirectory($reportDir) ) {
             Zermelo::reportsIn( $reportDir );
         }

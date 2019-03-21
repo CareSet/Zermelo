@@ -24,6 +24,12 @@ function zermelo_db()
     return $db;
 }
 
+function report_path()
+{
+    $reportNS = config("zermelo.REPORT_NAMESPACE" );
+    $parts = explode("\\", $reportNS );
+    return app_path($parts[count($parts)-1]);
+}
 
 function bootstap_css()
 {

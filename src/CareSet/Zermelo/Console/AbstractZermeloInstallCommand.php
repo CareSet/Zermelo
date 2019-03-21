@@ -60,6 +60,10 @@ abstract class AbstractZermeloInstallCommand extends Command
      */
     protected function createDirectories()
     {
+        if (! is_dir($directory = report_path())) {
+            mkdir($directory, 0755, true);
+        }
+
         if (! is_dir($directory = resource_path('views/zermelo'))) {
             mkdir($directory, 0755, true);
         }
