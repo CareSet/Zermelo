@@ -77,5 +77,4 @@ class Zermelo
             return $value::uriKey() === $key;
         });
     }
-
 }
