@@ -54,7 +54,7 @@ class TabularPresenter extends AbstractPresenter
     public function getDownloadUri()
     {
         $parameterString = implode("/", $this->_report->getMergedParameters() );
-        $report_api_uri = "//{$this->getApiPrefix()}/{$this->getReportPath()}/{$this->_report->uriKey()}/Download/{$parameterString}";
+        $report_api_uri = "/{$this->getApiPrefix()}/{$this->getReportPath()}/{$this->_report->uriKey()}/Download/{$parameterString}";
         return $report_api_uri;
     }
 
