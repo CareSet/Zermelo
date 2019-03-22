@@ -50,9 +50,13 @@ class Zermelo
                     Str::after($report->getPathname(), app_path().DIRECTORY_SEPARATOR)
                 );
 
-            if (is_subclass_of($report, ZermeloReport::class) &&
-                ! (new ReflectionClass($report))->isAbstract()) {
-                $reports[] = $report;
+            try {
+                if ( is_subclass_of( $report, ZermeloReport::class ) &&
+                    !(new ReflectionClass( $report ))->isAbstract() ) {
+                    $reports[] = $report;
+                }
+            } catch ( \Exception $e ) {
+                throw new \Exception($e->getMessage().". If you recently made changes to the contents of your reports directory, you may have do run `composer dump-autoload`");
             }
         }
 

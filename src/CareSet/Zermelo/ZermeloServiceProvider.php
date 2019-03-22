@@ -126,11 +126,7 @@ Class ZermeloServiceProvider extends \Illuminate\Support\ServiceProvider
     protected function routeConfiguration()
     {
         $middleware = config('zermelo.MIDDLEWARE',[ 'api' ]);
-        $middlewareString = "";
-        foreach ( $middleware as $m ) {
-            $middlewareString .= "$m,";
-        }
-        $middlewareString = rtrim($middlewareString,",");
+        $middlewareString = implode(',', $middleware );
 
         return [
             'namespace' => 'CareSet\Zermelo\Http\Controllers',
