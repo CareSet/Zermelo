@@ -16,29 +16,9 @@ class CardPresenter extends AbstractPresenter
     private $_report_path = null;
     private $_summary_path = null;
 
-    public function __construct( AbstractCardsReport $report )
+    public function __construct( ZermeloReport $report )
     {
         parent::__construct( $report );
-    }
-
-    /**
-     * $REPORT_VIEW
-     * Overrideable custom report View template to use
-     *
-     * @var string
-     */
-    protected $REPORT_VIEW = null;
-
-
-    /**
-     * getReportView
-     * Returns the $REPORT_VIEW value
-     *
-     * @return string
-     */
-    public function getReportView(): ?string
-    {
-        return $this->REPORT_VIEW;
     }
 
     protected function getApiPrefix() : string
@@ -71,17 +51,24 @@ class CardPresenter extends AbstractPresenter
         $this->_summary_path = $summary_path;
     }
 
+    public function getDownloadUri()
+    {
+        $parameterString = implode("/", $this->_report->getMergedParameters() );
+        $report_api_uri = "/{$this->getApiPrefix()}/{$this->getReportPath()}/{$this->_report->uriKey()}/Download/{$parameterString}";
+        return $report_api_uri;
+    }
+
     public function getReportUri()
     {
         $parameterString = implode("/", $this->_report->getMergedParameters() );
-        $report_api_uri = "/{$this->getApiPrefix()}/{$this->getReportPath()}/{$this->_report->getClassName()}/{$parameterString}";
+        $report_api_uri = "/{$this->getApiPrefix()}/{$this->getReportPath()}/{$this->_report->uriKey()}/{$parameterString}";
         return $report_api_uri;
     }
 
     public function getSummaryUri()
     {
         $parameterString = implode("/", $this->_report->getMergedParameters() );
-        $summary_api_uri = "/{$this->getApiPrefix()}/{$this->getSummaryPath()}/{$this->_report->getClassName()}/{$parameterString}";
+        $summary_api_uri = "/{$this->getApiPrefix()}/{$this->getReportPath()}/{$this->_report->uriKey()}/Summary/{$parameterString}";
         return $summary_api_uri;
     }
 
@@ -90,5 +77,4 @@ class CardPresenter extends AbstractPresenter
         $page_length =  $this->_report->getParameter("length") ?: null;
         return $page_length;
     }
-
 }
