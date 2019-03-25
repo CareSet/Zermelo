@@ -19,9 +19,9 @@ files will create two databases and their data. Run these mysql commands from yo
     ```
     ```
     myslq> source vendor/careset/zermelo/examples/data/northwind_model.sql
-    ```
-    ```
     myslq> source vendor/careset/zermelo/examples/data/northwind_data.sql
+    myslq> source vendor/careset/zermelo/examples/data/tags_report.sql
+    myslq> source vendor/careset/zermelo/examples/data/northwind_socket_example.sql
     ```
     ```
     mysql> show databases;
