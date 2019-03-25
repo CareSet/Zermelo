@@ -51,6 +51,7 @@ For a quick start, assuming your Laravel instance already has access to the DB t
 
 ```bash
     $ composer require careset/zermelo
+    $ composer require careset/zermelobladetabular
     $ php artisan install:zermelo
     $ php artisan install:zermelobladetabular
 ```
