@@ -3,21 +3,26 @@
 namespace App\Reports;
 use CareSet\Zermelo\Reports\Tabular\AbstractTabularReport;
 
-class NorthwindProductReport extends AbstractTabularReport
+class NorthwindCustomerSocketReport extends AbstractTabularReport
 {
 
     /*
     * Get the Report Name
     */
-    public function GetReportName(): string {
-	return('Zermelo Demo: Northwind Product Report');
+    public function GetReportName(): string
+    {
+	return('Zermelo Demo: NorthWind Customer Socket Report');
     }
 
     /*
-    * Get the Report Description, can be html
+    * Get the Report Description, can return html
     */
-    public function GetReportDescription(): ?string {
-    	return('The list of all northwind products');
+    public function GetReportDescription(): ?string
+    {
+
+        return "This is the customer database filtered using the socket/wrench system which can be configured 
+            using the `Current Data View` button on the UI";
+
     }
 
 	/**
@@ -30,10 +35,54 @@ class NorthwindProductReport extends AbstractTabularReport
     **/
     public function GetSQL()
     {
-        $sql = "SELECT productCode, productName, standardCost, listPrice
-                FROM northwind_model.product";
+
+	$customer_id = $this->getCode();
+	$customerFilter = $this->getSocket('job_title_filter');
+
+	if(!is_numeric($customer_id)){
+		//this means that there was no customer_id passed in on the url...
+		//so we have a SQL that will return all of the customers information
+        $sql = "
+SELECT 
+	customer.id AS customer_id, 
+	companyName, 
+	lastName, 
+	firstName, 
+	emailAddress, 
+	jobTitle, 
+	businessPhone, 
+	homePhone, 
+	mobilePhone
+FROM northwind_model.customer
+";
+
+        if ( $customerFilter ) {
+            $sql .= " WHERE ".$customerFilter;
+        }
+
+	}else{
+		//here we know that $customer_id is numeric, and we should search the database for a mathing customer
+        $sql = "
+SELECT
+	customer.id AS customer_id, 
+	companyName, 
+	lastName, 
+	firstName, 
+	emailAddress, 
+	jobTitle, 
+	businessPhone, 
+	homePhone, 
+	mobilePhone
+FROM northwind_model.customer
+WHERE customer.id = '$customer_id'
+";
+
+	}
+
+
     	return $sql;
     }
+
 
     /**
     * Each row content will be passed to MapRow.
@@ -87,6 +136,7 @@ class NorthwindProductReport extends AbstractTabularReport
     *
     */
 	public $REPORT_VIEW = null;
+
 
 
 

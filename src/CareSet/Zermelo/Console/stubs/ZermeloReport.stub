@@ -1,9 +1,9 @@
 <?php
 
 namespace {{ report_namespace }};
-use CareSet\Zermelo\Models\ZermeloReport;
+use CareSet\Zermelo\Reports\Tabular\AbstractTabularReport;
 
-class {{ report_name }} extends ZermeloReport
+class {{ report_name }} extends AbstractTabularReport
 {
 
     /*

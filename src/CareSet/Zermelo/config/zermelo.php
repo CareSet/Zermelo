@@ -15,7 +15,19 @@ return [
      * If the api route has a prefix, use this prefix when pre-pend to the uri
      * By default, laravel uses the api prefix in their api.php file
      */
-    'URI_API_PREFIX'=>env("API_PREFIX","api"),
+    'API_PREFIX'=>env("API_PREFIX","api"),
+
+    /**
+     * This is the prefix for the tabular API routes for retrieving data formatted
+     * For jQuery DataTables
+     */
+    'TABULAR_API_PREFIX' => env("TABULAR_API_PREFIX","Zermelo"),
+
+    /**
+     * This is the prefix for the tabular API routes for retrieving data formatted
+     * For D3 and other graphing toolkits
+     */
+    'GRAPH_API_PREFIX'=>env("GRAPH_API_PREFIX","ZermeloGraph"),
 
     /**
      * Should the engine auto index any 'subject' it detects in the report
@@ -29,7 +41,7 @@ return [
     'RESTRICT_TAGS'=>env("REPORT_STRICT_TAGS",true),
 
     // Any middleware you want to run on zermelo routes (ie: 'auth')
-    'MIDDLEWARE' => [],
+    'MIDDLEWARE' => ['api'],
 
     /**
      * List of valid tags to be used with RESTRICT_TAGS

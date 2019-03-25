@@ -14,7 +14,7 @@ class ZermeloInstallCommand extends AbstractZermeloInstallCommand
     protected $config_file = __DIR__.'/../config/zermelo.php';
 
     protected $signature = 'install:zermelo
-                    {--database}
+                    {--database= : Pass in the database name}
                     {--force : Overwrite existing views and database by default}';
 
     public function handle()
@@ -41,8 +41,11 @@ class ZermeloInstallCommand extends AbstractZermeloInstallCommand
             }
         }
 
+        // Do we need to create the database, or do we migrate only?
         if ( $create_zermelo_db ) {
-            $this->runZermeloMigration( $zermelo_db_name );
+            $this->runZermeloInitialMigration( $zermelo_db_name );
+        } else {
+            $this->migrateDatabase( $zermelo_db_name );
         }
 
         if ( ! $this->option('force') ) {
@@ -69,7 +72,7 @@ class ZermeloInstallCommand extends AbstractZermeloInstallCommand
 
     }
 
-    public function runZermeloMigration( $zermelo_db_name )
+    public function runZermeloInitialMigration( $zermelo_db_name )
     {
         // Create the database
         if ( ZermeloDatabase::doesDatabaseExist( $zermelo_db_name ) ) {
@@ -84,6 +87,11 @@ class ZermeloInstallCommand extends AbstractZermeloInstallCommand
         // Configure the database for usage
         ZermeloDatabase::configure( $zermelo_db_name );
 
+        $this->migrateDatabase( $zermelo_db_name );
+    }
+
+    public function migrateDatabase( $zermelo_db_name )
+    {
         Artisan::call('migrate', [
             '--force' => true,
             '--database' => $zermelo_db_name,

@@ -19,6 +19,12 @@ abstract class AbstractPresenter
         $this->_report = $report;
     }
 
+    public function getSocketwrenchUri()
+    {
+        $uri = api_prefix()."/socketwrenches/submit";
+        return $uri;
+    }
+
     public function getRequestFormInput()
     {
         return $this->_report->getRequestFormInput();
