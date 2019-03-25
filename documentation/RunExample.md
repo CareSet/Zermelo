@@ -12,16 +12,16 @@ There is a sample DB table and sample reports based on the Northwind customer da
 the Zermelo project. To run:
 
 1. Import the two northwind database files from [project-root]/vendor/careset/zermelo/example/data using mysql. These 
-files will create two databases and their data. 
+files will create two databases and their data. Run these mysql commands from your Laravel project root.
 
     ```
     $ sudo mysql -u root -p
     ```
     ```
-    myslq> source [project-root]/vendor/careset/zermelo/examples/data/northwind_model.sql
+    myslq> source vendor/careset/zermelo/examples/data/northwind_model.sql
     ```
     ```
-    myslq> source [project-root]/vendor/careset/zermelo/examples/data/northwind_data.sql
+    myslq> source vendor/careset/zermelo/examples/data/northwind_data.sql
     ```
     ```
     mysql> show databases;
