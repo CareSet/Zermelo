@@ -53,7 +53,6 @@ For a quick start, assuming your Laravel instance already has access to the DB t
     $ composer require careset/zermelo
     $ php artisan install:zermelo
     $ php artisan install:zermelobladetabular
-    $ mkdir app/Reports
 ```
 This will install and configure zermelo, and create an app/Reports for you to add reports too.
 
@@ -61,9 +60,14 @@ Next, you should test your routes...
 
 ```
     $ php artisan route:list | grep Zermelo
-    |        | GET|HEAD | Zermelo/{report_name}/{parameters?}            |      | Closure |              |
-    |        | GET|HEAD | api/Zermelo/{report_name}/{parameters?}        |      | Closure |              |
-    |        | GET|HEAD | api/ZermeloSummary/{report_name}/{parameters?} |      | Closure |              |
+|        | GET|HEAD | Zermelo/{report_key}                                 |
+|        | GET|HEAD | ZermeloCard/{report_key}                             |
+|        | GET|HEAD | ZermeloGraph/{report_key}                            |
+|        | GET|HEAD | api/Zermelo/{report_key}/Download/{parameters?}      |
+|        | GET|HEAD | api/Zermelo/{report_key}/Summary/{parameters?}       |
+|        | GET|HEAD | api/Zermelo/{report_key}/{parameters?}               | 
+|        | GET|HEAD | api/ZermeloGraph/{report_key}/Download/{parameters?} |
+|        | GET|HEAD | api/ZermeloGraph/{report_key}/{parameters?}          |
 ```
 
 ### Running Example
