@@ -263,7 +263,7 @@ class ExampleReport extends ZermeloReport
 ------------------
 
 I'm seeing a 404 error when I browse to my report url.
-* Check URL, use `php atisan route:list` to make sure your route is there
+* Check URL, use `php artisan route:list` to make sure your route is there
 * Make sure your report file is in the proper directory in App and is properly namespaced.
 * Make sure your report class is a subclass of ZermeloReport, or else it will not be picked up by the engine
 
