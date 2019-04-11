@@ -86,10 +86,10 @@ class ZermeloInstallCommand extends AbstractZermeloInstallCommand
     {
         // Create the database
         if ( ZermeloDatabase::doesDatabaseExist( $zermelo_cache_db_name ) ) {
-            DB::connection($zermelo_cache_db_name)->statement( DB::connection($zermelo_cache_db_name)->raw( "DROP DATABASE IF EXISTS " . $zermelo_cache_db_name . ";" ) );
+            DB::connection()->statement( DB::connection()->raw( "DROP DATABASE IF EXISTS " . $zermelo_cache_db_name . ";" ) );
         }
 
-        DB::connection($zermelo_cache_db_name)->statement( DB::connection($zermelo_cache_db_name)->raw( "CREATE DATABASE `".$zermelo_cache_db_name."`;" ) );
+        DB::connection()->statement( DB::connection()->raw( "CREATE DATABASE `".$zermelo_cache_db_name."`;" ) );
 
         // Write the database name to the master config
         config( ['zermelo.ZERMELO_CACHE_DB' => $zermelo_cache_db_name ] );
@@ -102,10 +102,10 @@ class ZermeloInstallCommand extends AbstractZermeloInstallCommand
     {
         // Create the database
         if ( ZermeloDatabase::doesDatabaseExist( $zermelo_config_db_name ) ) {
-            DB::connection($zermelo_config_db_name)->statement( DB::connection($zermelo_config_db_name)->raw( "DROP DATABASE IF EXISTS " . $zermelo_config_db_name . ";" ) );
+            DB::connection()->statement( DB::connection()->raw( "DROP DATABASE IF EXISTS " . $zermelo_config_db_name . ";" ) );
         }
 
-        DB::connection($zermelo_config_db_name)->statement( DB::connection($zermelo_config_db_name)->raw( "CREATE DATABASE `".$zermelo_config_db_name."`;" ) );
+        DB::connection()->statement( DB::connection()->raw( "CREATE DATABASE `".$zermelo_config_db_name."`;" ) );
 
         // Write the database name to the master config
         config( ['zermelo.ZERMELO_CONFIG_DB' => $zermelo_config_db_name ] );

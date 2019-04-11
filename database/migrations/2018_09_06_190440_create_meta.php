@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateCache extends Migration
+class CreateMeta extends Migration
 {
     /**
      * Run the migrations.
