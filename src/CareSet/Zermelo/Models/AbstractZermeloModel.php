@@ -19,6 +19,7 @@ abstract class AbstractZermeloModel extends Model
     {
         parent::__construct( $attributes );
 
-        $this->connection = zermelo_db();
+        // We use the zermelo config DB for our "in-house" models
+        $this->connection = zermelo_config_db();
     }
 }

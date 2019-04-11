@@ -15,17 +15,19 @@ class DatabaseCache implements ReportInterface
     protected $cache_table = null;
     protected $report = null;
     protected $key = null;
+    protected $connectionName = null;
 
-    public function __construct( ZermeloReport $report )
+    public function __construct( ZermeloReport $report, $connectionName )
     {
         $this->report = $report;
+        $this->connectionName = $connectionName;
 
         $clear_cache = filter_var($report->getInput( 'clear_cache' ),FILTER_VALIDATE_BOOLEAN) == true ? true : false;
         $this->setDoClearCache( $clear_cache );
 
         // Generate the prefix, but make sure it's not longer than 32 chars
         $this->key = $this->keygen( $this->report->getClassName() );
-        $this->cache_table = ZermeloDatabase::connection()->table("{$this->key}");
+        $this->cache_table = ZermeloDatabase::connection($this->connectionName)->table("{$this->key}");
 
         if ( $this->exists() === false ||
             $report->isCacheEnabled() === false ||
@@ -35,9 +37,14 @@ class DatabaseCache implements ReportInterface
             $this->generatedThisRequest = true;
         }
 
-        $this->columns = ZermeloDatabase::getTableColumnDefinition( $this->getTableName() );
+        $this->columns = ZermeloDatabase::getTableColumnDefinition( $this->getTableName(), $this->connectionName );
 
         return true;
+    }
+
+    public function getConnectionName()
+    {
+        return $this->connectionName;
     }
 
     protected function keygen( $prefix = "" )
@@ -77,7 +84,7 @@ class DatabaseCache implements ReportInterface
 
     public function exists(): bool
     {
-        $hasTable = ZermeloDatabase::hasTable( $this->cache_table->from );
+        $hasTable = ZermeloDatabase::hasTable( $this->cache_table->from, $this->connectionName );
         return $hasTable;
     }
 
@@ -159,19 +166,19 @@ class DatabaseCache implements ReportInterface
         $temp_cache_table = clone $this->cache_table;
 
         if ( $this->exists() ) {
-            ZermeloDatabase::drop($temp_cache_table->from);
+            ZermeloDatabase::drop($temp_cache_table->from, $this->connectionName);
         }
 
         foreach ( $this->getIndividualQueries() as $index => $query ) {
 
             if ( strpos( strtoupper( $query ), "SELECT", 0 ) === 0 ) {
                 if ( $index == 0 ) {
-                    ZermeloDatabase::connection()->statement(DB::raw("CREATE TABLE {$temp_cache_table->from} AS {$query}"));
+                    ZermeloDatabase::connection($this->connectionName)->statement(DB::raw("CREATE TABLE {$temp_cache_table->from} AS {$query}"));
                 } else {
-                    ZermeloDatabase::connection()->statement(DB::raw("INSERT INTO {$temp_cache_table->from} {$query}"));
+                    ZermeloDatabase::connection($this->connectionName)->statement(DB::raw("INSERT INTO {$temp_cache_table->from} {$query}"));
                 }
             } else {
-                ZermeloDatabase::connection()->statement(DB::raw($query));
+                ZermeloDatabase::connection($this->connectionName)->statement(DB::raw($query));
             }
         }
 
@@ -220,7 +227,7 @@ class DatabaseCache implements ReportInterface
     {
         $stats = DB::select("SELECT CURRENT_TIMESTAMP, CREATE_TIME,
                                     TIMESTAMPDIFF(MINUTE,CREATE_TIME, CURRENT_TIMESTAMP) as age
-                                FROM information_schema.tables WHERE table_schema=? and table_name = ?", [config("zermelo.ZERMELO_DB"), $this->getTableName() ]);
+                                FROM information_schema.tables WHERE table_schema=? and table_name = ?", [$this->connectionName, $this->getTableName() ]);
 
         if (!$stats) {
             return true;

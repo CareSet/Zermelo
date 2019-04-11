@@ -62,5 +62,10 @@ return [
      * Database path where all the cache table will be stored.
      * This is set at installation and is not recommended to change.
      */
-    'ZERMELO_DB'=>env("ZERMELO_DB","_zermelo"),
+    'ZERMELO_CACHE_DB'=>env("ZERMELO_CACHE_DB","_zermelo_cache"),
+
+    /**
+     * Database path where configuration data will be stored, for sockets, etc
+     */
+    'ZERMELO_CONFIG_DB'=>env("ZERMELO_CONFIG_DB","_zermelo_config"),
 ];

@@ -14,7 +14,7 @@ class TabularApiController
     public function index( TabularReportRequest $request )
     {
         $report = $request->buildReport();
-        $cache = new DatabaseCache( $report );
+        $cache = new DatabaseCache( $report, zermelo_cache_db() );
         $generator = new ReportGenerator( $cache );
         return $generator->toJson();
     }
@@ -23,7 +23,7 @@ class TabularApiController
     {
         $report = $request->buildReport();
         // Wrap the report in cache
-        $cache = new DatabaseCache( $report );
+        $cache = new DatabaseCache( $report, zermelo_cache_db() );
         $generator = new ReportSummaryGenerator( $cache );
         return $generator->toJson();
     }
@@ -37,7 +37,8 @@ class TabularApiController
     public function download( TabularReportRequest $request )
     {
         $report = $request->buildReport();
-        $cache = new DatabaseCache( $report );
+        $connectionName = config('zermelo.CACHE_DB');
+        $cache = new DatabaseCache( $report, $connectionName );
         $summaryGenerator = new ReportSummaryGenerator( $cache );
         $header = $summaryGenerator->runSummary();
         $header = array_map( function( $element ) {

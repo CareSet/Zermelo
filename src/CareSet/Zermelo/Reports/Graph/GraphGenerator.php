@@ -64,8 +64,8 @@ class GraphGenerator extends AbstractGenerator
             }
         }
 
-        $nodes =  ZermeloDatabase::connection()->table($this->cache->getNodeTable())->select("id", "type", "value", "size", "sum_weight","degree")->whereIn('type',$node_types )->get();
-        $links = ZermeloDatabase::connection()->table($this->cache->getLinkTable())->select("source", "target", "link_type", "weight")->whereIn('link_type',$link_types)->whereNotNull("source")->whereNotNull("target")->get();
+        $nodes =  ZermeloDatabase::connection($this->cache->getConnectionName())->table($this->cache->getNodeTable())->select("id", "type", "value", "size", "sum_weight","degree")->whereIn('type',$node_types )->get();
+        $links = ZermeloDatabase::connection($this->cache->getConnectionName())->table($this->cache->getLinkTable())->select("source", "target", "link_type", "weight")->whereIn('link_type',$link_types)->whereNotNull("source")->whereNotNull("target")->get();
 
         return [
             'node_types' => array_values($this->cache->getNodeTypes()),

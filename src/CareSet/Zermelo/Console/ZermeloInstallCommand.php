@@ -22,30 +22,40 @@ class ZermeloInstallCommand extends AbstractZermeloInstallCommand
         // Do view, config and asset installing first
         parent::handle();
 
+        // If there are any config changes from the installation command, we track with this flag in case
+        // we need to write an updated config file.
         $config_changes = false;
-        // If the user specifies a database name, user that, otherwise
-        // use the default database name
-        if ( $this->option( 'database' ) ) {
-            $zermelo_db_name = $this->option( 'database' );
-            $config_changes = true;
-        } else {
-            $zermelo_db_name = config( 'zermelo.ZERMELO_DB' );
-        }
 
-        $create_zermelo_db = true;
-        if ( ZermeloDatabase::doesDatabaseExist( $zermelo_db_name ) &&
+        $zermelo_cache_db_name = config( 'zermelo.ZERMELO_CACHE_DB' );
+        $zermelo_config_db_name = config( 'zermelo.ZERMELO_CONFIG_DB' );
+
+        $create_zermelo_cache_db = true;
+        if ( ZermeloDatabase::doesDatabaseExist( $zermelo_cache_db_name ) &&
             ! $this->option('force') ) {
 
-            if ( !$this->confirm("The Zermelo database '".$zermelo_db_name."' already exists. Do you want to DROP it and recreate it?")) {
-                $create_zermelo_db = false;
+            if ( !$this->confirm("The Zermelo database '".$zermelo_cache_db_name."' already exists. Do you want to DROP it and recreate it?")) {
+                $create_zermelo_cache_db = false;
             }
         }
 
-        // Do we need to create the database, or do we migrate only?
-        if ( $create_zermelo_db ) {
-            $this->runZermeloInitialMigration( $zermelo_db_name );
+        $create_zermelo_config_db = true;
+        if ( ZermeloDatabase::doesDatabaseExist( $zermelo_config_db_name ) &&
+            ! $this->option('force') ) {
+
+            if ( !$this->confirm("The Zermelo database '".$zermelo_config_db_name."' already exists. Do you want to DROP it and recreate it?")) {
+                $create_zermelo_config_db = false;
+            }
+        }
+
+        if ( $create_zermelo_cache_db ) {
+            $this->runZermeloInitialCacheMigration( $zermelo_cache_db_name );
+        }
+
+        // Do we need to create the cache database, or do we migrate only?
+        if ( $create_zermelo_config_db ) {
+            $this->runZermeloInitialConfigMigration( $zermelo_config_db_name );
         } else {
-            $this->migrateDatabase( $zermelo_db_name );
+            $this->migrateDatabase( $zermelo_config_db_name );
         }
 
         if ( ! $this->option('force') ) {
@@ -72,30 +82,46 @@ class ZermeloInstallCommand extends AbstractZermeloInstallCommand
 
     }
 
-    public function runZermeloInitialMigration( $zermelo_db_name )
+    public function runZermeloInitialCacheMigration( $zermelo_cache_db_name )
     {
         // Create the database
-        if ( ZermeloDatabase::doesDatabaseExist( $zermelo_db_name ) ) {
-            DB::connection()->statement( DB::connection()->raw( "DROP DATABASE IF EXISTS " . $zermelo_db_name . ";" ) );
+        if ( ZermeloDatabase::doesDatabaseExist( $zermelo_cache_db_name ) ) {
+            DB::connection()->statement( DB::connection()->raw( "DROP DATABASE IF EXISTS " . $zermelo_cache_db_name . ";" ) );
         }
 
-        DB::connection()->statement( DB::connection()->raw( "CREATE DATABASE `".$zermelo_db_name."`;" ) );
+        DB::connection()->statement( DB::connection()->raw( "CREATE DATABASE `".$zermelo_cache_db_name."`;" ) );
 
         // Write the database name to the master config
-        config( ['zermelo.ZERMELO_DB' => $zermelo_db_name ] );
+        config( ['zermelo.ZERMELO_CACHE_DB' => $zermelo_cache_db_name ] );
 
         // Configure the database for usage
-        ZermeloDatabase::configure( $zermelo_db_name );
-
-        $this->migrateDatabase( $zermelo_db_name );
+        ZermeloDatabase::configure( $zermelo_cache_db_name );
     }
 
-    public function migrateDatabase( $zermelo_db_name )
+    public function runZermeloInitialConfigMigration( $zermelo_config_db_name )
+    {
+        // Create the database
+        if ( ZermeloDatabase::doesDatabaseExist( $zermelo_config_db_name ) ) {
+            DB::connection()->statement( DB::connection()->raw( "DROP DATABASE IF EXISTS " . $zermelo_config_db_name . ";" ) );
+        }
+
+        DB::connection()->statement( DB::connection()->raw( "CREATE DATABASE `".$zermelo_config_db_name."`;" ) );
+
+        // Write the database name to the master config
+        config( ['zermelo.ZERMELO_CONFIG_DB' => $zermelo_config_db_name ] );
+
+        // Configure the database for usage
+        ZermeloDatabase::configure( $zermelo_config_db_name );
+
+        $this->migrateDatabase( $zermelo_config_db_name, 'vendor/careset/zermelo/database/migrations' );
+    }
+
+    public function migrateDatabase( $dbname, $path )
     {
         Artisan::call('migrate', [
             '--force' => true,
-            '--database' => $zermelo_db_name,
-            '--path' => 'vendor/careset/zermelo/database/migrations'
+            '--database' => $dbname,
+            '--path' => $path
         ]);
     }
 }

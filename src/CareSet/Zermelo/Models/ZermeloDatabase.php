@@ -32,26 +32,21 @@ class ZermeloDatabase
         DB::connection( $database )->statement( DB::raw( "SET SESSION group_concat_max_len = 1000000;" ) );
     }
 
-    public static function hasTable( $table_name )
+    public static function hasTable( $table_name, $connectionName )
     {
-        return Schema::connection( self::connectionName() )->hasTable( $table_name );
+        return Schema::connection( $connectionName )->hasTable( $table_name );
     }
 
-    public static function drop( $table_name )
+    public static function drop( $table_name, $connectionName )
     {
-        return Schema::connection( self::connectionName() )->drop( $table_name );
+        return Schema::connection( $connectionName )->drop( $table_name );
     }
 
-    public static function connectionName()
-    {
-        $zermelo_db = config('zermelo.ZERMELO_DB' );
-        return $zermelo_db;
-    }
 
-    public static function connection()
+    public static function connection($connectionName)
     {
         //
-        return DB::connection( self::connectionName() );
+        return DB::connection( $connectionName );
     }
 
     public static function doesDatabaseExist( $database )
@@ -120,9 +115,9 @@ class ZermeloDatabase
      *
      * @return array
      */
-    public static function getTableColumnDefinition( $table_name ): array
+    public static function getTableColumnDefinition( $table_name, $connectionName ): array
     {
-        $result = self::connection()->select("SHOW COLUMNS FROM {$table_name}");
+        $result = self::connection($connectionName)->select("SHOW COLUMNS FROM {$table_name}");
         $column_meta = [];
         foreach ($result as $column) {
             $column_meta[$column->Field] = [
