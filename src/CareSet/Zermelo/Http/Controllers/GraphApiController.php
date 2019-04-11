@@ -17,7 +17,7 @@ class GraphApiController
     public function index( GraphReportRequest $request )
     {
         $report = $request->buildReport();
-        $cache = new CachedGraphReport( $report );
+        $cache = new CachedGraphReport( $report, zermelo_cache_db() );
         $generatorInterface = new GraphGenerator( $cache );
         return $generatorInterface->toJson();
     }

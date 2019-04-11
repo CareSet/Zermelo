@@ -18,9 +18,21 @@ function graph_api_prefix()
     return $api_prefix;
 }
 
-function zermelo_db()
+function zermelo_cache_db()
 {
-    $db = config("zermelo.ZERMELO_DB" );
+    $db = config("zermelo.ZERMELO_CACHE_DB" );
+    if ( empty($db)) {
+        throw new \Exception("Zermelo Cache DB not set in zermelo.php config file.");
+    }
+    return $db;
+}
+
+function zermelo_config_db()
+{
+    $db = config("zermelo.ZERMELO_CONFIG_DB" );
+    if ( empty($db)) {
+        throw new \Exception("Zermelo Config DB not set in zermelo.php config file.");
+    }
     return $db;
 }
 

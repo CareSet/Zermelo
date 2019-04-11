@@ -52,9 +52,15 @@ Class ZermeloServiceProvider extends \Illuminate\Support\ServiceProvider
         }
 
         // Register the cache database connection if we have a zermelo db
-        $zermelo_db = config( 'zermelo.ZERMELO_DB' );
-        if ( ZermeloDatabase::doesDatabaseExist( $zermelo_db ) ) {
-            ZermeloDatabase::configure( $zermelo_db );
+        $zermelo_cache_db = zermelo_cache_db();
+        if ( ZermeloDatabase::doesDatabaseExist( $zermelo_cache_db ) ) {
+            ZermeloDatabase::configure( $zermelo_cache_db );
+        }
+
+        // Register and configure the config DB
+        $zermelo_config_db = zermelo_config_db();
+        if ( ZermeloDatabase::doesDatabaseExist( $zermelo_config_db ) ) {
+            ZermeloDatabase::configure( $zermelo_config_db );
         }
 	}
 

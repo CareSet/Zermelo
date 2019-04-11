@@ -30,10 +30,10 @@ class CachedGraphReport extends DatabaseCache
     protected $visible_node_types = [];
     protected $visible_link_types = [];
 
-    public function __construct( ZermeloReport $report )
+    public function __construct( ZermeloReport $report, $connectionName )
     {
         // Cache the "main" query
-        parent::__construct( $report );
+        parent::__construct( $report, $connectionName );
 
         $this->node_table = $this->keygen( 'GraphNode' );
         $this->link_table = $this->keygen( 'GraphLinks' );
@@ -49,7 +49,7 @@ class CachedGraphReport extends DatabaseCache
         }
 
         // Go ahead to build the auxilliary tables that represent the nodes and links of the graph
-        $fields = ZermeloDatabase::getTableColumnDefinition( $this->getTableName() );
+        $fields = ZermeloDatabase::getTableColumnDefinition( $this->getTableName(), $this->connectionName );
         $node_index = 0;
         $link_index = 0;
 
@@ -139,7 +139,7 @@ class CachedGraphReport extends DatabaseCache
         $subjects_found = [];
         $weights_found = [];
 
-        $fields = ZermeloDatabase::getTableColumnDefinition( $this->getTableName() );
+        $fields = ZermeloDatabase::getTableColumnDefinition( $this->getTableName(), $this->connectionName );
         foreach ($fields as $field) {
             $column = $field['Name'];
             if (ZermeloDatabase::isColumnInKeyArray($column, $NodeColumns)) {
@@ -154,11 +154,11 @@ class CachedGraphReport extends DatabaseCache
         /*
             Create the cache table
         */
-        ZermeloDatabase::connection()->statement("DROP TABLE IF EXISTS {$this->node_table}");
-        ZermeloDatabase::connection()->statement("DROP TABLE IF EXISTS {$this->link_table}");
-        ZermeloDatabase::connection()->statement("DROP TABLE IF EXISTS {$weight_table}");
+        ZermeloDatabase::connection($this->connectionName)->statement("DROP TABLE IF EXISTS {$this->node_table}");
+        ZermeloDatabase::connection($this->connectionName)->statement("DROP TABLE IF EXISTS {$this->link_table}");
+        ZermeloDatabase::connection($this->connectionName)->statement("DROP TABLE IF EXISTS {$weight_table}");
 
-        Schema::connection(ZermeloDatabase::connectionName())->create( $this->node_table, function ( Blueprint $table ) {
+        Schema::connection($this->connectionName)->create( $this->node_table, function ( Blueprint $table ) {
             $table->bigIncrements('id');
             $table->integer('type')->nullable(false);
             $table->string('value')->nullable(false);
@@ -169,7 +169,7 @@ class CachedGraphReport extends DatabaseCache
             //$table->unique(['type', 'value']);
         });
 
-        Schema::connection(ZermeloDatabase::connectionName())->create( $this->link_table, function ( Blueprint $table ) {
+        Schema::connection($this->connectionName)->create( $this->link_table, function ( Blueprint $table ) {
             $table->bigInteger('source')->nullable(true);
             $table->bigInteger('target')->nullable(true);
             $table->integer('link_type')->nullable(false);
@@ -192,11 +192,11 @@ class CachedGraphReport extends DatabaseCache
                 If we need to build the table, Insert into the node table, all the nodes possible
             */
             if( $this->node_types[$index] ) {
-                ZermeloDatabase::connection()->statement("INSERT INTO {$this->node_table}(type,value,size,sum_weight) SELECT distinct ?,`{$subject}`,0,0 from {$this->getTableName()}", [$index]);
+                ZermeloDatabase::connection($this->connectionName)->statement("INSERT INTO {$this->node_table}(type,value,size,sum_weight) SELECT distinct ?,`{$subject}`,0,0 from {$this->getTableName()}", [$index]);
             }
         }
 
-        ZermeloDatabase::connection()->statement("UPDATE {$this->node_table} A SET A.id = A.id-1;");
+        ZermeloDatabase::connection($this->connectionName)->statement("UPDATE {$this->node_table} A SET A.id = A.id-1;");
 
         foreach ($weights_found as $index => $weight) {
 //            $this->link_types[$index] = [
@@ -216,7 +216,7 @@ class CachedGraphReport extends DatabaseCache
                         }
 
                         if( $this->link_types[$index] )
-                            ZermeloDatabase::connection()->statement("INSERT INTO {$this->link_table}(source,target,link_type,weight)
+                            ZermeloDatabase::connection($this->connectionName)->statement("INSERT INTO {$this->link_table}(source,target,link_type,weight)
                                             SELECT
                                             A.id as source,
                                             B.id as target,
@@ -240,7 +240,7 @@ class CachedGraphReport extends DatabaseCache
                 */
                 $AIndex = 0;
                 $ASubject = $this->node_types[0];
-                ZermeloDatabase::connection()->statement("INSERT INTO {$this->link_table}(source,target,link_type,weight)
+                ZermeloDatabase::connection($this->connectionName)->statement("INSERT INTO {$this->link_table}(source,target,link_type,weight)
                                 SELECT
                                 A.id as source,
                                 null as target,
@@ -261,14 +261,14 @@ class CachedGraphReport extends DatabaseCache
             Calculate the sum_weight per each node.
             This is cross-SQL friendly
         */
-        ZermeloDatabase::connection()->statement("CREATE TABLE {$weight_table} AS
+        ZermeloDatabase::connection($this->connectionName)->statement("CREATE TABLE {$weight_table} AS
             SELECT A.id,sum(COALESCE(B.weight,0) + COALESCE(C.weight,0)) as sum_weight FROM {$this->node_table} AS A
             LEFT JOIN  {$this->link_table} AS B ON B.source = A.id
             LEFT JOIN  {$this->link_table} AS C ON C.target = A.id
             GROUP BY A.id;
         ");
-        ZermeloDatabase::connection()->statement("ALTER TABLE {$weight_table} add primary key(id);");
-        ZermeloDatabase::connection()->statement("UPDATE {$this->node_table} AS A 
+        ZermeloDatabase::connection($this->connectionName)->statement("ALTER TABLE {$weight_table} add primary key(id);");
+        ZermeloDatabase::connection($this->connectionName)->statement("UPDATE {$this->node_table} AS A 
                             SET 
                                 A.sum_weight = (SELECT sum_weight from {$weight_table} AS B WHERE B.id = A.id),
                                 A.degree = (SELECT count(distinct C.source, C.target) from {$this->link_table} as C WHERE (C.source = A.id OR C.target = A.id) AND (C.source IS NOT NULL and C.target IS NOT NULL))
@@ -276,13 +276,13 @@ class CachedGraphReport extends DatabaseCache
         ;");
 
         /* scale the size by the min/max of that type */
-        $results = ZermeloDatabase::connection()->select("select type, min(sum_weight) as min, max(sum_weight) as max, (max(sum_weight) - min(sum_weight)) as localize_max from {$this->node_table} group by type order by type");
+        $results = ZermeloDatabase::connection($this->connectionName)->select("select type, min(sum_weight) as min, max(sum_weight) as max, (max(sum_weight) - min(sum_weight)) as localize_max from {$this->node_table} group by type order by type");
         foreach ($results as $index => $result) {
             $type = $result->type;
             $min = $result->min;
             $max = $result->max;
             $local_max = $result->localize_max;
-            ZermeloDatabase::connection()->statement("UPDATE {$this->node_table} SET size = COALESCE(((sum_weight - ?) / ?) * 100,0) WHERE type = ?", [$min, $local_max, $type]);
+            ZermeloDatabase::connection($this->connectionName)->statement("UPDATE {$this->node_table} SET size = COALESCE(((sum_weight - ?) / ?) * 100,0) WHERE type = ?", [$min, $local_max, $type]);
         }
     }
 

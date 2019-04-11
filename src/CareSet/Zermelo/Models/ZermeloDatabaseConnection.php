@@ -9,27 +9,18 @@
 namespace CareSet\Zermelo\Models;
 
 
-class ZermeloCacheDatabase extends ZermeloDatabase
+class ZermeloDatabaseConnection
 {
-    public static function hasTable( $table_name )
+    protected $connectionName = '';
+
+    public function __construct( $connectionName )
     {
-        return Schema::connection( self::connectionName() )->hasTable( $table_name );
+        $this->connectionName = $connectionName;
     }
 
-    public static function drop( $table_name )
+    public function connectionName()
     {
-        return Schema::connection( self::connectionName() )->drop( $table_name );
+        return $this->connectionName;
     }
 
-    public static function connectionName()
-    {
-        $zermelo_db = config('zermelo.ZERMELO_DB' );
-        return $zermelo_db;
-    }
-
-    public static function connection()
-    {
-        //
-        return DB::connection( self::connectionName() );
-    }
 }
