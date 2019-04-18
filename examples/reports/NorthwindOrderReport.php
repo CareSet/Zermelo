@@ -6,6 +6,10 @@ use CareSet\Zermelo\Reports\Tabular\AbstractTabularReport;
 class NorthwindOrderReport extends AbstractTabularReport
 {
 
+    public $CACHE_ENABLED = false; //caching is advanced functionality, not on during demo
+    public $HOW_LONG_TO_CACHE_IN_SECONDS = 600; //should you want to turn it on, this will apply
+
+
     /*
     * Get the Report Name
     */
