@@ -64,7 +64,7 @@ class ReportGenerator extends AbstractGenerator implements GeneratorInterface
         This makes sure no new columns were added or removed.
          */
         if (count($original_array_key) != count($mapped_header)) {
-            throw new UnexpectedMapRowException();
+            throw new UnexpectedMapRowException("Zermelo Report Error: Unexpected Map Row Exception");
         }
 
 
@@ -89,18 +89,18 @@ class ReportGenerator extends AbstractGenerator implements GeneratorInterface
 
         foreach ($header_format as $name => $format) {
             if (!in_array($name, $mapped_header)) {
-                throw new UnexpectedHeaderException("Column header not found: {$name}");
+                throw new UnexpectedHeaderException("Zermelo Report Error: Column header not found: {$name}");
             }
 
             if ($format !== null && !in_array($format, $this->cache->getReport()->VALID_COLUMN_FORMAT)) {
-                throw new InvalidHeaderFormatException("Invalid column header format: {$format}");
+                throw new InvalidHeaderFormatException("Zermelo Report Error: Invalid column header format: {$format}");
             }
 
         }
 
         foreach ($header_tags as $name => &$tags) {
             if (!in_array($name, $mapped_header)) {
-                throw new UnexpectedHeaderException("Column header not found: {$name}");
+                throw new UnexpectedHeaderException("Zermelo Report Error: Column header not found: {$name}");
             }
 
             if ($tags == null) {
@@ -116,7 +116,7 @@ class ReportGenerator extends AbstractGenerator implements GeneratorInterface
 
                 foreach ($tags as $tag) {
                     if (!in_array($tag, $valid_tags)) {
-                        throw new InvalidHeaderTagException("Invalid tag: {$tag}");
+                        throw new InvalidHeaderTagException("Zermelo Report Error: Invalid tag: {$tag}");
                     }
                 }
             }

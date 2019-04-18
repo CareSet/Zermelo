@@ -68,7 +68,7 @@ class SocketService
                 ])->first();
             }
         } else {
-            throw new \Exception("Zermelo Error: No Wrench found for lookup string=`$key`");
+            throw new \Exception("Zermelo SocketWrench Error: No Wrench found for lookup string=`$key`");
         }
 
         return $foundSocket;

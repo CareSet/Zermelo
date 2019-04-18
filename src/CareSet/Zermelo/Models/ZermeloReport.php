@@ -118,7 +118,7 @@ abstract class ZermeloReport
             $socket = $this->_socketService->fetchSocketForWrenchKey( $wrenchName );
 
             if ( $socket === null ) {
-                throw new Exception("No socket for wrench name $wrenchName");
+                throw new Exception("Zermelo SocketWrench Error: No socket for wrench name $wrenchName");
             }
 
             $this->_activeSockets[$socket->id]= $socket;
@@ -129,7 +129,7 @@ abstract class ZermeloReport
             }
 
         } else {
-			throw new Exception("No wrench name provided");
+			throw new Exception("Zermelo SocketWrench Error: No wrench name provided");
 		}
 
         return $socket->wrench_value;
