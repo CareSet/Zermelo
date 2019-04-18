@@ -40,12 +40,16 @@ class NorthwindCustomerSocketReport extends AbstractTabularReport
     {
 
 	$customer_id = $this->getCode();
-	$customerFilter = $this->getSocket('job_title_filter');
+
+
+	$filters = [];
+	$filters[] = $this->getSocket('job_title_filter');
+	$filters[] = $this->getSocket('big_state_filter');
 
 	if(!is_numeric($customer_id)){
 		//this means that there was no customer_id passed in on the url...
 		//so we have a SQL that will return all of the customers information
-        $sql = "
+        	$sql = "
 SELECT 
 	customer.id AS customer_id, 
 	companyName, 
@@ -55,14 +59,22 @@ SELECT
 	jobTitle, 
 	businessPhone, 
 	homePhone, 
-	mobilePhone
+	mobilePhone,
+	stateProvince
 FROM northwind_model.customer
 ";
 
-        if ( $customerFilter ) {
-            $sql .= " WHERE ".$customerFilter;
-        }
+		$where_then_and = ' WHERE ';
 
+		foreach($filters as $this_filter){
+			if($this_filter){ //blank  strings will not be used, etc
+				$sql .= " $where_then_and $this_filter"; 	
+			
+				$where_then_and = "\n AND "; //we only need the WHERE on the first filter, but we need AND after that
+			}
+		}
+
+	
 	}else{
 		//here we know that $customer_id is numeric, and we should search the database for a mathing customer
         $sql = "
@@ -75,13 +87,20 @@ SELECT
 	jobTitle, 
 	businessPhone, 
 	homePhone, 
-	mobilePhone
+	mobilePhone,
+	stateProvince
 FROM northwind_model.customer
 WHERE customer.id = '$customer_id'
 ";
 
 	}
 
+	$is_debug = false;
+
+	if($is_debug){
+		echo "<pre> $sql";
+		exit();
+	}
 
     	return $sql;
     }
