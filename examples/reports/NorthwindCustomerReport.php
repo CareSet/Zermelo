@@ -71,6 +71,13 @@ SELECT
 FROM northwind_model.customer
 ";
 
+		//lets order this report by companyName to start:
+		//this nessecary, instead of an ORDER BY on the SQL 
+		//because the ORDER BY will impact the SQL -> cache table
+		//but this controls the cache table -> front end connection 
+		$this->setInput('order',[0 => ['companyName' => 'desc']]);
+
+
 	}else{
 		//here we know that $customer_id is numeric, and we should search the database for a mathing customer
         $sql = "
