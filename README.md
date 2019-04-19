@@ -139,6 +139,8 @@ class ExampleReport extends ZermeloReport
     *   $this->getParameters() - which will give an array of every later url segment after the getCode value
     *   $this->getInput() - which will give _GET parameters (etc?)
     * 	$this->setInput($key,$new_value) - a way to override _GET parameters (i.e. for initializing a sort for instance)
+    * 		For instance $this->setInput('order',[0 => ['order_by_me' => 'asc']]); will order the report, to start by the order_by_me column ASC. 
+    *		This replicates what is being passed from the front end data tables to the backend to make sorting work.. 
     **/
     public function GetSQL()
     { 
