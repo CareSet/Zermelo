@@ -17,6 +17,8 @@ class ZermeloInstallCommand extends AbstractZermeloInstallCommand
                     {--database= : Pass in the database name}
                     {--force : Overwrite existing views and database by default}';
 
+    const CONFIG_MIGRATIONS_PATH = 'vendor/careset/zermelo/database/migrations';
+
     public function handle()
     {
         // Do view, config and asset installing first
@@ -55,7 +57,7 @@ class ZermeloInstallCommand extends AbstractZermeloInstallCommand
         if ( $create_zermelo_config_db ) {
             $this->runZermeloInitialConfigMigration( $zermelo_config_db_name );
         } else {
-            $this->migrateDatabase( $zermelo_config_db_name );
+            $this->migrateDatabase( $zermelo_config_db_name, self::CONFIG_MIGRATIONS_PATH );
         }
 
         if ( ! $this->option('force') ) {
@@ -113,7 +115,7 @@ class ZermeloInstallCommand extends AbstractZermeloInstallCommand
         // Configure the database for usage
         ZermeloDatabase::configure( $zermelo_config_db_name );
 
-        $this->migrateDatabase( $zermelo_config_db_name, 'vendor/careset/zermelo/database/migrations' );
+        $this->migrateDatabase( $zermelo_config_db_name, self::CONFIG_MIGRATIONS_PATH );
     }
 
     public function migrateDatabase( $dbname, $path )
