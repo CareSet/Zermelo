@@ -340,7 +340,12 @@ abstract class ZermeloReport
 	public function GetReportName(): string
 	{
 		$me = get_called_class();
-		return $me::REPORT_NAME;
+		if(defined($me::REPORT_NAME)){
+			return $me::REPORT_NAME;
+		}else{
+			//return the class name if there is nothing defined
+			return $me;
+		}
 	}
 	/**
 	 * GetReportDescription
@@ -354,7 +359,11 @@ abstract class ZermeloReport
 	public function GetReportDescription(): ?string
 	{
 		$me = get_called_class();
-		return $me::DESCRIPTION;
+		if(defined($me::DESCRIPTION)){
+			return $me::DESCRIPTION;
+		}else{
+			return $me;
+		}
 	}
 
 
