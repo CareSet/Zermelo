@@ -79,14 +79,4 @@ abstract class AbstractCardsReport extends ZermeloReport
      */
     public $SUGGEST_NO_SUMMARY = [];
 
-    /**
-     * Each row content will be passed to MapRow.
-     * Values and header names can be changed.
-     * Columns cannot be added or removed
-     *
-     */
-    public function MapRow(array $row, int $row_number) :array
-    {
-        return $row;
-    }
 }
