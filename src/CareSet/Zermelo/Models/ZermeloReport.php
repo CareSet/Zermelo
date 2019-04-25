@@ -291,7 +291,10 @@ abstract class ZermeloReport
 	 */
 	public function GetSQL()
 	{
-		abort(500,"The requested report does not have the GetSQL() function defined, this is a required function");
+                //this function should have been overridden by a child class (i.e. a specific report) if this is being called
+                //then the child report is missing the GetSQL() function, which is one of the few required functions.
+                $error = "The requested Zermelo Report class exists, but does not have the GetSQL() function defined, this is a required function";
+                throw new Exception($error);
 	}
 	/**
 	 * MapRow
@@ -330,7 +333,10 @@ abstract class ZermeloReport
 	 */
 	public function GetReportName(): string
 	{
-		abort(500,"The requested report does not have the GetReportName() function defined, this is a required function");
+                //this function should have been overridden by a child class (i.e. a specific report) if this is being called
+                //then the child report is missing the GetReportName() function, which is one of the few required functions.
+                $error = "The requested Zermelo Report class exists, but does not have the GetReportName() function defined, this is a required function";
+                throw new Exception($error);
 	}
 	/**
 	 * GetReportDescription
@@ -343,7 +349,10 @@ abstract class ZermeloReport
 	 */
 	public function GetReportDescription(): ?string
 	{
-		abort(500,"The requested report does not have the GetReportDescription() function defined, this is a required function");
+                //this function should have been overridden by a child class (i.e. a specific report) if this is being called
+                //then the child report is missing the GetReportDescription() function, which is one of the few required functions.
+                $error = "The requested Zermelo Report class exists, but does not have the GetReportDescription() function defined, this is a required function";
+                throw new Exception($error);
 	}
 
 
