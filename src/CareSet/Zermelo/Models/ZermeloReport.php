@@ -35,14 +35,6 @@ abstract class ZermeloReport
 	 */
 	private $_input = [];
 
-	/**
-	 * $_bolt_id
-	 * If Report supports 'Bolting' system, the selected bolt_id will be stored
-	 *
-	 * @var boolean
-	 */
-	private $_bolt_id = false;
-
 	private $_isCacheEnabled = null;
 
 	private $_howLongToCacheInSeconds = null;
@@ -299,7 +291,7 @@ abstract class ZermeloReport
 	 */
 	public function GetSQL()
 	{
-		return null;
+		abort(500,"The requested report does not have the GetSQL() function defined, this is a required function");
 	}
 	/**
 	 * MapRow
@@ -332,20 +324,13 @@ abstract class ZermeloReport
 	/**
 	 * GetReportName
 	 * Return the name of the report,
-	 * By default, this will return the const $REPORT_NAME
-	 * This function can be used to change the report name based on $code,$parameters,$input
+         * This function must be defined in the called class
 	 *
 	 * @return void
 	 */
 	public function GetReportName(): string
 	{
-		$me = get_called_class();
-		if(defined($me::REPORT_NAME)){
-			return $me::REPORT_NAME;
-		}else{
-			//return the class name if there is nothing defined
-			return $me;
-		}
+		abort(500,"The requested report does not have the GetReportName() function defined, this is a required function");
 	}
 	/**
 	 * GetReportDescription
@@ -358,12 +343,7 @@ abstract class ZermeloReport
 	 */
 	public function GetReportDescription(): ?string
 	{
-		$me = get_called_class();
-		if(defined($me::DESCRIPTION)){
-			return $me::DESCRIPTION;
-		}else{
-			return $me;
-		}
+		abort(500,"The requested report does not have the GetReportDescription() function defined, this is a required function");
 	}
 
 
