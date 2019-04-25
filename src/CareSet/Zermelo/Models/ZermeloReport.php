@@ -318,7 +318,7 @@ abstract class ZermeloReport
 	 */
 	public function OverrideHeader(array &$format, array &$tags): void
 	{
-
+		//doing nothing is the default
 	}
 
 	/**
