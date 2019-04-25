@@ -111,9 +111,9 @@ https://github.com/CareSet/Zermelo/blob/master/src/CareSet/Zermelo/Models/Zermel
 <?php
 
 namespace App\Reports;
-use CareSet\Zermelo\Models\ZermeloReport;
+use CareSet\Zermelo\Reports\Tabular\AbstractTabularReport;
 
-class ExampleReport extends ZermeloReport
+class ExampleReport extends AbstractTabularReport
 {
 
     /*
