@@ -7,31 +7,18 @@
 -- Server version: 10.2.22-MariaDB-10.2.22+maria~xenial-log
 -- PHP Version: 7.2.15-1+ubuntu16.04.1+deb.sury.org+1
 
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET AUTOCOMMIT = 0;
-START TRANSACTION;
-SET time_zone = "+00:00";
-
---
--- Database: `_zermelo_config`
---
-
--- --------------------------------------------------------
-
---
--- Table structure for table `socket`
---
-
-CREATE TABLE `socket` (
-  `id` int(10) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `socket` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `wrench_id` int(11) NOT NULL,
   `wrench_value` varchar(1024) NOT NULL,
   `wrench_label` varchar(1024) NOT NULL,
   `is_default_socket` tinyint(1) NOT NULL,
   `socketsource_id` int(11) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
 
 --
 -- Dumping data for table `socket`
@@ -51,12 +38,13 @@ INSERT INTO `socket` (`id`, `wrench_id`, `wrench_value`, `wrench_label`, `is_def
 -- Table structure for table `wrench`
 --
 
-CREATE TABLE `wrench` (
-  `id` int(10) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `wrench` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `wrench_lookup_string` varchar(1024) NOT NULL,
   `wrench_label` varchar(1024) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
@@ -70,33 +58,4 @@ INSERT INTO `wrench` (`id`, `wrench_lookup_string`, `wrench_label`, `created_at`
 --
 -- Indexes for dumped tables
 --
-
---
--- Indexes for table `socket`
---
-ALTER TABLE `socket`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `wrench`
---
-ALTER TABLE `wrench`
-  ADD PRIMARY KEY (`id`);
-
---
--- AUTO_INCREMENT for dumped tables
---
-
---
--- AUTO_INCREMENT for table `socket`
---
-ALTER TABLE `socket`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
-
---
--- AUTO_INCREMENT for table `wrench`
---
-ALTER TABLE `wrench`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-COMMIT;
 
