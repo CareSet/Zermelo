@@ -368,14 +368,6 @@ abstract class ZermeloReport
 
 
 
-	public function SetBolt($id)
-	{
-		$this->_bolt_id = $id;
-	}
-	public function GetBoltId()
-	{
-		return $this->_bolt_id;
-	}
 
 	public function setRequestFormInput( $request_form_input )
 	{
