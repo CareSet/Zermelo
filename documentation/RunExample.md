@@ -11,33 +11,11 @@ can quickly get some example reports working...
 There is a sample DB table and sample reports based on the Northwind customer database in the example directory of 
 the Zermelo project. To run:
 
-1. Import the two northwind database files from [project-root]/vendor/careset/zermelo/example/data using mysql. These 
-files will create two databases and their data. Run these mysql commands from your Laravel project root.
+1. First, load the "MyWind" test databases. 
+You can find the databases, and instructions for loading them here: [https://github.com/CareSet/MyWind_Test_Data](https://github.com/CareSet/MyWind_Test_Data)
+These test databases work for both major CareSet projects: [DURC](https://github.com/CareSet/DURC) and Zermelo (this one).  
 
-    ```
-    $ sudo mysql -u root -p
-    ```
-    ```
-    myslq> source vendor/careset/zermelo/examples/data/northwind_model.sql
-    myslq> source vendor/careset/zermelo/examples/data/northwind_data.sql
-    myslq> source vendor/careset/zermelo/examples/data/tags_report.sql
-    myslq> source vendor/careset/zermelo/examples/data/northwind_socket_example.sql
-    ```
-    ```
-    mysql> show databases;
-    +--------------------+
-    | Database           |
-    +--------------------+
-    | information_schema |
-    | mysql              |
-    | northwind_data     |
-    | northwind_model    |
-    | performance_schema |
-    | sys                |
-    +--------------------+
-    6 rows in set (0.00 sec)
-
-    ```
+Load these databases and verify that they exist using your favorite database administration tool 
 
 1. Then copy the example reports from [project-root]/vendor/careset/zermelo/examples/reports into your app/Reports directory. 
 You will need to create the app/Reports directory if it does not exist. From your project root:
@@ -45,6 +23,9 @@ You will need to create the app/Reports directory if it does not exist. From you
     ```
     $ cp vendor/careset/zermelo/examples/reports/* app/Reports
     ```
+
+Each example report can be accessed using the Zermelo report url. 
+Assuming you have not changed the default urls in the zermelo configuration, you can load the reports in the following way
 
 Example Report tabular views
 ``` 
