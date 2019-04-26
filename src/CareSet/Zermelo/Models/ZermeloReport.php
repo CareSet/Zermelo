@@ -405,6 +405,27 @@ abstract class ZermeloReport
 		return $fn;
 	}
 
+
+	/**
+	 * optional code that can serve to index the cache table. 
+         * SQL must use the string {{_CACHE_TABLE_}} in place of the cache table in the index commands
+         * it returns either null or an array of index SQL commands that can be run against the index table. 
+	 * 
+	 * @return array of SQL templates or false
+	 */
+	public function GetIndexSQL(): ?array
+	{
+		//by default this function returns null, which causes the cache indexer to do nothing... 
+		return null;
+	}
+
+
+
+
+
+
+
+
 }
 
 ?>

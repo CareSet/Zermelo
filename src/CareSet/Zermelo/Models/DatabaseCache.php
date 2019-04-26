@@ -33,8 +33,9 @@ class DatabaseCache implements ReportInterface
             $report->isCacheEnabled() === false ||
             $this->getDoClearCache() == true ||
             $this->isCacheExpired() === true ) {
-            $this->createTable();
-            $this->generatedThisRequest = true;
+			//if any of the above is true, then we need to re-run the create table. 
+            		$this->createTable();
+            		$this->generatedThisRequest = true;
         }
 
         $this->columns = ZermeloDatabase::getTableColumnDefinition( $this->getTableName(), $this->connectionName );
@@ -141,7 +142,14 @@ class DatabaseCache implements ReportInterface
     {
         $this->report->OverrideHeader( $format, $tags );
     }
+/*
+	getIndividualQueries() serves to ensure that the SQL returned by an individual report always takes the same structure
+	inside the reporting engine. 
 
+	Basically, its job is to ensure that it returns an array of SQL singletons. 
+
+
+*/
     public function getIndividualQueries()
     {
         $sql = $this->report->getSQL();
@@ -152,10 +160,13 @@ class DatabaseCache implements ReportInterface
 
         $all_queries = [];
         if (!is_array($sql)) {
-            $sql = [$sql];
+		// we must always return an array. If a report returns a single SQL statement, lets tuck it into an array with just one member
+            	$sql = [$sql];
         }
 
         /*
+	It is possible for single sql text field to contain multiple SQL queries seperated by semicolons. 
+	But we really want an array with elements of single SQL statements
         break up each queries by semi colon,
         we will run each query separately
          */
@@ -168,6 +179,7 @@ class DatabaseCache implements ReportInterface
             }
         }
 
+	//this will always be an array with singleton SQL statements. or false. 
         return $all_queries;
     }
 
@@ -185,57 +197,63 @@ class DatabaseCache implements ReportInterface
         // Clone the cache table, to avoid query modifications that may affect future queries
         $temp_cache_table = clone $this->cache_table;
 
+	//we are starting over, so if the table exists.. lets drop it.
         if ( $this->exists() ) {
             ZermeloDatabase::drop($temp_cache_table->from, $this->connectionName);
         }
 
-        foreach ( $this->getIndividualQueries() as $index => $query ) {
+	//now we will loop over all of the SQL queries that make up the report.
 
-            if ( strpos( strtoupper( $query ), "SELECT", 0 ) === 0 ) {
-                if ( $index == 0 ) {
-                    ZermeloDatabase::connection($this->connectionName)->statement(DB::raw("CREATE TABLE {$temp_cache_table->from} AS {$query}"));
-                } else {
-                    ZermeloDatabase::connection($this->connectionName)->statement(DB::raw("INSERT INTO {$temp_cache_table->from} {$query}"));
-                }
-            } else {
-                ZermeloDatabase::connection($this->connectionName)->statement(DB::raw($query));
-            }
-        }
+	$queries = $this->getIndividualQueries();
 
-        /*
-        Lets try to be clever and attempt to index any 'subject' we have on the table.
-         */
-        if ( config("zermelo.AUTO_INDEX" ) ) {
-            $data_row = $temp_cache_table->first();
-            if ( $data_row ) {
-		$old_data_row = $data_row;
-		$encoded_json = json_encode($data_row);
-		$first_error = json_last_error_msg();
-                $data_row = json_decode( $encoded_json, true );
-		if(is_array($data_row)){
-                	$columns = array_keys( $data_row );
-		}else{
-			echo "<h1> Badly formed UTF-8 characters detected in the data (probably) here is the raw data to help fill it out";
-			//well damn.. what is it then..
-			echo "<pre> $encoded_json $first_error";
-			var_export($data_row);
-			var_export(json_last_error_msg());
-			dd($old_data_row);
-			
+	if($queries){
+        	foreach ( $this->getIndividualQueries() as $index => $query ) {
+
+            		if ( strpos( strtoupper( $query ), "SELECT", 0 ) === 0 ) {
+                		if ( $index == 0 ) {
+					//for the first query, we use a CREATE TABLE statement
+                    			ZermeloDatabase::connection($this->connectionName)->statement(DB::raw("CREATE TABLE {$temp_cache_table->from} AS {$query}"));
+                		} else {
+					//for all subsequent queries we use INSERT INTO to merely add data to the table in question..
+        	   			ZermeloDatabase::connection($this->connectionName)->statement(DB::raw("INSERT INTO {$temp_cache_table->from} {$query}"));
+                		}
+            		} else {
+				//this allows us to database maintainance tasks using UPDATES etc.
+				//not that non-select statements are executed in the same order as they are provideded in the contents of the returned SQL
+                		ZermeloDatabase::connection($this->connectionName)->statement(DB::raw($query));
+            		}
+        	}
+	}else{
+		//the report returned 'false'. 
+		//we need to figure out how to handle this. 
+	}
+
+
+	$table_string_to_replace = '{{_CACHE_TABLE_}}';
+
+	$index_sql_array  = $this->report->GetIndexSQL();
+
+	if(is_null($index_sql_array)){
+		//then this report has not defined any indexes for the index table. 
+		//do nothing... 
+	}else{
+		//lets loop over the index commands, which should have {{_CACHE_TABLE_}} in the place of any database.table name
+		//and then replace that string with our temp table name, and then run those indexes. 
+		foreach($index_sql_query as $this_index_sql_template){
+			if(strpos($this_index_sql_template,$table_string_to_replace) !== false){
+				//then we have the table string... lets replace it. 
+				$index_sql_command = str_replace($table_string_to_replace,$temp_cache_table->from,$this_index_sql_template);
+				//now lets run those index commands... 
+				ZermeloDatabase::connection($this->connectionName)->statement(DB::raw($index_sql_command));
+			}else{
+				throw new Exception("Zermelo Report Error: $this_index_sql_template was retrieved from GetIndexSql() but it did not contain $table_string_to_replace");
+			}
+
 		}
-                $to_index = [];
-                foreach ( $columns as $column ) {
-                    if ( ZermeloDatabase::isColumnInKeyArray( $column, $this->report->INDICIES ) ) {
-                        $to_index[] = "ADD INDEX(`{$column}`)";
-                    }
-                }
-                if ( !empty( $to_index ) ) {
-                    $to_index = "ALTER TABLE {$this->getTableName()} " . implode( ",", $to_index ) . ";";
-                    ZermeloDatabase::connection()->statement( $to_index );
-                }
 
-            }
-        }
+	}
+	
+
     }
 
     /**
