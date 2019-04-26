@@ -8,11 +8,7 @@
 
 namespace CareSet\Zermelo\Models;
 
-
-use CareSet\Zermelo\Exceptions\InvalidDatabaseTableException;
-use CareSet\Zermelo\Interfaces\CacheInterface;
 use Illuminate\Support\Facades\DB;
-use Symfony\Component\VarDumper\Cloner\Data;
 
 class AbstractGenerator
 {
@@ -23,7 +19,7 @@ class AbstractGenerator
     protected $_Table = null;
     protected $_filters = [];
 
-    public function __construct( CacheInterface $cache )
+    public function __construct( DatabaseCache $cache )
     {
         $this->cache = $cache;
     }
@@ -34,7 +30,7 @@ class AbstractGenerator
         {
             if($field == '_')
             {
-                $fields = ZermeloDatabase::getTableColumnDefinition( $this->cache->getTableName() );
+                $fields = ZermeloDatabase::getTableColumnDefinition( $this->cache->getTableName(), zermelo_cache_db() );
                 $this->cache->getTable()->where(function($q) use($fields,$value)
                 {
                     foreach ($fields as $field) {
