@@ -30,11 +30,6 @@ return [
     'GRAPH_API_PREFIX'=>env("GRAPH_API_PREFIX","ZermeloGraph"),
 
     /**
-     * Should the engine auto index any 'subject' it detects in the report
-     */
-    "AUTO_INDEX" => env("REPORT_AUTO_INDEX",true),
-
-    /**
      * Determine if the 'TAGS' will be restricted to the valid TAGS or if they are just suggestions.
      * If RESTRICT_TAGS is set to true and a column is set to an invalid tag, an InvalidHeaderTagException will be thrown
      */
