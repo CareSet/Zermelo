@@ -64,7 +64,7 @@ SELECT
 	businessPhone, 
 	homePhone, 
 	mobilePhone
-FROM northwind_model.customer
+FROM MyWind_northwind_model.customer
 ";
 
 		//lets order this report by companyName to start:
@@ -87,7 +87,7 @@ SELECT
 	businessPhone, 
 	homePhone, 
 	mobilePhone
-FROM northwind_model.customer
+FROM MyWind_northwind_model.customer
 WHERE customer.id = '$customer_id'
 ";
 

@@ -3,6 +3,9 @@
 namespace App\Reports;
 use CareSet\Zermelo\Reports\Tabular\AbstractTabularReport;
 
+//note that we are specifically testing layout features with this report
+//so we will not extend ParentTabularReport... 
+//take a look at OverrideHeader for the real tests that this report undertakes
 class TagsReport extends AbstractTabularReport
 {
 
@@ -32,7 +35,7 @@ class TagsReport extends AbstractTabularReport
     public function GetSQL()
     {
 	//replace with your own SQL
-        $sql = "SELECT * FROM zermelo_tags.tags_report";
+        $sql = "SELECT * FROM MyWind_aaa.tags_report";
     	return $sql;
     }
 
@@ -45,21 +48,6 @@ class TagsReport extends AbstractTabularReport
     */
     public function MapRow(array $row, int $row_number) :array
     {
-
-    	/*
-		//this logic would ensure that every cell in the TABLE_NAME column, was converted to a link to
-		//a table drilldown report
-		$table_name = $row['TABLE_NAME'];
-
-		$row['TABLE_NAME'] = "Gotta Love Those Row Decorations: $table_name";
-
-		//this will make table name a link to another report
-		//$row['TABLE_NAME'] = "<a href='/Zermelo/TableDrillDownReport/$table_name/'>$table_name</a>";
-
-		//this will do the same thing, but styling the link as a bootstrap button.
-		//$row['TABLE_NAME'] = "<a class='btn btn-primary btn-sm' href='/Zermelo/TableDrillDownReport/$table_name/'>$table_name</a>";
-	*/
-
         return $row;
     }
 

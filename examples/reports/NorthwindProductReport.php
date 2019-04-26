@@ -30,7 +30,7 @@ class NorthwindProductReport extends ParentTabularReport
     public function GetSQL()
     {
         $sql = "SELECT productCode, productName, standardCost, listPrice
-                FROM northwind_model.product";
+                FROM MyWind_northwind_model.product";
     	return $sql;
     }
 
