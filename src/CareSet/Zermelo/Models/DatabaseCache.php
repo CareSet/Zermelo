@@ -239,7 +239,7 @@ class DatabaseCache implements ReportInterface
 	}else{
 		//lets loop over the index commands, which should have {{_CACHE_TABLE_}} in the place of any database.table name
 		//and then replace that string with our temp table name, and then run those indexes. 
-		foreach($index_sql_query as $this_index_sql_template){
+		foreach($index_sql_array as $this_index_sql_template){
 			if(strpos($this_index_sql_template,$table_string_to_replace) !== false){
 				//then we have the table string... lets replace it. 
 				$index_sql_command = str_replace($table_string_to_replace,$temp_cache_table->from,$this_index_sql_template);
