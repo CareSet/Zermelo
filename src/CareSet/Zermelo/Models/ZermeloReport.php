@@ -137,6 +137,17 @@ abstract class ZermeloReport
 		return $this->_activeWrenches;
 	}
 
+	/**
+	*	will return true if there are wrenches that have been configured for this report, false if not
+	*/
+	public function hasActiveWrenches(): bool {
+		if(count($this->_activeWrenches) > 0){
+			return(true);
+		}else{
+			return(false);
+		}
+	}
+
 
     /**
      * Get the URI key for the resource.
