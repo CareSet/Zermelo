@@ -16,7 +16,17 @@ class NorthwindProductReport extends ParentTabularReport
     * Get the Report Description, can be html
     */
     public function GetReportDescription(): ?string {
-    	return('The list of all northwind products');
+    	$html = "<p>
+The list of all northwind products.
+<br>
+List of things to test:</p>
+<ul>
+	<li>Currently, not very much, but soon, we will use this report to test the auto-column summary features of Zermelo </li>
+</ul>
+
+";
+
+	return($html);
     }
 
 	/**

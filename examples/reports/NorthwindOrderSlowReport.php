@@ -36,7 +36,7 @@ class NorthwindOrderSlowReport extends ParentTabularReport
     * to prevent frequent re-indexing...
     */
    public function howLongToCacheInSeconds(){
-        return(1200); //twenty minutes by default
+        return(120); //two minutes by default
    }
 
  
@@ -52,7 +52,14 @@ class NorthwindOrderSlowReport extends ParentTabularReport
     */
     public function GetReportDescription(): ?string {
 
-		$html = "This report is just like <a href='/Zermelo/NorthwindOrderIndexReport'>Northwind Order Index Report</a> except that it does not use indexes. So for sufficiently large data.. it should be slower.";
+		$html = "<p>This report is just like <a href='/Zermelo/NorthwindOrderIndexReport'>Northwind Order Index Report</a> except that it does not use indexes. So for sufficiently large data.. it should be slower.
+<br>
+Test the following on this report </p>
+<ul>
+	<li> It should search slower than the indexed version of the report </li>
+	<li> The field type for product_list on the backend should be LONGTEXT, assuming that is what the mysql engine continues to do with GROUP_CONCAT created fields </li>
+</ul>
+";
 		return($html);
     }
 

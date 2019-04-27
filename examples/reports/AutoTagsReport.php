@@ -6,7 +6,7 @@ use CareSet\Zermelo\Reports\Tabular\AbstractTabularReport;
 //note that we are specifically testing layout features with this report
 //so we will not extend ParentTabularReport... 
 //take a look at OverrideHeader for the real tests that this report undertakes
-class TagsReport extends AbstractTabularReport
+class AutoTagsReport extends AbstractTabularReport
 {
 
     /*
@@ -26,8 +26,8 @@ This is a report designed to test the tags and formatting functionality
 <br>
 Things to test</p>
 <ul>
-	<li> Basically, each field in this report exists to demonstrate that each field acts the way that it should, based on its entry in the OverrideHeader() function in the report </li>
-	<li>So we should review each field and make sure that it looks correct. </li> 
+	<li> The report uses the same source data as the TagsReport, but uses a blank OverrideHeader() function </li>
+	<li> instead this report names the fields in ways that should auto-invoke the right formatting processes </li>
 </ul>
 
 ";
@@ -45,7 +45,12 @@ Things to test</p>
     public function GetSQL()
     {
 	//replace with your own SQL
-        $sql = "SELECT * FROM MyWind_aaa.tags_report";
+        $sql = "
+SELECT 
+`url_field` AS should_auto_format_url
+FROM MyWind_aaa.tags_report
+";
+
     	return $sql;
     }
 
@@ -67,21 +72,6 @@ Things to test</p>
     */
     public function OverrideHeader(array &$format, array &$tags): void
     {
-        $tags['field_to_bold_in_report_display'] = 	    ['BOLD'];
-        $tags['field_to_hide_by_default'] = 		    ['HIDDEN'];
-        $tags['field_to_italic_in_report_display'] = 	['ITALIC'];
-        $tags['field_to_right_align_in_report'] = 	    ['RIGHT'];
-        $tags['field_to_bolditalic_in_report_display'] = ['BOLD','ITALIC'];
-
-        //How to set the format of the display
-        $format['numeric_field'] = 			'NUMBER'; // Formats number in table using commas, and right-aligns
-        $format['decimal_field'] = 			'DECIMAL'; // Formats decimal to 4 places, and right-aligns
-        $format['currency_field'] = 	    'CURRENCY'; // adds $ or Eurosign and right align
-        $format['percent_field'] = 			'PERCENT'; // adds % in the right place and right align
-        $format['url_field'] = 			    'URL'; // auto-link using <a href='$url_field'>$url_field</a>
-        $format['date_field'] = 			'DATE'; // future date display
-        $format['datetime_field'] = 		'DATETIME'; //future date time display
-        $format['time_field'] = 			'TIME'; // future time display
     }
 
  	/**

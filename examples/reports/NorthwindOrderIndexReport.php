@@ -15,6 +15,14 @@ class NorthwindOrderIndexReport extends ParentTabularReport
     public function GetIndexSQL(): ?array {
 
 		$index_sql = [
+//the results of a GROUP_CONCAT are stored by MySQL as LONGTEXT, but that is not convenient to simply index...
+//so to start lets convert it to a VARCHAR
+"ALTER TABLE {{_CACHE_TABLE_}}  CHANGE `product_list` `product_list` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL;",
+//lets do the same thing with shipAddress
+"ALTER TABLE {{_CACHE_TABLE_}}  CHANGE `shipAddress` `shipAddress` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL;",
+//which we can then index with a simple index command
+"ALTER TABLE {{_CACHE_TABLE_}}  ADD INDEX(`product_list`);",
+"ALTER TABLE {{_CACHE_TABLE_}}  ADD INDEX(`shipAddress`);",
 "ALTER TABLE {{_CACHE_TABLE_}}  ADD PRIMARY KEY(`order_id`);",
 "ALTER TABLE {{_CACHE_TABLE_}}  ADD INDEX(`shipName`);",
 "ALTER TABLE {{_CACHE_TABLE_}}  ADD INDEX(`employee_first_name`);",
@@ -44,7 +52,7 @@ class NorthwindOrderIndexReport extends ParentTabularReport
     * to prevent frequent re-indexing...
     */
    public function howLongToCacheInSeconds(){
-        return(1200); //twenty minutes by default
+        return(120); //two minutes by default
    }
 
  
@@ -60,10 +68,18 @@ class NorthwindOrderIndexReport extends ParentTabularReport
     */
     public function GetReportDescription(): ?string {
 
-                $html = "
+                $html = "<p>
 The performance of this report should be pretty zippy for ordering and for searching various fields... because the cache table has been indexed. <br>
 Compare this to  <a href='/Zermelo/NorthwindOrderSlowReport'>Northwind Order Slow Report</a> 
-which is the same report but without indexes";
+which is the same report but without indexes<br>
+Test this report for </p>
+<ul>
+	<li>To make sure that the caching is functioning correctly. It has a very short cache time to facilitate this </li>
+	<li>To make sure that cache indexing is working correctly. Confirm that the back-end cache in _zermelo_cache (presumably) is properly indexed </li>
+	<li>The index SQL stage can run any SQL, including SQL that changes the field types of the cache, make sure those work </li>
+	<li>Do some searches and filters that are designed to test the backend system and make sure that indexing is effective </li>
+</ul>
+";
 
 	return($html);
     }

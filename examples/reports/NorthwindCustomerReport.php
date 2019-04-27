@@ -23,7 +23,22 @@ class NorthwindCustomerReport extends ParentTabularReport
 	if(!is_numeric($customer_id)){
 		//this means that there was no customer_id passed in on the url...
 		//so we have a SQL that will return all of the customers information
-		return('This is a list of all of Northwinds Customers');
+$html = "
+<p> This is a basic list of all Northwind Customers. <br>
+On this interface test:</p>
+<ul>
+	<li> The field search functions should work. For instance, type something in the search box about 'LastName' and make sure the results are correct </li>
+	<li> Assuming you are using the randomized data, there is no relationship between the fields... so that you can search for different name in the email field, for instance </li>
+	<li>Test the print view </li>
+	<li>Test that the print view only has filtered rows </li>
+	<li> Test that sorting works on all the column types (numbers, words and dates at least) </li>
+	<li> TEst that you can hide and unhide columns </li>
+	<li> test that column hiding stays on when the print view is used </li>
+	<li> Test that maximizing and minimizing the description (i.e. this list goes away and then comes back) works correctly </li>
+		
+</ul>
+";
+		return($html);
 	}else{
 		//we have only one customer here... so we will only see one customer.
 		//we need to give users a way to get back to the list of all customers...

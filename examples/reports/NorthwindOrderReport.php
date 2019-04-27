@@ -22,7 +22,15 @@ class NorthwindOrderReport extends ParentTabularReport
 <p>
 This report demonstrates how you can add bootstrap HTML forms to your reports, and how to work with the form data inside the report. <br>
 Using this report, you can specify a start and end date and limit the orders to those dates.
+<br>
+Use this report to test for: 
 </p>
+<ul>
+	<li> Make sure that a GET Form an communicate with the backed report class </li>
+	<li> Make sure that the backend creates a different cache for the GET search results </li>
+	<li> Make sure that the results of the GET form can be downloaded in its limited form (i.e. not the whole data report) </li>
+	 
+</ul>
 
 <form method='GET'>
   <div class='form-group row'>

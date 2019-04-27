@@ -20,7 +20,19 @@ class NorthwindCustomerSocketReport extends ParentTabularReport
     {
 
         return "This is the customer database filtered using the socket/wrench system which can be configured 
-            using the `Current Data View` button on the UI";
+            using the `Data Options` button on the UI
+<br>
+What to test here: 
+<ul>
+	<li> Do you see several data options when you click the 'Data Options' button? </li>
+	<li> Choose an option and confirm that it works </li> 
+	<li> Choose an option that is impossible to do with just search and/or sort in datatabels and confirm that this works </li>
+	<li> Make sure that the data comes back when you turn off the data options </li>
+	<li> Make sure that two data options correctly work together </li>
+	<li> Confirm that there are seperate caches created for each data option in _zermelo_cache </li>
+	<li> Confirm that when you download the csv file, you are downloading with the data options applied </li>
+</ul>
+";
 
     }
 
