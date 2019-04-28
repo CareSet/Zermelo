@@ -151,7 +151,6 @@ abstract class ZermeloReport
 
     /**
      * Get the URI key for the resource.
-     *
      * @return string
      */
     public static function uriKey()
@@ -275,9 +274,11 @@ abstract class ZermeloReport
 		$inputs = $this->_input;
 		if($key!==null)
 		{
-			if(isset($inputs[$key]))
+			if(isset($inputs[$key])){
 				return $inputs[$key];
-			return null;
+			}else{
+				return null;
+			}
 		}
 		return $this->_input;
 	}
@@ -430,8 +431,45 @@ abstract class ZermeloReport
 		return null;
 	}
 
+	
+/*
+	This function gets string that indicates the current state of the SQL, without considering things that could 
+	be temporarily modifying what is shown on the screen, (like order and filter commands from datatables) 
+        This function should be used to generate the name of the cache table, as well as data download functionality..
+        Basically, this determines when a specific data request is different.
+        There are lots of inputs to the system that might be considered..
+        But if they do not change the SQL from GetSQL() in the end they do not matter
+        So we actually use an md5 on the SQL from the report to make the key.
+        If the SQL changes, then the inputs matter enough to be cached in a different table
+        And if the SQL output does not change, then it is really the same cache..
+*/
+	public function getDataIdentityKey($prefix = ''): string{
 
+	        $shortenedPrefix = $prefix;
+        	if ( strlen( $shortenedPrefix ) > 31 ) {
+            		$shortenedPrefix = substr( $shortenedPrefix, 0, max( strlen( $shortenedPrefix ), 31 ) );
+        	}
+        // Get the report key, can be a maximum of 64 chars
+        //   md5 = 32
+        // + "_" = 1
+        // + max( ReportClassName, 31 )
+        // = 64
 
+        //when any of the following strings change then it really is a different
+        //ending data output... which means it needs to have a different data cache...
+                $sql = $this->GetSQL();
+                if(!is_array($sql)){
+                        $sql = [$sql]; //make it an array..
+                }
+                $identity_string =      $this->getClassName() . '-' .
+                                        $this->getCode() . '-' . //note that we do this just to make table and directory listings easier to read.. the data is fully captured in the SQL
+                                        implode('-',$sql);	//which is why we do not need to add paramaters (etc) to this identity function... 
+
+        //lets make this into something short that can be used to make a good table name in the cache.
+        	$key = $shortenedPrefix."_".md5($identity_string);
+        	return $key;
+
+	}
 
 
 

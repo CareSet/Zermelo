@@ -49,37 +49,11 @@ class DatabaseCache implements ReportInterface
     }
 /*
 	This function generates the name of the cache table. 
-	Basically, this determines when a specific data request is different. 
-	There are lots of inputs to the system that might be considered..
-	But if they do not change the SQL from GetSQL() in the end they do not matter
-	So we actually use an md5 on the SQL from the report to make the key. 
-	If the SQL changes, then the inputs matter enough to be cached in a different table
-	And if the SQL output does not change, then it is really the same cache..
+	It refers to the getDataIdentityKey() function on the report... 
 */
     protected function keygen( $prefix = "" )
     {
-        $shortenedPrefix = $prefix;
-        if ( strlen( $shortenedPrefix ) > 31 ) {
-            $shortenedPrefix = substr( $shortenedPrefix, 0, max( strlen( $shortenedPrefix ), 31 ) );
-        }
-        // Get the report key, can be a maximum of 64 chars
-        //   md5 = 32
-        // + "_" = 1
-        // + max( ReportClassName, 31 )
-        // = 64
-
-	//when any of the following strings change then it really is a different 
-	//ending data output... which means it needs to have a different data cache...
-		$sql = $this->report->GetSQL();
-		if(!is_array($sql)){
-			$sql = [$sql]; //make it an array..
-		}
-		$identity_string = 	$this->report->getClassName() . '-' .
-					$this->report->getCode() . '-' .
-					implode('-',$sql);
-
-	//lets make this into something short that can be used to make a good table name in the cache. 
-        $key = $shortenedPrefix."_".md5($identity_string);
+	$key = $this->report->getDataIdentityKey($prefix);
         return $key;
     }
 
