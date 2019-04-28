@@ -65,7 +65,7 @@ class TabularPresenter extends AbstractPresenter
 		$s = '&';
 	}//now $get_string should either have all of the _GET _POST parameters or be blank string
 
-        $report_api_uri = "/{$this->getApiPrefix()}/{$this->getReportPath()}/{$this->_report->uriKey()}/Download/{$dataIdentityString}$get_string";
+        $report_api_uri = "/{$this->getApiPrefix()}/{$this->getReportPath()}/{$this->_report->uriKey()}/Download/{$parameterString}$get_string";
 
         return $report_api_uri;
     }
