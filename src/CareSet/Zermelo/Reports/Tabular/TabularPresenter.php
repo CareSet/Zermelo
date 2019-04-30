@@ -56,14 +56,8 @@ class TabularPresenter extends AbstractPresenter
         $parameterString = implode("/", $this->_report->getMergedParameters() );
 	//we also need to pass along _GET and _POST parameters by forcing them all into _GET...
 
-	$s = '?'; //the first and only the first GET parameter is prefixed by this...
-	$get_string = '';	
-	foreach($this->_report->getInput() as $input_key => $input_value){
-		$ue_input_value = urlencode($input_value); 
-		$ue_input_key = urlencode($input_key); //should not need this.. but just to be careful..
-		$get_string .= "$s$ue_input_key=$ue_input_value"; 	
-		$s = '&';
-	}//now $get_string should either have all of the _GET _POST parameters or be blank string
+	//convert all input into a _GET argument
+	$get_string = '?' . http_build_query($this->_report->getInput());
 
         $report_api_uri = "/{$this->getApiPrefix()}/{$this->getReportPath()}/{$this->_report->uriKey()}/Download/{$parameterString}$get_string";
 
