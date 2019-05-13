@@ -3,13 +3,14 @@
 namespace CareSet\Zermelo\Http\Controllers;
 
 use CareSet\Zermelo\Http\Requests\TabularReportRequest;
+use CareSet\Zermelo\Models\ZermeloMeta;
 use CareSet\Zermelo\Models\DatabaseCache;
 use CareSet\Zermelo\Reports\Tabular\ReportGenerator;
 use CareSet\Zermelo\Reports\Tabular\ReportSummaryGenerator;
 use DB;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
-class TabularApiController
+class TabularApiController extends AbstractController
 {
     public function index( TabularReportRequest $request )
     {
@@ -37,7 +38,7 @@ class TabularApiController
     public function download( TabularReportRequest $request )
     {
         $report = $request->buildReport();
-        $connectionName = config('zermelo.CACHE_DB');
+        $connectionName = zermelo_cache_db();
         $cache = new DatabaseCache( $report, $connectionName );
         $summaryGenerator = new ReportSummaryGenerator( $cache );
         $header = $summaryGenerator->runSummary();
