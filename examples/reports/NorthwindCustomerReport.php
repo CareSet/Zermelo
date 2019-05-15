@@ -27,6 +27,7 @@ $html = "
 <p> This is a basic list of all Northwind Customers. <br>
 On this interface test:</p>
 <ul>
+	<li> There is an initial sort on this report, which means that it should start with company Z and go backwards down the alphabet (DESC sort) </li>
 	<li> The field search functions should work. For instance, type something in the search box about 'LastName' and make sure the results are correct </li>
 	<li> Assuming you are using the randomized data, there is no relationship between the fields... so that you can search for different name in the email field, for instance </li>
 	<li>Test the print view </li>
@@ -86,7 +87,9 @@ FROM MyWind_northwind_model.customer
 		//this nessecary, instead of an ORDER BY on the SQL 
 		//because the ORDER BY will impact the SQL -> cache table
 		//but this controls the cache table -> front end connection 
-		$this->setInput('order',[0 => ['companyName' => 'desc']]);
+		//we use setInputDefault instead of setInput because we do not want to lock the sorting...
+		//we just want to have an initial sort. 
+		$this->setInputDefault('order',[0 => ['companyName' => 'desc']]);
 
 
 	}else{
