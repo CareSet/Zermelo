@@ -18,7 +18,7 @@ To load the test databases the repo must be cloned into the directory next to th
 
 cd to vagrant@homestead:~/code
 
-Do: $ git clone https://github.com/CareSet/MyWind_Test_Data.git
+	$ git clone https://github.com/CareSet/MyWind_Test_Data.git
 
 Assuming it cloned w/ no errors cd into the new repo dir:
 
