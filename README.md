@@ -15,7 +15,7 @@ Core Reporting features
 * Report automatically generates JSON data source that can be used as an API
 * Supports Laravel's Blade templating engine out of the box (with more effort supports any front end templating engine).
 
-We have a [feature roadmap](FullFeature.md) if you want to see where we are going
+We have a [feature roadmap](FullFeature.md) if you want to see where we are going and an extended list of Zermello Reporting features.
 
 ScreenShot that explains everything
 --------------------------
@@ -26,11 +26,11 @@ ScreenShot that explains everything
 Architecture
 ------------------
 
-Read the [Architecture documentation](documentation/Architecture.md)
+Read the [Architecture diagram](documentation/Architecture.md)
 Zermelo is doing the hard work of translating "mere SQL" into something that can be consistently and performantly loaded into a single browser session. 
 Zermelo understands how to push the hard work to the MariaDB/MySQL server, ensuring that the browser gets its data in dribbles. The backend is having to do a huge amount of work in order make that happen. 
 
-There are some queries that will legitimately take hours for the backend to run, even when the resulting data is only a few hundred rows of results. In order to support these heavy loads, Zermelo understands how to cache results. 
+Some queries will legitimately take hours for the backend to run, even when the resulting data is only a few hundred rows of results. In order to support these heavy loads, Zermelo understands how to cache results. 
 It always caches the results, but for most queries, it always refreshes the cache on every browser call. 
 
 You, the user, get to control how this works. Look at the [Controlling the Cache](documentation/ControlCaching.md) documentation to see how.
@@ -42,9 +42,10 @@ How to get started using it
 ### Prerequisites
 You will need a modern LAMP server with at least php 7.2 and at least Laravel 5.5
 [Complete Prerequisites](documentation/Prerequisites.md)
+Once the prerequisites are completed you should be able to check URLs on host system's browser at URL: homestead.test
 
-### Quick Start
-
+### Database Setup
+Skip this section if your Laravel instance already has access to the dB it needs.
 Look in [Basic Installation](documentation/BasicInstall.md) for complete installation instructions
 
 For a quick start, assuming your Laravel instance already has access to the DB that it needs
