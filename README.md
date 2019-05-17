@@ -44,9 +44,8 @@ You will need a modern LAMP server with at least php 7.2 and at least Laravel 5.
 [Complete Prerequisites](documentation/Prerequisites.md)
 Once the prerequisites are completed you should be able to check URLs on host system's browser at URL: homestead.test
 
-### Database Setup
-Skip this section if your Laravel instance already has access to the dB it needs.
-Look in [Basic Installation](documentation/BasicInstall.md) for complete installation instructions
+### Installation
+Look in [Basic Installation](documentation/BasicInstall.md) for complete installation instructions and database setup.
 
 For a quick start, assuming your Laravel instance already has access to the DB that it needs
 
