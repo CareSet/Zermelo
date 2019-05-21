@@ -12,9 +12,11 @@ To load the test databases the repo must be cloned into the directory next to th
 	Have the database root-enabled password ready.  It may be found in:
 	/home/vagrant/code/zermelo-demo/.env
 		defaults are:
-		DB_USERNAME=homestead
-		DB_PASSWORD=secret
-	If needed obtain the repo path from https://github.com/CareSet/MyWind_Test_Data
+
+	DB_USERNAME=homestead
+	DB_PASSWORD=secret
+
+If needed obtain the repo path from https://github.com/CareSet/MyWind_Test_Data
 
 cd to vagrant@homestead:~/code
 
@@ -28,15 +30,13 @@ Assuming it cloned w/ no errors cd into the new repo dir:
 
 
 There is a sample DB table and sample reports based on the Northwind customer database in the example directory of 
-the Zermelo project. To run:
+the Zermelo project.
 
-1. First, load the "MyWind" test databases. 
-You can find the databases, and instructions for loading them here: [https://github.com/CareSet/MyWind_Test_Data](https://github.com/CareSet/MyWind_Test_Data)
 These test databases work for both major CareSet projects: [DURC](https://github.com/CareSet/DURC) and Zermelo (this one).  
 
-Load these databases and verify that they exist using your favorite database administration tool 
+1. Load these databases and verify that they exist using your favorite database administration tool 
 
-1. Then copy the example reports from [project-root]/vendor/careset/zermelo/examples/reports into your app/Reports directory. 
+2. Then copy the example reports from [project-root]/vendor/careset/zermelo/examples/reports into your app/Reports directory. 
 You will need to create the app/Reports directory if it does not exist. From your project root:
 
     ```
