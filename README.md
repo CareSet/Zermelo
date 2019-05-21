@@ -27,7 +27,7 @@ Architecture
 ------------------
 
 Read the [Architecture diagram](documentation/Architecture.md)
-Zermelo is doing the hard work of translating "mere SQL" into something that can be consistently and performantly loaded into a single browser session. 
+Zermelo is doing the hard work of translating "mere SQL" into something that can consistently and with minimal impact on performance be loaded into a single browser session. 
 Zermelo understands how to push the hard work to the MariaDB/MySQL server, ensuring that the browser gets its data in dribbles. The backend is having to do a huge amount of work in order make that happen. 
 
 Some queries will legitimately take hours for the backend to run, even when the resulting data is only a few hundred rows of results. In order to support these heavy loads, Zermelo understands how to cache results. 
