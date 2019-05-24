@@ -79,10 +79,10 @@ This is a good place to start if you are just exploring the system. Read, [Runni
 ### Configuration Notes 
 1. Edit the file `config/zermelo.php` to change core zermelo settings
 1. Edit the file `config/zermelobladetabular.php` to change settings specific to zermelo blade tabular view package.
-1. If your app already has an App\Reports namespace and directory, you can change the REPORT\_NAMESPACE setting in 
+1. If your app already has an app\Reports namespace and directory, you can change the REPORT\_NAMESPACE setting in 
 config/zermelo.php to something else like "Zermelo" and then create an app/Zermelo directory 
 to place your example report in. Note: you will also need to change the namespace of Northwind\*Reports.php files to "namespace 
-App\Zermelo;" if you change the REPORT\_NAMESPACE.
+app\Zermelo;" if you change the REPORT\_NAMESPACE.
 1. If you ran these commands as root user, you'll have to change the ownership of the php files so they are readable
 by the webserver.
 1. If the reports don't run take a look at: `[project-root]/storage/logs/laravel.log` for errors
