@@ -29,7 +29,7 @@ you can put 'northwind_data' for the DB_DATABASE. If you have an existing databa
     ```
     php artisan install:zermelobladetabular
     ```
-    This will create a zermelo directory in your resources directory containing blade view templates. This will also publish the configuration file to your app's config directory, and move assets (js, css) to public/vendor.
+    This will create a reports directory in your resources directory containing blade view templates. This will also publish the configuration file to your app's config directory, and move assets (js, css) to public/vendor.
 
     ```
     mkdir app/Reports
