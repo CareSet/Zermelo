@@ -22,7 +22,7 @@ cd to vagrant@homestead:~/code
 
 	$ git clone https://github.com/CareSet/MyWind_Test_Data.git
 
-Assuming it cloned w/ no errors cd into the new repo dir:
+Assuming it cloned with no errors cd into the new repo dir:
 
     vagrant@homestead:~/code$ cd MyWind_Test_Data/
 
