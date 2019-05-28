@@ -111,6 +111,11 @@ In home dir of /home/vagrant/code/zermelo-demo
 	$ php artisan install:zermelo
 	$ php artisan install:zermelobladetabular
 
+When you install the zermelobladetabular package, Just Say No to 'replace' all those files EXCEPT:
+	'The [zermelo/tabular.blade.php] view already exists'  Y  (replace it!)
+	'The [zermelo/layouts/tabular.blade.php] view already exists.' Y  (replace it!)
+
+
 ### Creating Your First Report
 1. In order to get your first report, you need to create a report file. The easiest way to create an new report file
 is to run: 
@@ -119,7 +124,7 @@ is to run:
 
 To understand what this does, take a look at the example report model below.
 
-2. Edit the new file `/app/Zermelo/YourNewReportName` (or, with the defaults mentioned in the instructions, `/app/Reports/[YourNewReportName]`)
+2. Edit the new file `/app/Zermelo/[YourNewReportName]` (or, with the defaults mentioned in the instructions, `/app/Reports/[YourNewReportName]`)
  You must fill in a reasonable GetSQL() function that returns either a single SQL text string, or an array of SQL text strings.
 3. Point your browser to https://yourapp.example.com/Zermelo/YourNewReportName
 4. Enjoy seeing your data in an automatically pagable [Datatables](https://datatables.net/) display!!
