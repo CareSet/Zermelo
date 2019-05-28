@@ -95,6 +95,7 @@ by the webserver.
 ### Start a Session
 (with the Homestead VM installed)
 In the terminal do:
+
 	$ cd ~/Homestead/
 	$ vagrant up
 	$ vagrant ssh
@@ -114,7 +115,7 @@ In home dir of /home/vagrant/code/zermelo-demo
 1. In order to get your first report, you need to create a report file. The easiest way to create an new report file
 is to run: 
 
-`php artisan make:zermelo [YourNewReportName]`
+	`php artisan make:zermelo [YourNewReportName]`
 
 To understand what this does, take a look at the example report model below.
 
