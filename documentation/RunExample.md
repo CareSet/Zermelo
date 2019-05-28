@@ -8,26 +8,7 @@ A PHP reporting engine that works especially well with Laravel, built with love 
 We use a variation on the classic northwind database to test Zermelo features. We include the schema and data for those databases so that you 
 can quickly get some example reports working...
 
-To load the test databases the repo must be cloned into the directory next to the laravel project dir.
-	Have the database root-enabled password ready.  It may be found in:
-	/home/vagrant/code/zermelo-demo/.env
-		defaults are:
-
-	DB_USERNAME=homestead
-	DB_PASSWORD=secret
-
-If needed obtain the repo path from https://github.com/CareSet/MyWind_Test_Data
-
-cd to vagrant@homestead:~/code
-
-	$ git clone https://github.com/CareSet/MyWind_Test_Data.git
-
-Assuming it cloned with no errors cd into the new repo dir:
-
-    vagrant@homestead:~/code$ cd MyWind_Test_Data/
-
-    vagrant@homestead:~/code/MyWind_Test_Data$ php load_databases.php
-
+To load the test databases the repo must be cloned into the directory next to the laravel project dir.  Your location will vary depending on your Laravel config.
 
 There is a sample DB table and sample reports based on the Northwind customer database in the example directory of 
 the Zermelo project.
