@@ -119,8 +119,8 @@ is to run:
 
 To understand what this does, take a look at the example report model below.
 
-2. Edit the new file `/app/Zermelo/YourNewReportName` You must fill in a reasonable GetSQL() function that returns either a 
-single SQL text string, or an array of SQL text strings.
+2. Edit the new file `/app/Zermelo/YourNewReportName` (or, with the defaults mentioned in the instructions, `/app/Reports/[YourNewReportName]`)
+ You must fill in a reasonable GetSQL() function that returns either a single SQL text string, or an array of SQL text strings.
 3. Point your browser to https://yourapp.example.com/Zermelo/YourNewReportName
 4. Enjoy seeing your data in an automatically pagable [Datatables](https://datatables.net/) display!!
 5. Various functions and constants in the report file can dramatically change how the report is displayed on the front end. Use them to change the reports (a good first hack is to use the MapRow function to link one report to another report)
