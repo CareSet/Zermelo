@@ -92,6 +92,24 @@ This is a good place to start if you are just exploring the system. Read, [Runni
 by the webserver.
 1. If the reports don't run take a look at: `[project-root]/storage/logs/laravel.log` for errors
 
+### Start a Session
+(with the Homestead VM installed)
+In the terminal do:
+	$ cd ~/Homestead/
+	$ vagrant up
+	$ vagrant ssh
+	$ cd /home/vagrant/code/zermelo-demo
+
+Then you're on the VM command line where you run all your composer and artisan commands.
+
+### Update to New Version of zermelo
+In home dir of /home/vagrant/code/zermelo-demo
+
+	$ composer require careset/zermelo
+	$ composer require careset/zermelobladetabular
+	$ php artisan install:zermelo
+	$ php artisan install:zermelobladetabular
+
 ### Creating Your First Report
 1. In order to get your first report, you need to create a report file. The easiest way to create an new report file
 is to run: 
