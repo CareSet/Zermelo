@@ -54,13 +54,7 @@ class TabularPresenter extends AbstractPresenter
     public function getDownloadUri()
     {
         $parameterString = implode("/", $this->_report->getMergedParameters() );
-	//we also need to pass along _GET and _POST parameters by forcing them all into _GET...
-
-	//convert all input into a _GET argument
-	$get_string = '?' . http_build_query($this->_report->getInput());
-
-        $report_api_uri = "/{$this->getApiPrefix()}/{$this->getReportPath()}/{$this->_report->uriKey()}/Download/{$parameterString}$get_string";
-
+        $report_api_uri = "/{$this->getApiPrefix()}/{$this->getReportPath()}/{$this->_report->uriKey()}/Download/{$parameterString}";
         return $report_api_uri;
     }
 
@@ -80,7 +74,7 @@ class TabularPresenter extends AbstractPresenter
 
     public function getPageLength()
     {
-        $page_length =  $this->_report->getParameter("length") ?: null;
+        $page_length =  $this->_report->getParameter("length") ?: 50;
         return $page_length;
     }
 

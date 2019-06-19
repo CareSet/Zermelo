@@ -1,8 +1,15 @@
 <?php
-
+/**
+ * This is the base report class for all report types.
+ * Each report sub-class has it's own file in Zermelo/Reports
+ * such as Zermelo/Reports/Tabular/AbstractTabularReport.php
+ * This file contains functionality that pertains to all report
+ * types, where the more specific report sub-classes contain
+ * functionality specific to their usage.
+ *
+ */
 namespace CareSet\Zermelo\Models;
 use CareSet\Zermelo\Services\SocketService;
-use Illuminate\Support\Str;
 use Mockery\Exception;
 use \Request;
 
@@ -33,7 +40,12 @@ abstract class ZermeloReport
 	 *
 	 * @var array
 	 */
-	private $_input = [];
+	protected $_input = [];
+
+	/*
+	 * Store the column name and direction of the default sort order to pass to UI
+	 */
+	private $_default_sort_order = [];
 
 	private $_isCacheEnabled = null;
 
@@ -231,25 +243,6 @@ abstract class ZermeloReport
 	}
 
 
-	/**
-	 * setInputDefault
-	 * This will set an input value unless one has already been set, allows report to define things like default sorts (etc) 
-	 * But if the user changes things, it will be allowed to override.
-	 * @return void
-	 */
-	public function setInputDefault($key, $new_value)
-	{
-
-		if(isset($this->_input[$key])){
-			return(false);
-		}else{		
-			$this->_input[$key] = $new_value;
-			return(true);
-		}
-	}
-
-	
-	
 	/**
 	 * setInput
  	 * a useful but dangerous function that allows for specific reports to override the input that comes from a user before it is used.

@@ -86,10 +86,8 @@ FROM MyWind_northwind_model.customer
 		//lets order this report by companyName to start:
 		//this nessecary, instead of an ORDER BY on the SQL 
 		//because the ORDER BY will impact the SQL -> cache table
-		//but this controls the cache table -> front end connection 
-		//we use setInputDefault instead of setInput because we do not want to lock the sorting...
-		//we just want to have an initial sort. 
-		$this->setInputDefault('order',[0 => ['companyName' => 'desc']]);
+		//but this controls the cache table -> front end connection
+		$this->setDefaultSortOrder('companyName','desc' );
 
 
 	}else{

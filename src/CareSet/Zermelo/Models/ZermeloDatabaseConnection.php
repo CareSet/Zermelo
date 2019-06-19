@@ -4,6 +4,8 @@
  * User: kchapple
  * Date: 4/8/19
  * Time: 11:15 AM
+ *
+ * Wrapper for a database connection
  */
 
 namespace CareSet\Zermelo\Models;

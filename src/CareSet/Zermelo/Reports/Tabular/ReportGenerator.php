@@ -301,10 +301,6 @@ class ReportGenerator extends AbstractGenerator implements GeneratorInterface
     public function toJson()
     {
         $Report = $this->cache->getReport();
-        $input_bolt = $Report->getParameter('data-option' );
-        $report_name = trim($Report->getClassName());
-        $Code = $Report->getCode();
-        $Parameters = $Report->getParameters();
 
         $paging_length = $Report->getInput("length") ?? 1000;
 
@@ -334,6 +330,8 @@ class ReportGenerator extends AbstractGenerator implements GeneratorInterface
         }
 
         $orderBy = $Report->getInput('order') ?? [];
+
+        // This is where we want to merge in our "defaults" ??
         $associated_orderby = [];
 
         foreach ($orderBy as $order) {

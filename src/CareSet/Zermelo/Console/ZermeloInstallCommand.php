@@ -11,6 +11,11 @@ use Illuminate\Support\Facades\File;
 
 class ZermeloInstallCommand extends AbstractZermeloInstallCommand
 {
+    /*
+     * Automatically copy the zermelo.js library in assets/js
+     */
+    protected $asset_path = __DIR__.'/../assets';
+
     protected $config_file = __DIR__.'/../config/zermelo.php';
 
     protected $signature = 'install:zermelo

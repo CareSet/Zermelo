@@ -4,6 +4,10 @@
  * User: kchapple
  * Date: 9/7/18
  * Time: 9:19 AM
+ *
+ * This is a class of database helpers to perform common operations,
+ * like dynamically configuring a database with Laravel, checking if
+ * database exists, getting meta data, etc.
  */
 
 namespace CareSet\Zermelo\Models;
@@ -52,6 +56,11 @@ class ZermeloDatabase
     public static function doesDatabaseExist( $database )
     {
         $query = "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME =  ?";
+
+        // In case the database in the database.php or .env file doesn't exist, we can safely
+        // set this to null so the select call will work, otherwise, we get a mysterious error
+        config(["database.connections.mysql.database" => null]);
+
         try {
             $db = DB::select( $query, [ $database ] );
         } catch ( \Exception $e ) {
