@@ -105,7 +105,9 @@ When you install the zermelobladetabular package, Just Say No to 'replace' all t
 	'The [zermelo/layouts/tabular.blade.php] view already exists.' Y  (replace it!)
 
 
-### Creating Your First Report
+Make your first Report
+------------------
+
 1. In order to get your first report, you need to create a report file. The easiest way to create an new report file
 is to run: 
 
@@ -303,7 +305,108 @@ class ExampleReport extends AbstractTabularReport
 
 ```
 
-### TROUBLESHOOTING
+
+Advanced Features
+------------------
+
+One of the most advanced features is the use of the "socket/wrench" notion inside reports. 
+
+Essentially, each "wrench" that you ask for in a report using:
+```
+$this->getSocket('someWrenchName');
+```
+
+You can call this function anywhere you want in your report file, but usually it is called from the GetSQL()
+function, so that you can use the results to build your sql. 
+
+Will ask the user to choose between options that are associated with the 'someWrenchSocket'
+To use it you have to setup as 'socketwrench' database and populate it with the following tables...
+
+```
+--
+-- Table structure for table `socketsource`
+--
+
+CREATE TABLE `socketsource` (
+  `id` int(11) NOT NULL,
+  `socketsource_name` varchar(255) NOT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `socket_user`
+--
+
+CREATE TABLE `socket_user` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `wrench_id` int(11) NOT NULL,
+  `current_chosen_socket_id` int(11) NOT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `wrench`
+--
+
+CREATE TABLE `wrench` (
+  `id` int(11) NOT NULL,
+  `wrench_lookup_string` varchar(255) NOT NULL,
+  `wrench_label` varchar(255) NOT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `socket`
+--
+ALTER TABLE `socket`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `wrench_value` (`socket_value`,`socket_label`),
+  ADD KEY `wrench_id` (`wrench_id`);
+
+--
+-- Indexes for table `socketsource`
+--
+ALTER TABLE `socketsource`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `socket_user`
+--
+ALTER TABLE `socket_user`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `wrench`
+--
+ALTER TABLE `wrench`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `wrench_lookup_string` (`wrench_lookup_string`);
+
+```
+
+Then you determine what options are available for each "wrench" by putting the options in the 
+socket database, linking to the right wrench_id. The user can choose which socket they want (they will only see the socket_label text). And then in your code.. you get to have the contents of that choice (socket_value) available to help build your SQL. 
+
+Take a look at the NorthwindCustomerSocketReport.php in the examples/reports directory for an idea of the implications and
+an example use case.
+
+This lets you write one report that operates on a multitude of underlying tables.. and the end user can choose
+which tables they want the report to target, for instance.
+
+
+TROUBLESHOOTING
 ------------------
 
 I'm seeing a 404 error when I browse to my report url.
@@ -311,7 +414,7 @@ I'm seeing a 404 error when I browse to my report url.
 * Make sure your report file is in the proper directory in App and is properly namespaced.
 * Make sure your report class is a subclass of ZermeloReport, or else it will not be picked up by the engine
 
-### Why 'Zermelo'?
+Why 'Zermelo'?
 ------------------
 Zermelo has been developed by [CareSet Systems](https://careset.com) which provides extensive reporting on CMS, Medicare and Medicaid data. We developed Zermelo to make that task easier. CareSet systems uses Set Theory, SQL and Graph technology to datamine Medicare claims data. We chose the name "CareSet" for our company to highlight our data approach (our logo contains a graph and a 'set' of nodes, which we thought was a good illustration of our analytical approach. In any case, because of our focus on Set-theory approaches to data analytics we thought we should celebrate a famous set theory mathematician with the names of our Open Source projects. 
 
