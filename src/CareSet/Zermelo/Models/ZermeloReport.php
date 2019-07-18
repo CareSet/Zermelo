@@ -136,7 +136,7 @@ abstract class ZermeloReport
 			throw new Exception("Zermelo SocketWrench Error: No wrench name provided");
 		}
 
-        return $socket->wrench_value;
+        return $socket->socket_value;
 	}
 
 	public function isActiveSocket($id)
