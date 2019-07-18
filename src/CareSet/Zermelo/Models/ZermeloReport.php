@@ -216,6 +216,26 @@ abstract class ZermeloReport
 		return $this->_code;
 	}
 
+
+	/**
+	 * getNumericCode
+	 * This is a convenience wrapper to getCode()
+	 * Frequently you want to get the code if an only if it is numeric...
+         * This function simplfies this, and returns an number if the argument is numeric, but returns false if it is not numeric
+	 *
+	 * @return int or boolean
+	 */
+	public function getNumericCode()
+	{
+		if(is_numeric($this->_code)){
+			return $this->_code;
+		}else{
+			return false;
+		}
+	}
+	
+
+
     /**
      * @param $key
      * @return bool|mixed
