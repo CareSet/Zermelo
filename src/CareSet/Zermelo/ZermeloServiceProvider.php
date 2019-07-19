@@ -69,8 +69,11 @@ Class ZermeloServiceProvider extends \Illuminate\Support\ServiceProvider
         // routes
         $this->registerApiRoutes();
 
-        // Boot our reports
-        $this->registerReports();
+        // Boot our reports, but only in web mode. We don't care to register reports
+        // during composer package discovery, or installation
+        if (php_sapi_name() !== 'cli') {
+            $this->registerReports();
+        }
 	}
 
     /**

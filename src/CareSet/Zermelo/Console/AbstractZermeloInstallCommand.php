@@ -4,6 +4,7 @@ namespace CareSet\Zermelo\Console;
 
 use Illuminate\Console\Command;
 use Illuminate\Console\DetectsApplicationNamespace;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
 
 abstract class AbstractZermeloInstallCommand extends Command
@@ -119,6 +120,7 @@ abstract class AbstractZermeloInstallCommand extends Command
 
     protected function exportConfig()
     {
+        $doCopy = true;
         $filename = basename( $this->config_file );
 
         if ( file_exists( config_path( $filename ) ) &&
@@ -127,14 +129,25 @@ abstract class AbstractZermeloInstallCommand extends Command
             // If the configs are identical, or if the user doesn't want to... don't overwrite
             if ( self::filesIdentical( $this->config_file, config_path( $filename )) ||
                 !$this->confirm("The [{$filename}] config already exists. Do you want to replace it?")) {
-                return;
+                $doCopy = false;
             }
         }
 
-        copy(
-            $this->config_file,
-            config_path( $filename )
-        );
+        // Test to see if old/current config is missing any "new" settings from the package
+        $newConfig = include $this->config_file;
+        $currentConfig = include config_path( $filename );
+        foreach ($newConfig as $key => $value) {
+            if (!isset($currentConfig[$key])) {
+                $this->error("Your current configuration file is missing required setting `{$key}`. Please refer to the package config `{$this->config_file}` to copy the default setting value.");
+            }
+        }
+
+        if ($doCopy) {
+            copy(
+                $this->config_file,
+                config_path($filename)
+            );
+        }
     }
 
     protected function exportAssets()
