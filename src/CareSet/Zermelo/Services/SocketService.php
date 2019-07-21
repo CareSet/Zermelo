@@ -48,9 +48,49 @@ class SocketService
         return $this->activeSockets;
     }
 
+   /*
+	Get all of the sockets for a given wrenchString aand 
+	return then as an associative array... 
+   */
+    public function fetchAllSocketsForWrenchKey( $key )
+    {
+        $wrench = Wrench::where( 'wrench_lookup_string', $key )->first();
+        if ( $wrench !== null ) {
+
+		//I know their is an Eloquent way to do this.. not work the bother...  
+		$sockets = Socket::where('wrench_id', $wrench->id)->get();
+
+		$socket_list_to_return = [];
+
+		//lets build a simple flat list with the expected contents... 
+		foreach($sockets as $this_socket){
+			$socket_list_to_return[$this_socket->id] = [
+						'socket_label' => $this_socket->socket_label,
+						'socket_value' => $this_socket->socket_value,
+						'is_default_socket' => $this_socket->is_default_socket,
+						'wrench_id' =>  $wrench->id,
+						'wrench_lookup_string' => $wrench->wrench_lookup_string,
+						'wrench_label' => $wrench->wrench_label,
+					];
+		}
+
+		return($socket_list_to_return);
+
+        } else {
+            throw new \Exception("Zermelo SocketWrench Error: No Wrench found for lookup string=`$key`");
+        }
+
+        return $foundSocket;
+    }
+
+
+   /*
+	Does the grunt work for fetching a specific socket.
+   */
     public function fetchSocketForWrenchKey( $key )
     {
         $wrench = Wrench::where( 'wrench_lookup_string', $key )->first();
+	//TODO It is not at all obvious what this code block is doing. This needs documentation...
         if ( $wrench !== null ) {
             $foundSocket = null;
             foreach ( $this->activeSockets as $activeSocket ) {
