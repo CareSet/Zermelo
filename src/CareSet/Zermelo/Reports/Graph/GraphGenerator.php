@@ -27,16 +27,9 @@ class GraphGenerator extends AbstractGenerator
      */
     public function toJson(): array
     {
-        /*
-        If there is a filter, lets apply it to each column
-         */
 
-/*
-        $nodes =  ZermeloDatabase::connection($this->cache->getConnectionName())->table($this->cache->getNodeTable())->select("id", "type", "value", "size", "sum_weight","degree")->whereIn('type',$node_types )->get();
-        $links = ZermeloDatabase::connection($this->cache->getConnectionName())->table($this->cache->getLinkTable())->select("source", "target", "link_type", "weight")->whereIn('link_type',$link_types)->whereNotNull("source")->whereNotNull("target")->get();
-*/
-
-
+	$start_time = microtime(true);
+	
 	$cache_table_name_key = $this->cache->getKey();
 	$cache_table = $this->cache->getTableName();
 	$connection_name = $this->cache->getConnectionName();
@@ -53,6 +46,7 @@ class GraphGenerator extends AbstractGenerator
 	$node_groups_table = "node_groups_$cache_table_name_key";
 	$links_table = "links_$cache_table_name_key";
 	$link_types_table = "link_types_$cache_table_name_key";
+	$summary_table = "summary_$cache_table_name_key";
 
 	$sql = [];
 
@@ -222,8 +216,41 @@ UPDATE $cache_db.$node_groups_table SET id = id - 1
 ";
 
 
+	$sql["drop the summary table"] = "
+DROP TABLE IF EXISTS $cache_db.$summary_table;
+";
 
+	$sql["create the summary table with the group count"] = "
+CREATE TABLE $cache_db.$summary_table AS 
+SELECT 
+	'group_count                            ' AS summary_key,
+	COUNT(DISTINCT(group_name))  AS summary_value
+FROM $cache_db.$node_groups_table
+";
 
+	$sql["add the type count"] = "
+INSERT INTO $cache_db.$summary_table
+SELECT 
+	'type_count' AS summary_key,
+	COUNT(DISTINCT(node_type)) AS summary_value
+FROM $cache_db.$node_types_table
+";
+
+	$sql["add the node count"] = "
+INSERT INTO $cache_db.$summary_table
+SELECT 
+	'nodes_count' AS summary_key,
+	COUNT(DISTINCT(`id`)) AS summary_value
+FROM $cache_db.$nodes_table
+";
+
+	$sql["add the edge count"] = "
+INSERT INTO $cache_db.$summary_table
+SELECT 
+	'links_count' AS summary_key,
+	COUNT(DISTINCT(CONCAT(source_id,target_id))) AS summary_value
+FROM $cache_db.$cache_table
+";
 
 
 
@@ -368,21 +395,66 @@ ORDER BY nodes.id DESC
 			];
 	}
 
+	//lets sort the links
+	$links_sql = "
+SELECT 
+	source_nodes.id AS `source`,
+	target_nodes.id AS `target`, 
+	`weight`, 
+	link_types.id AS `link_type`
+FROM $cache_db.$cache_table AS graph
+JOIN $cache_db.$nodes_table AS source_nodes ON 
+	source_nodes.node_id =
+    	graph.source_id
+JOIN $cache_db.$nodes_table AS target_nodes ON 
+	target_nodes.node_id =
+    	graph.target_id  
+JOIN $cache_db.$link_types_table AS link_types ON 
+	link_types.link_type =
+    	graph.link_type
+";
+	//lets load the link_types from the database...
+	$links = [];
+	$links_result = DB::select(DB::raw($links_sql));
+	foreach($links_result as $this_row){
 
+		$links[] = [
+			'source' => $this_row->source,
+			'target' => $this_row->target,
+			'weight' => $this_row->weight,
+			'link_type'  => $this_row->link_type,
+			];
+	}
+
+	//lets export the summary data on the graph
+	
+	$summary_sql = "
+SELECT 
+	summary_key,
+	summary_value
+FROM $cache_db.$summary_table
+";
+
+	$summary = [];
+	$summary_result = DB::select(DB::raw($summary_sql));
+	foreach($summary_result as $this_row){
+		$summary[][$this_row->summary_key] = $this_row->summary_value;
+	}
+
+	$time_elapsed = microtime(true) - $start_time;	
+
+	$summary[]['seconds_to_process'] = $time_elapsed;
 
 	//now we put it all together to return the results...
         return [
 		'Report_Name' => $report_name,
 		'Report_Description' => $report_description,
+		'summary' => $summary,
 		'groups' => $node_groups,
             	'types' => $node_types,
             	'link_types' => $link_types,
-            	'links' => [],
             	'nodes' => $nodes,
-            	'cache_meta_generated_this_request' => [],
-            	'cache_meta_last_generated' => [],
-            	'cache_meta_expire_time' => [],
-            	'cache_meta_cache_enabled' => []
+            	'links' => $links,
         ];
     }
 
