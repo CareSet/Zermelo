@@ -319,20 +319,53 @@ FROM $cache_db.$node_groups_table
 	//lets sort the nodes
 	$link_types_sql = "
 SELECT 
-	id AS my_index,
-	link_type AS label,
-	count_distinct_link AS link_type_count
-FROM $cache_db.$link_types_table	
+	`node_name` AS name,
+	CONCAT(SUBSTR(node_name,0,20)) AS short_name,
+	`node_latitude` AS latitude,
+	`node_longitude` AS longitude,
+	groups.id AS `group`,
+	node_size AS size,
+	node_img AS img,
+	nodes.id AS `type`,
+	`node_id` AS id,
+	0 AS weight_sum,
+	0 AS degree,
+	nodes.id AS my_index
+FROM $cache_db.$nodes_table AS nodes
+LEFT JOIN $cache_db.$node_groups_table AS groups ON 
+	groups.group_name =
+    	node_group
+LEFT JOIN $cache_db.$node_types_table AS types ON 
+	types.node_type = 
+    	nodes.node_type 
+ORDER BY nodes.id DESC
 ";
 	//lets load the link_types from the database...
-	$link_types = [];
-	$link_types_result = DB::select(DB::raw($link_types_sql));
-	foreach($link_types_result as $this_row){
+	$nodes = [];
+	$nodes_result = DB::select(DB::raw($link_types_sql));
+	foreach($nodes_result as $this_row){
 
-		$link_types[$this_row->my_index] = [
-			'id' => $this_row->label,
-			'label' => $this_row->label,
-			'link_type_count' => $this_row->link_type_count,
+		if(is_null($this_row->img)){
+			$img = false;
+		}else{
+			$img = $this_row->img;
+		}
+
+		//we would this version result in an object instead of an array?? confusing
+//		$nodes[$this_row->my_index] = [
+		$nodes[] = [
+				'name' => $this_row->name,
+				'short_name' => $this_row->short_name,
+				'longitude' => $this_row->longitude,
+				'latitiude' => $this_row->latitude,
+				'group' => $this_row->group,
+				'size' => $this_row->size,
+				'img' => $img,
+				'type' => $this_row->type,
+				'id' => $this_row->id,
+				'weight_sum' => $this_row->weight_sum,
+				'degree' => $this_row->degree,
+				'my_index' => $this_row->my_index,
 			];
 	}
 
@@ -346,7 +379,7 @@ FROM $cache_db.$link_types_table
             	'types' => $node_types,
             	'link_types' => $link_types,
             	'links' => [],
-            	'nodes' => [],
+            	'nodes' => $nodes,
             	'cache_meta_generated_this_request' => [],
             	'cache_meta_last_generated' => [],
             	'cache_meta_expire_time' => [],
