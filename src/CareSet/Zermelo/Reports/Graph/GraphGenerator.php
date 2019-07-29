@@ -447,9 +447,13 @@ FROM $cache_db.$summary_table
 
 	//now we put it all together to return the results...
         return [
+		'careset_name' => 'For backwards compatibility',
+		'careset_code' => '1112223334',
 		'Report_Name' => $report_name,
 		'Report_Description' => $report_description,
+		'Report_Key' => $cache_table_name_key,
 		'summary' => $summary,
+		'config' => [], //not implemented..
 		'groups' => $node_groups,
             	'types' => $node_types,
             	'link_types' => $link_types,
