@@ -317,10 +317,9 @@ FROM $cache_db.$node_groups_table
 	}
 
 	//lets sort the nodes
-	$link_types_sql = "
+	$nodes_sql = "
 SELECT 
 	`node_name` AS name,
-	CONCAT(SUBSTR(node_name,0,20)) AS short_name,
 	`node_latitude` AS latitude,
 	`node_longitude` AS longitude,
 	groups.id AS `group`,
@@ -342,7 +341,7 @@ ORDER BY nodes.id DESC
 ";
 	//lets load the link_types from the database...
 	$nodes = [];
-	$nodes_result = DB::select(DB::raw($link_types_sql));
+	$nodes_result = DB::select(DB::raw($nodes_sql));
 	foreach($nodes_result as $this_row){
 
 		if(is_null($this_row->img)){
@@ -355,17 +354,17 @@ ORDER BY nodes.id DESC
 //		$nodes[$this_row->my_index] = [
 		$nodes[] = [
 				'name' => $this_row->name,
-				'short_name' => $this_row->short_name,
+				'short_name' => substr($this_row->name,0,20),
 				'longitude' => $this_row->longitude,
 				'latitiude' => $this_row->latitude,
-				'group' => $this_row->group,
-				'size' => $this_row->size,
+				'group' => (int) $this_row->group,
+				'size' => (int) $this_row->size,
 				'img' => $img,
-				'type' => $this_row->type,
+				'type' => (int) $this_row->type,
 				'id' => $this_row->id,
-				'weight_sum' => $this_row->weight_sum,
-				'degree' => $this_row->degree,
-				'my_index' => $this_row->my_index,
+				'weight_sum' => (int) $this_row->weight_sum,
+				'degree' => (int) $this_row->degree,
+				'my_index' => (int) $this_row->my_index,
 			];
 	}
 
