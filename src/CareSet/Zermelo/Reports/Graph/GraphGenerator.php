@@ -50,6 +50,7 @@ class GraphGenerator extends AbstractGenerator
 
 	$nodes_table = "nodes_$cache_table_name_key";
 	$node_types_table = "node_types_$cache_table_name_key";
+	$node_groups_table = "node_groups_$cache_table_name_key";
 	$links_table = "links_$cache_table_name_key";
 	$link_types_table = "link_types_$cache_table_name_key";
 
@@ -109,6 +110,11 @@ GROUP BY node_id, node_name, node_type, node_group, node_longitude, node_latitud
 ALTER TABLE $cache_db.$nodes_table ADD `id` INT(11) NOT NULL AUTO_INCREMENT FIRST, ADD PRIMARY KEY (`id`); 
 ";
 
+	$sql["add an index to the string id for the nodes, so tha we can join"] =  "
+ALTER TABLE $cache_db.$nodes_table   ADD INDEX(`node_id`);
+";
+
+
 	//we do this because we need to have something that starts from zero for our JSON indexing..
 	$sql["array that starts from zero"] = "
 UPDATE $cache_db.$nodes_table SET id = id - 1
@@ -146,7 +152,7 @@ UPDATE $cache_db.$link_types_table SET id = id - 1
 ";
 
 
-	//Sort the node table...
+	//Sort the node type table...
 	
 	$sql["drop node type table"] = "
 DROP TABLE IF EXISTS $cache_db.$node_types_table
@@ -182,29 +188,163 @@ ALTER TABLE $cache_db.$node_types_table ADD `id` INT(11) NOT NULL AUTO_INCREMENT
 UPDATE $cache_db.$node_types_table SET id = id - 1
 ";
 
+	//we use the same "distinct on the results of a union of two distincts" method
+	//that we used to sort the nodes... but this time we get a unique list of node types...
+	$sql["drop node group table"] = "
+DROP TABLE IF EXISTS $cache_db.$node_groups_table
+";
+	
+	$sql["create node group table"] = "
+CREATE TABLE $cache_db.$node_groups_table
+SELECT 	
+	group_name, 
+	COUNT(DISTINCT(node_id)) AS count_distinct_node
+FROM (
+		SELECT DISTINCT 
+			source_group AS group_name,
+			source_id AS node_id
+		FROM $cache_db.$cache_table
+	UNION 
+		SELECT DISTINCT 
+			target_type AS group_name,
+			target_id AS node_id
+		FROM $cache_db.$cache_table 
+	) AS  merged_node_type
+GROUP BY group_name
+";
+	
+	$sql["create unique id for node group table"] = "
+ALTER TABLE $cache_db.$node_groups_table ADD `id` INT(11) NOT NULL AUTO_INCREMENT FIRST, ADD PRIMARY KEY (`id`);
+";
+
+	$sql["the node group table should start from zero"] =  "
+UPDATE $cache_db.$node_groups_table SET id = id - 1
+";
+
+
+
+
+
+
+
+	//loop all over the sql commands and run each one in order...
 	foreach($sql as $this_sql){	
 		ZermeloDatabase::connection($connection_name)->statement(DB::raw($this_sql));
 	}
+
 	$report_description = $this->report->getReportDescription();
 	$report_name = $this->report->getReportName();
 
+	//lets read in the node types
+
 	$node_types_sql = "
 SELECT 
+	id AS my_index,
 	node_type AS id,
 	node_type AS label,
 	CONCAT('/api/',node_type) AS data_url_stub,
 	CONCAT(node_type,'_dust') AS dust,
 	0 AS is_img,
 	'' AS img_stub,
-	
+	count_distinct_node AS type_count
+FROM $cache_db.$node_types_table	
+";
+	//lets load the node_types from the database...
+	$node_types = [];
+	$node_types_result = DB::select(DB::raw($node_types_sql));
+	foreach($node_types_result as $this_row){
+
+		//handle the differeces between json and mysql/php here for is_img
+		if($this_row->is_img){
+			$is_img = false;
+		}else{
+			$is_img = $this_row->is_img;
+		}
+		
+		$node_types[$this_row->my_index] = [
+			'id' => $this_row->id,
+			'label' => $this_row->label,
+			'data_url_stub' => $this_row->data_url_stub,
+			'dust' => $this_row->dust,
+			'is_img' => $is_img,
+			'img_stub' => $this_row->img_stub,
+			'type_count' => $this_row->type_count,
+			];
+	}
+
+	//lets read in the link types
+
+	$link_types_sql = "
+SELECT 
+	id AS my_index,
+	link_type AS label,
+	count_distinct_link AS link_type_count
+FROM $cache_db.$link_types_table	
+";
+	//lets load the link_types from the database...
+	$link_types = [];
+	$link_types_result = DB::select(DB::raw($link_types_sql));
+	foreach($link_types_result as $this_row){
+
+		$link_types[$this_row->my_index] = [
+			'id' => $this_row->label,
+			'label' => $this_row->label,
+			'link_type_count' => $this_row->link_type_count,
+			];
+	}
+
+	//lets read in the link types
+
+	$group_sql = "
+SELECT 
+	id AS my_index,
+	group_name AS id,
+	group_name AS name,
+	count_distinct_node AS group_count
+FROM $cache_db.$node_groups_table	
 ";
 
+	//lets load the link_types from the database...
+	$node_groups = [];
+	$node_groups_result = DB::select(DB::raw($group_sql));
+	foreach($node_groups_result as $this_row){
 
+		$node_groups[$this_row->my_index] = [
+			'id' => $this_row->id,
+			'name' => $this_row->name,
+			'group_count' => $this_row->group_count,
+			];
+	}
+
+	//lets sort the nodes
+	$link_types_sql = "
+SELECT 
+	id AS my_index,
+	link_type AS label,
+	count_distinct_link AS link_type_count
+FROM $cache_db.$link_types_table	
+";
+	//lets load the link_types from the database...
+	$link_types = [];
+	$link_types_result = DB::select(DB::raw($link_types_sql));
+	foreach($link_types_result as $this_row){
+
+		$link_types[$this_row->my_index] = [
+			'id' => $this_row->label,
+			'label' => $this_row->label,
+			'link_type_count' => $this_row->link_type_count,
+			];
+	}
+
+
+
+	//now we put it all together to return the results...
         return [
 		'Report_Name' => $report_name,
 		'Report_Description' => $report_description,
-            	'node_types' => [],
-            	'link_types' => [],
+		'groups' => $node_groups,
+            	'types' => $node_types,
+            	'link_types' => $link_types,
             	'links' => [],
             	'nodes' => [],
             	'cache_meta_generated_this_request' => [],
@@ -213,4 +353,7 @@ SELECT
             	'cache_meta_cache_enabled' => []
         ];
     }
+
+
+
 }
