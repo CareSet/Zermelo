@@ -105,6 +105,32 @@ abstract class ZermeloReport
 		$this->_socketService = $socketService;
 	}
 
+
+    /**
+     * @param string|null $wrenchName
+	 *
+	 * Get all of the sockets and their labels for a given wrenchName
+	 * 
+	 * The last setting is saved before we get here in the ReportBuilder
+     */
+	public function getAllSockets( string $wrenchName = null )
+	{
+		$sockets = null;
+		if ( $wrenchName ) {
+
+            		// Get the user selected socket for this wrench
+            		$sockets = $this->_socketService->fetchAllSocketsForWrenchKey( $wrenchName );
+
+            		if ( $sockets === null ) {
+                		throw new Exception("Zermelo SocketWrench Error: getAllSockets: No sockets for wrench name $wrenchName");
+            		}
+
+        	} else {
+			throw new Exception("Zermelo SocketWrench Error: getAllSockets:  No wrench name provided");
+		}
+
+        	return $sockets;
+	}
     /**
      * @param string|null $wrenchName
 	 *
@@ -118,25 +144,25 @@ abstract class ZermeloReport
 		$socket = null;
 		if ( $wrenchName ) {
 
-            // Get the user selected socket for this wrench
-            $socket = $this->_socketService->fetchSocketForWrenchKey( $wrenchName );
+            		// Get the user selected socket for this wrench
+            		$socket = $this->_socketService->fetchSocketForWrenchKey( $wrenchName );
 
-            if ( $socket === null ) {
-                throw new Exception("Zermelo SocketWrench Error: No socket for wrench name $wrenchName");
-            }
+            		if ( $socket === null ) {
+                		throw new Exception("Zermelo SocketWrench Error: No socket for wrench name $wrenchName");
+            		}
 
-            $this->_activeSockets[$socket->id]= $socket;
+            		$this->_activeSockets[$socket->id]= $socket;
 
-            // Then, make sure we make socket options available to view
-            if ( $socket->wrench ) {
-                $this->_activeWrenches[] = $socket->wrench;
-            }
+            		// Then, make sure we make socket options available to view
+            		if ( $socket->wrench ) {
+                		$this->_activeWrenches[] = $socket->wrench;
+            		}
 
-        } else {
+        	} else {
 			throw new Exception("Zermelo SocketWrench Error: No wrench name provided");
 		}
 
-        return $socket->socket_value;
+        	return $socket->socket_value;
 	}
 
 	public function isActiveSocket($id)
