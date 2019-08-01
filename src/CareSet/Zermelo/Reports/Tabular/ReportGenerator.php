@@ -55,8 +55,14 @@ class ReportGenerator extends AbstractGenerator implements GeneratorInterface
          */
 	    $first_row_num = 0;
 	    if ( $has_data ) {
-            $data_row = $this->cache->MapRow( $data_row, $first_row_num ); //
-            $mapped_header = array_keys( $data_row );
+            $data_row = $this->cache->MapRow( $data_row, $first_row_num );
+
+            // (#94) To fix error where strange encoding in first row breaks table
+            $mapped_and_encoded = [];
+            foreach ( $data_row as $mapped_key => $mapped_value ) {
+                $mapped_and_encoded[$mapped_key]= mb_convert_encoding( $mapped_value, 'UTF-8', 'UTF-8' );
+            }
+            $mapped_header = array_keys( $mapped_and_encoded );
         }
 
 
