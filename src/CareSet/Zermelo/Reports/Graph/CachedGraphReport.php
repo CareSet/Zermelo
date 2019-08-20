@@ -30,14 +30,24 @@ class CachedGraphReport extends DatabaseCache
     protected $visible_node_types = [];
     protected $visible_link_types = [];
 
-    public function __construct( ZermeloReport $report, $connectionName )
+    /**
+     * CachedGraphReport constructor.
+     *
+     * @param ZermeloReport $report The report to be cached
+     *
+     * @param $connectionName The name of the Cache Database connection, which represents the cache database name, and credentials for connecting
+     */
+    public function __construct(ZermeloReport $report, $connectionName)
     {
-        // Cache the "main" query
-        parent::__construct( $report, $connectionName );
+        // create cache tables, the logic in handled in the superclass constructor, and it only generates new table if required
+        // We override the createTable() function in this subclass to also generate the graph cache tables
+        parent::__construct($report, $connectionName);
 
-        $this->node_table = $this->keygen( 'GraphNode' );
-        $this->link_table = $this->keygen( 'GraphLinks' );
+        $this->node_table = $this->keygen('GraphNode');
+        $this->link_table = $this->keygen('GraphLinks');
 
+        // Get the node types and link types from user input
+        // TODO this is not used in this implementation, needs to be considered
         $input_node_types = [];
         if ($this->getReport()->getInput('node_types') && is_array($this->getReport()->getInput('node_types'))) {
             $input_node_types = $this->getReport()->getInput('node_types');
@@ -49,50 +59,46 @@ class CachedGraphReport extends DatabaseCache
         }
 
         // Go ahead to build the auxilliary tables that represent the nodes and links of the graph
-        $fields = ZermeloDatabase::getTableColumnDefinition( $this->getTableName(), $this->connectionName );
+        $fields = ZermeloDatabase::getTableColumnDefinition($this->getTableName(), $this->connectionName);
         $node_index = 0;
         $link_index = 0;
 
-        $NodeColumns = $this->getReport()->SUBJECTS;
-        $LinkColumns = $this->getReport()->WEIGHTS;
+        // These are the columns of the table to treat as Nodes and Links
+        $NodeColumns = $this->getReport()->NODES;
+        $LinkColumns = $this->getReport()->LINKS;
 
-        foreach ( $fields as $field ) {
-            $column = $field[ 'Name' ];
-            $title = ucwords( str_replace( '_', ' ', $column ), "\t\r\n\f\v " );
-            if ( ZermeloDatabase::isColumnInKeyArray( $column, $NodeColumns ) ) {
+        foreach ($fields as $field) {
+            $column = $field['Name'];
+            $title = ucwords(str_replace('_', ' ', $column), "\t\r\n\f\v ");
+            if (ZermeloDatabase::isColumnInKeyArray($column, $NodeColumns)) {
                 $subjects_found[] = $column;
-                $this->node_types[ $node_index ] = [
+                $this->node_types[$node_index] = [
                     'id' => $node_index,
                     'field' => $column,
                     'name' => $title,
-                    'visible' => in_array( $node_index, $input_node_types )
+                    'visible' => in_array($node_index, $input_node_types)
                 ];
-                $this->visible_node_types[ $node_index ] = $this->node_types[ $node_index ][ 'visible' ];
+                $this->visible_node_types[$node_index] = $this->node_types[$node_index]['visible'];
                 ++$node_index;
             }
-            if ( ZermeloDatabase::isColumnInKeyArray( $column, $LinkColumns ) ) {
+            if (ZermeloDatabase::isColumnInKeyArray($column, $LinkColumns)) {
                 $weights_found[] = $column;
-                $this->link_types[ $link_index ] = [
+                $this->link_types[$link_index] = [
                     'id' => $link_index,
                     'field' => $column,
                     'name' => $title,
-                    'visible' => in_array( $link_index, $input_link_types )
+                    'visible' => in_array($link_index, $input_link_types)
                 ];
-                $this->visible_link_types[ $link_index ] = $this->link_types[ $link_index ][ 'visible' ];
+                $this->visible_link_types[$link_index] = $this->link_types[$link_index]['visible'];
                 ++$link_index;
             }
         }
 
-        if ( !is_array( $this->node_types ) || empty( $this->node_types ) ) {
-            for ( $i = 2, $len = count( $this->node_types ); $i < $len; ++$i ) {
-                $this->node_types[ $i ][ 'visible' ] = false;
-                $this->visible_node_types[ $i ] = false;
+        if (!is_array($this->node_types) || empty($this->node_types)) {
+            for ($i = 2, $len = count($this->node_types); $i < $len; ++$i) {
+                $this->node_types[$i]['visible'] = false;
+                $this->visible_node_types[$i] = false;
             }
-        }
-
-        // If we generated the base table this request, then rebulild the auxilliary tables
-        if ( $this->generatedThisRequest == true ) {
-            $this->buildGraphTable();
         }
     }
 
@@ -126,164 +132,243 @@ class CachedGraphReport extends DatabaseCache
         return $this->visible_link_types;
     }
 
-    private function buildGraphTable()
+    /**
+     * This function is called by the parent class when the cache has to be regenerated,
+     * so create the "main" table, and then the aux node/link tables
+     */
+    public function createTable()
     {
-        $NodeColumns = $this->getReport()->SUBJECTS;
-        $LinkColumns = $this->getReport()->WEIGHTS;
+        parent::createTable();
 
-        $weight_table = $this->keygen('GraphWeight');
+        $this->createGraphTables();
+    }
 
-        /*
-            Determine the subjects and the weights column
-        */
-        $subjects_found = [];
-        $weights_found = [];
+    private function createGraphTables()
+    {
+        $start_time = microtime(true);
 
-        $fields = ZermeloDatabase::getTableColumnDefinition( $this->getTableName(), $this->connectionName );
-        foreach ($fields as $field) {
-            $column = $field['Name'];
-            if (ZermeloDatabase::isColumnInKeyArray($column, $NodeColumns)) {
-                $subjects_found[] = $column;
-            }
-            if (ZermeloDatabase::isColumnInKeyArray($column, $LinkColumns)) {
-                $weights_found[] = $column;
-            }
+        $cache_table_name_key = $this->getKey();
+        $cache_table = $this->getTableName();
+        $connection_name = $this->getConnectionName();
+
+        $cache_db = zermelo_cache_db();
+
+        $nodes_table = "nodes_$cache_table_name_key";
+        $node_types_table = "node_types_$cache_table_name_key";
+        $node_groups_table = "node_groups_$cache_table_name_key";
+        $links_table = "links_$cache_table_name_key";
+        $link_types_table = "link_types_$cache_table_name_key";
+        $summary_table = "summary_$cache_table_name_key";
+
+        $sql = [];
+
+        $sql['delete current node table'] = "
+DROP TABLE IF EXISTS $cache_db.$nodes_table;
+";
+
+        //First we find all of the unique nodes in the from side of the table
+        //then union them will all of the unique nodes in the two side of the table..
+        //then we create a table of nodes that is the unique nodes shared between the two...
+        $sql['create node cache table'] = "
+CREATE TABLE $cache_db.$nodes_table AS 
+SELECT  
+    node_id,
+    node_name,
+    MAX(node_size) AS node_size,
+    node_type,
+    node_group,
+    node_latitude,
+    node_longitude,
+    node_img
+FROM (
+
+SELECT
+    `source_id` AS node_id, 
+    `source_name` AS node_name, 
+    IF(MAX(`source_size`) > 0, MAX(`source_size`), 50) AS node_size,
+    `source_type` AS node_type,
+    `source_group` AS node_group, 
+    `source_longitude` AS node_longitude, 
+    `source_latitude` AS node_latitude, 
+    `source_img` AS node_img
+
+FROM $cache_db.$cache_table
+GROUP BY `source_id`, `source_name`, `source_type`, `source_group`, `source_longitude`, `source_latitude`, `source_img`
+
+UNION 
+
+SELECT
+    `target_id` AS node_id,
+    `target_name` AS node_name,
+    IF(MAX(`target_size`) > 0, MAX(`target_size`), 50) AS node_size,
+    `target_type` AS node_type,
+    `target_group` AS node_group,
+    `target_longitude` AS node_longitude,
+    `target_latitude` AS node_latitude,
+    `target_img` AS node_img
+
+FROM $cache_db.$cache_table 
+GROUP BY `target_id`, `target_name`, `target_type`, `target_group`, `target_longitude`, `target_latitude`, `target_img` ) AS node_union
+GROUP BY node_id, node_name, node_type, node_group, node_longitude, node_latitude, node_img
+";
+
+        $sql["lets add an auto indexed primary key to the node table"] = "
+ALTER TABLE $cache_db.$nodes_table ADD `id` INT(11) NOT NULL AUTO_INCREMENT FIRST, ADD PRIMARY KEY (`id`); 
+";
+
+        $sql["add an index to the string id for the nodes, so tha we can join"] = "
+ALTER TABLE $cache_db.$nodes_table   ADD INDEX(`node_id`);
+";
+
+
+        //we do this because we need to have something that starts from zero for our JSON indexing..
+        $sql["array that starts from zero"] = "
+UPDATE $cache_db.$nodes_table SET id = id - 1
+";
+
+        $sql["doing joins is better with indexes source side"] = "
+ALTER TABLE $cache_db.$cache_table ADD INDEX(`source_id`);
+";
+
+        $sql["doing joins is better with indexes target side"] = "
+ALTER TABLE $cache_db.$cache_table ADD INDEX(`target_id`);
+";
+
+        //Sort the link types table...
+
+        $sql["drop link type table"] = "
+DROP TABLE IF EXISTS $cache_db.$link_types_table
+";
+
+        $sql["create link type table"] = "
+CREATE TABLE $cache_db.$link_types_table
+SELECT DISTINCT
+	link_type,
+	COUNT(DISTINCT(CONCAT(source_id,target_id))) AS count_distinct_link
+FROM $cache_db.$cache_table
+GROUP BY link_type
+";
+
+        $sql["create unique id for link type table"] = "
+ALTER TABLE $cache_db.$link_types_table ADD `id` INT(11) NOT NULL AUTO_INCREMENT FIRST, ADD PRIMARY KEY (`id`);
+";
+
+        $sql["the link types table should start from zero"] = "
+UPDATE $cache_db.$link_types_table SET id = id - 1
+";
+
+
+        //Sort the node type table...
+
+        $sql["drop node type table"] = "
+DROP TABLE IF EXISTS $cache_db.$node_types_table
+";
+
+        //we use the same "distinct on the results of a union of two distincts" method
+        //that we used to sort the nodes... but this time we get a unique list of node types...
+
+        $sql["create node type table"] = "
+CREATE TABLE $cache_db.$node_types_table
+SELECT 	
+	node_type, 
+	COUNT(DISTINCT(node_id)) AS count_distinct_node
+FROM (
+		SELECT DISTINCT 
+			source_type AS node_type,
+			source_id AS node_id
+		FROM $cache_db.$cache_table
+	UNION 
+		SELECT DISTINCT 
+			target_type AS node_type,
+			target_id AS node_id
+		FROM $cache_db.$cache_table 
+	) AS  merged_node_type
+GROUP BY node_type
+";
+
+        $sql["create unique id for node type table"] = "
+ALTER TABLE $cache_db.$node_types_table ADD `id` INT(11) NOT NULL AUTO_INCREMENT FIRST, ADD PRIMARY KEY (`id`);
+";
+
+        $sql["the node types table should start from zero"] = "
+UPDATE $cache_db.$node_types_table SET id = id - 1
+";
+
+        //we use the same "distinct on the results of a union of two distincts" method
+        //that we used to sort the nodes... but this time we get a unique list of node types...
+        $sql["drop node group table"] = "
+DROP TABLE IF EXISTS $cache_db.$node_groups_table
+";
+
+        $sql["create node group table"] = "
+CREATE TABLE $cache_db.$node_groups_table
+SELECT 	
+	group_name, 
+	COUNT(DISTINCT(node_id)) AS count_distinct_node
+FROM (
+		SELECT DISTINCT 
+			source_group AS group_name,
+			source_id AS node_id
+		FROM $cache_db.$cache_table
+	UNION 
+		SELECT DISTINCT 
+			target_type AS group_name,
+			target_id AS node_id
+		FROM $cache_db.$cache_table 
+	) AS  merged_node_type
+GROUP BY group_name
+";
+
+        $sql["create unique id for node group table"] = "
+ALTER TABLE $cache_db.$node_groups_table ADD `id` INT(11) NOT NULL AUTO_INCREMENT FIRST, ADD PRIMARY KEY (`id`);
+";
+
+        $sql["the node group table should start from zero"] = "
+UPDATE $cache_db.$node_groups_table SET id = id - 1
+";
+
+
+        $sql["drop the summary table"] = "
+DROP TABLE IF EXISTS $cache_db.$summary_table;
+";
+
+        $sql["create the summary table with the group count"] = "
+CREATE TABLE $cache_db.$summary_table AS 
+SELECT 
+	'group_count                            ' AS summary_key,
+	COUNT(DISTINCT(group_name))  AS summary_value
+FROM $cache_db.$node_groups_table
+";
+
+        $sql["add the type count"] = "
+INSERT INTO $cache_db.$summary_table
+SELECT 
+	'type_count' AS summary_key,
+	COUNT(DISTINCT(node_type)) AS summary_value
+FROM $cache_db.$node_types_table
+";
+
+        $sql["add the node count"] = "
+INSERT INTO $cache_db.$summary_table
+SELECT 
+	'nodes_count' AS summary_key,
+	COUNT(DISTINCT(`id`)) AS summary_value
+FROM $cache_db.$nodes_table
+";
+
+        $sql["add the edge count"] = "
+INSERT INTO $cache_db.$summary_table
+SELECT 
+	'links_count' AS summary_key,
+	COUNT(DISTINCT(CONCAT(source_id,target_id))) AS summary_value
+FROM $cache_db.$cache_table
+";
+
+        //loop all over the sql commands and run each one in order...
+        foreach ($sql as $this_sql) {
+            ZermeloDatabase::connection($connection_name)->statement(DB::raw($this_sql));
         }
 
-
-        /*
-            Create the cache table
-        */
-        ZermeloDatabase::connection($this->connectionName)->statement("DROP TABLE IF EXISTS {$this->node_table}");
-        ZermeloDatabase::connection($this->connectionName)->statement("DROP TABLE IF EXISTS {$this->link_table}");
-        ZermeloDatabase::connection($this->connectionName)->statement("DROP TABLE IF EXISTS {$weight_table}");
-
-        Schema::connection($this->connectionName)->create( $this->node_table, function ( Blueprint $table ) {
-            $table->bigIncrements('id');
-            $table->integer('type')->nullable(false);
-            $table->string('value')->nullable(false);
-            $table->decimal('size', 5, 2);
-            $table->integer('sum_weight');
-            $table->integer('degree')->default(0);
-            //$table->temporary();
-            //$table->unique(['type', 'value']);
-        });
-
-        Schema::connection($this->connectionName)->create( $this->link_table, function ( Blueprint $table ) {
-            $table->bigInteger('source')->nullable(true);
-            $table->bigInteger('target')->nullable(true);
-            $table->integer('link_type')->nullable(false);
-            $table->integer('weight')->nullable(false)->default(0);
-            //$table->temporary();
-            //  $table->unique(['source', 'target', 'link_type']);
-            // $table->index(['source','target']);
-            // $table->index('target');
-        });
-
-        /* populating the nodes table */
-        foreach ($subjects_found as $index => $subject) {
-
-//            /* each subject will be its own node type for now */
-//            $this->node_types[$index] = [
-//                'id' => $index,
-//                'field' => $subject
-//            ];
-            /*
-                If we need to build the table, Insert into the node table, all the nodes possible
-            */
-            if( $this->node_types[$index] ) {
-                ZermeloDatabase::connection($this->connectionName)->statement("INSERT INTO {$this->node_table}(type,value,size,sum_weight) SELECT distinct ?,`{$subject}`,0,0 from {$this->getTableName()}", [$index]);
-            }
-        }
-
-        ZermeloDatabase::connection($this->connectionName)->statement("UPDATE {$this->node_table} A SET A.id = A.id-1;");
-
-        foreach ($weights_found as $index => $weight) {
-//            $this->link_types[$index] = [
-//                'id' => $index,
-//                'field' => $weight,
-//            ];
-
-            /*
-                Actually has links
-            */
-            if (count($this->node_types) > 1) {
-                foreach ($this->node_types as $AIndex => $ASubject) {
-                    foreach ($this->node_types as $BIndex => $BSubject) {
-
-                        if ($BIndex <= $AIndex) {
-                            continue;
-                        }
-
-                        if( $this->link_types[$index] )
-                            ZermeloDatabase::connection($this->connectionName)->statement("INSERT INTO {$this->link_table}(source,target,link_type,weight)
-                                            SELECT
-                                            A.id as source,
-                                            B.id as target,
-                                            ? as link_type,
-                                            sum(COALESCE(`{$weight}`,0)) as weight
-                                            FROM {$this->getTableName()} as MASTER
-                                            LEFT JOIN {$this->node_table} AS A on (MASTER.`{$ASubject['field']}` = A.value and A.type = ?)
-                                            LEFT JOIN {$this->node_table} AS B on (MASTER.`{$BSubject['field']}` = B.value and B.type = ?)
-                                            group by A.id, B.id
-                                            HAVING sum(COALESCE(`{$weight}`,0)) > 0
-                                            ;
-                                            ", [$index, $AIndex, $BIndex]
-                            );
-                    }
-                }
-
-            } else {
-
-                /*
-                    Does not have any link, but we need to insert a null link to determine the size of the nodes
-                */
-                $AIndex = 0;
-                $ASubject = $this->node_types[0];
-                ZermeloDatabase::connection($this->connectionName)->statement("INSERT INTO {$this->link_table}(source,target,link_type,weight)
-                                SELECT
-                                A.id as source,
-                                null as target,
-                                ? as link_type,
-                                sum(COALESCE(`{$weight}`,0)) as weight
-                                FROM {$this->getTableName()} as MASTER
-                                INNER JOIN {$this->node_table} AS A on (MASTER.`{$ASubject['field']}` = A.value and A.type = ?)
-                                group by A.id
-                                HAVING sum(COALESCE(`{$weight}`,0)) > 0
-                                ;
-                                ", [$index, $AIndex]
-                );
-            }
-
-        }
-
-        /*
-            Calculate the sum_weight per each node.
-            This is cross-SQL friendly
-        */
-        ZermeloDatabase::connection($this->connectionName)->statement("CREATE TABLE {$weight_table} AS
-            SELECT A.id,sum(COALESCE(B.weight,0) + COALESCE(C.weight,0)) as sum_weight FROM {$this->node_table} AS A
-            LEFT JOIN  {$this->link_table} AS B ON B.source = A.id
-            LEFT JOIN  {$this->link_table} AS C ON C.target = A.id
-            GROUP BY A.id;
-        ");
-        ZermeloDatabase::connection($this->connectionName)->statement("ALTER TABLE {$weight_table} add primary key(id);");
-        ZermeloDatabase::connection($this->connectionName)->statement("UPDATE {$this->node_table} AS A 
-                            SET 
-                                A.sum_weight = (SELECT sum_weight from {$weight_table} AS B WHERE B.id = A.id),
-                                A.degree = (SELECT count(distinct C.source, C.target) from {$this->link_table} as C WHERE (C.source = A.id OR C.target = A.id) AND (C.source IS NOT NULL and C.target IS NOT NULL))
-        
-        ;");
-
-        /* scale the size by the min/max of that type */
-        $results = ZermeloDatabase::connection($this->connectionName)->select("select type, min(sum_weight) as min, max(sum_weight) as max, (max(sum_weight) - min(sum_weight)) as localize_max from {$this->node_table} group by type order by type");
-        foreach ($results as $index => $result) {
-            $type = $result->type;
-            $min = $result->min;
-            $max = $result->max;
-            $local_max = $result->localize_max;
-            ZermeloDatabase::connection($this->connectionName)->statement("UPDATE {$this->node_table} SET size = COALESCE(((sum_weight - ?) / ?) * 100,0) WHERE type = ?", [$min, $local_max, $type]);
-        }
     }
 
 }

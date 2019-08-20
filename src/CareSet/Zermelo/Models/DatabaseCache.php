@@ -17,28 +17,28 @@ class DatabaseCache implements ReportInterface
     protected $key = null;
     protected $connectionName = null;
 
-    public function __construct( ZermeloReport $report, $connectionName )
+    public function __construct(ZermeloReport $report, $connectionName)
     {
         $this->report = $report;
         $this->connectionName = $connectionName;
 
-        $clear_cache = filter_var($report->getInput( 'clear_cache' ),FILTER_VALIDATE_BOOLEAN) == true ? true : false;
-        $this->setDoClearCache( $clear_cache );
+        $clear_cache = filter_var($report->getInput('clear_cache'), FILTER_VALIDATE_BOOLEAN) == true ? true : false;
+        $this->setDoClearCache($clear_cache);
 
         // Generate the prefix, but make sure it's not longer than 32 chars
-        $this->key = $this->keygen( $this->report->getClassName() );
+        $this->key = $this->keygen($this->report->getClassName());
         $this->cache_table = ZermeloDatabase::connection($this->connectionName)->table("{$this->key}");
 
-        if ( $this->exists() === false ||
+        if ($this->exists() === false ||
             $report->isCacheEnabled() === false ||
             $this->getDoClearCache() == true ||
-            $this->isCacheExpired() === true ) {
-			//if any of the above is true, then we need to re-run the create table. 
-            		$this->createTable();
-            		$this->generatedThisRequest = true;
+            $this->isCacheExpired() === true) {
+            //if any of the above is true, then we need to re-run the create table.
+            $this->createTable();
+            $this->generatedThisRequest = true;
         }
 
-        $this->columns = ZermeloDatabase::getTableColumnDefinition( $this->getTableName(), $this->connectionName );
+        $this->columns = ZermeloDatabase::getTableColumnDefinition($this->getTableName(), $this->connectionName);
 
         return true;
     }
@@ -47,13 +47,14 @@ class DatabaseCache implements ReportInterface
     {
         return $this->connectionName;
     }
-/*
-	This function generates the name of the cache table. 
-	It refers to the getDataIdentityKey() function on the report... 
-*/
-    protected function keygen( $prefix = "" )
+
+    /*
+        This function generates the name of the cache table.
+        It refers to the getDataIdentityKey() function on the report...
+    */
+    protected function keygen($prefix = "")
     {
-	$key = $this->report->getDataIdentityKey($prefix);
+        $key = $this->report->getDataIdentityKey($prefix);
         return $key;
     }
 
@@ -79,11 +80,11 @@ class DatabaseCache implements ReportInterface
 
     public function exists(): bool
     {
-        $hasTable = ZermeloDatabase::hasTable( $this->cache_table->from, $this->connectionName );
+        $hasTable = ZermeloDatabase::hasTable($this->cache_table->from, $this->connectionName);
         return $hasTable;
     }
 
-    public function setDoClearCache( $doClearCache )
+    public function setDoClearCache($doClearCache)
     {
         $this->doClearCache = $doClearCache;
     }
@@ -99,31 +100,32 @@ class DatabaseCache implements ReportInterface
         $now = Carbon::now();
         $nowTimestamp = $now->timestamp;
         $expiredTime = $this->getExpireTime();
-        $expireTimestamp = Carbon::parse( $expiredTime )->timestamp;
-        if ( $nowTimestamp > $expireTimestamp ) {
+        $expireTimestamp = Carbon::parse($expiredTime)->timestamp;
+        if ($nowTimestamp > $expireTimestamp) {
             $expired = true;
         }
 
         return $expired;
     }
 
-    public function MapRow( array $row, int $row_number )
+    public function MapRow(array $row, int $row_number)
     {
-        return $this->report->MapRow( $row, $row_number );
+        return $this->report->MapRow($row, $row_number);
     }
 
-    public function OverrideHeader( array &$format, array &$tags ): void
+    public function OverrideHeader(array &$format, array &$tags): void
     {
-        $this->report->OverrideHeader( $format, $tags );
+        $this->report->OverrideHeader($format, $tags);
     }
-/*
-	getIndividualQueries() serves to ensure that the SQL returned by an individual report always takes the same structure
-	inside the reporting engine. 
 
-	Basically, its job is to ensure that it returns an array of SQL singletons. 
+    /*
+        getIndividualQueries() serves to ensure that the SQL returned by an individual report always takes the same structure
+        inside the reporting engine.
+
+        Basically, its job is to ensure that it returns an array of SQL singletons.
 
 
-*/
+    */
     public function getIndividualQueries()
     {
         $sql = $this->report->getSQL();
@@ -134,8 +136,8 @@ class DatabaseCache implements ReportInterface
 
         $all_queries = [];
         if (!is_array($sql)) {
-		// we must always return an array. If a report returns a single SQL statement, lets tuck it into an array with just one member
-            	$sql = [$sql];
+            // we must always return an array. If a report returns a single SQL statement, lets tuck it into an array with just one member
+            $sql = [$sql];
         }
 
         /*
@@ -153,7 +155,7 @@ class DatabaseCache implements ReportInterface
             }
         }
 
-	//this will always be an array with singleton SQL statements. or false. 
+        //this will always be an array with singleton SQL statements. or false.
         return $all_queries;
     }
 
@@ -171,62 +173,62 @@ class DatabaseCache implements ReportInterface
         // Clone the cache table, to avoid query modifications that may affect future queries
         $temp_cache_table = clone $this->cache_table;
 
-	//we are starting over, so if the table exists.. lets drop it.
-        if ( $this->exists() ) {
+        //we are starting over, so if the table exists.. lets drop it.
+        if ($this->exists()) {
             ZermeloDatabase::drop($temp_cache_table->from, $this->connectionName);
         }
 
-	//now we will loop over all of the SQL queries that make up the report.
+        //now we will loop over all of the SQL queries that make up the report.
 
-	$queries = $this->getIndividualQueries();
+        $queries = $this->getIndividualQueries();
 
-	if($queries){
-        	foreach ( $this->getIndividualQueries() as $index => $query ) {
+        if ($queries) {
+            foreach ($this->getIndividualQueries() as $index => $query) {
 
-            		if ( strpos( strtoupper( $query ), "SELECT", 0 ) === 0 ) {
-                		if ( $index == 0 ) {
-					//for the first query, we use a CREATE TABLE statement
-                    			ZermeloDatabase::connection($this->connectionName)->statement(DB::raw("CREATE TABLE {$temp_cache_table->from} AS {$query}"));
-                		} else {
-					//for all subsequent queries we use INSERT INTO to merely add data to the table in question..
-        	   			ZermeloDatabase::connection($this->connectionName)->statement(DB::raw("INSERT INTO {$temp_cache_table->from} {$query}"));
-                		}
-            		} else {
-				//this allows us to database maintainance tasks using UPDATES etc.
-				//not that non-select statements are executed in the same order as they are provideded in the contents of the returned SQL
-                		ZermeloDatabase::connection($this->connectionName)->statement(DB::raw($query));
-            		}
-        	}
-	}else{
-		//the report returned 'false'. 
-		//we need to figure out how to handle this. 
-	}
+                if (strpos(strtoupper($query), "SELECT", 0) === 0) {
+                    if ($index == 0) {
+                        //for the first query, we use a CREATE TABLE statement
+                        ZermeloDatabase::connection($this->connectionName)->statement(DB::raw("CREATE TABLE {$temp_cache_table->from} AS {$query}"));
+                    } else {
+                        //for all subsequent queries we use INSERT INTO to merely add data to the table in question..
+                        ZermeloDatabase::connection($this->connectionName)->statement(DB::raw("INSERT INTO {$temp_cache_table->from} {$query}"));
+                    }
+                } else {
+                    //this allows us to database maintainance tasks using UPDATES etc.
+                    //not that non-select statements are executed in the same order as they are provideded in the contents of the returned SQL
+                    ZermeloDatabase::connection($this->connectionName)->statement(DB::raw($query));
+                }
+            }
+        } else {
+            //the report returned 'false'.
+            //we need to figure out how to handle this.
+        }
 
 
-	$table_string_to_replace = '{{_CACHE_TABLE_}}';
+        $table_string_to_replace = '{{_CACHE_TABLE_}}';
 
-	$index_sql_array  = $this->report->GetIndexSQL();
+        $index_sql_array = $this->report->GetIndexSQL();
 
-	if(is_null($index_sql_array)){
-		//then this report has not defined any indexes for the index table. 
-		//do nothing... 
-	}else{
-		//lets loop over the index commands, which should have {{_CACHE_TABLE_}} in the place of any database.table name
-		//and then replace that string with our temp table name, and then run those indexes. 
-		foreach($index_sql_array as $this_index_sql_template){
-			if(strpos($this_index_sql_template,$table_string_to_replace) !== false){
-				//then we have the table string... lets replace it. 
-				$index_sql_command = str_replace($table_string_to_replace,$temp_cache_table->from,$this_index_sql_template);
-				//now lets run those index commands... 
-				ZermeloDatabase::connection($this->connectionName)->statement(DB::raw($index_sql_command));
-			}else{
-				throw new Exception("Zermelo Report Error: $this_index_sql_template was retrieved from GetIndexSql() but it did not contain $table_string_to_replace");
-			}
+        if (is_null($index_sql_array)) {
+            //then this report has not defined any indexes for the index table.
+            //do nothing...
+        } else {
+            //lets loop over the index commands, which should have {{_CACHE_TABLE_}} in the place of any database.table name
+            //and then replace that string with our temp table name, and then run those indexes.
+            foreach ($index_sql_array as $this_index_sql_template) {
+                if (strpos($this_index_sql_template, $table_string_to_replace) !== false) {
+                    //then we have the table string... lets replace it.
+                    $index_sql_command = str_replace($table_string_to_replace, $temp_cache_table->from, $this_index_sql_template);
+                    //now lets run those index commands...
+                    ZermeloDatabase::connection($this->connectionName)->statement(DB::raw($index_sql_command));
+                } else {
+                    throw new Exception("Zermelo Report Error: $this_index_sql_template was retrieved from GetIndexSql() but it did not contain $table_string_to_replace");
+                }
 
-		}
+            }
 
-	}
-	
+        }
+
 
     }
 
@@ -239,7 +241,7 @@ class DatabaseCache implements ReportInterface
     {
         $stats = DB::select("SELECT CURRENT_TIMESTAMP, CREATE_TIME,
                                     TIMESTAMPDIFF(MINUTE,CREATE_TIME, CURRENT_TIMESTAMP) as age
-                                FROM information_schema.tables WHERE table_schema=? and table_name = ?", [$this->connectionName, $this->getTableName() ]);
+                                FROM information_schema.tables WHERE table_schema=? and table_name = ?", [$this->connectionName, $this->getTableName()]);
 
         if (!$stats) {
             return true;
@@ -251,12 +253,12 @@ class DatabaseCache implements ReportInterface
 
         $time = $stats->CREATE_TIME;
         $offset = $tz[0]->TZ;
-        if ( $offset == '00:00' ) {
+        if ($offset == '00:00') {
             $offset = "+$offset";
         }
 
-        $carbonTime = Carbon::createFromFormat('Y-m-d H:i:s', $time, $offset  );
-        $carbonTime->setTimezone( config('app.timezone' ) );
+        $carbonTime = Carbon::createFromFormat('Y-m-d H:i:s', $time, $offset);
+        $carbonTime->setTimezone(config('app.timezone'));
         $lastGeneratedTime = $carbonTime->toDateTimeString();
         return $lastGeneratedTime;
     }
@@ -264,10 +266,10 @@ class DatabaseCache implements ReportInterface
     public function getExpireTime()
     {
         $expireTime = false;
-        if ( $this->report->isCacheEnabled() ) {
+        if ($this->report->isCacheEnabled()) {
 
-            $expireTimeCarbon = Carbon::parse( $this->getLastGenerated() )->addSeconds( $this->report->howLongToCacheInSeconds() );
-            $expireTime = date( 'Y-m-d H:i:s', $expireTimeCarbon->timestamp );
+            $expireTimeCarbon = Carbon::parse($this->getLastGenerated())->addSeconds($this->report->howLongToCacheInSeconds());
+            $expireTime = date('Y-m-d H:i:s', $expireTimeCarbon->timestamp);
         }
 
         return $expireTime;

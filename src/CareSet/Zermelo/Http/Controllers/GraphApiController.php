@@ -18,10 +18,10 @@ class GraphApiController
     public function index( GraphReportRequest $request )
     {
         $report = $request->buildReport();
-//	not sure why a different caching system than the tabular report was nessecary??
-//        $cache = new CachedGraphReport( $report, zermelo_cache_db() );
 
-        $cache = new DatabaseCache( $report, zermelo_cache_db() );
+        // We use a subclass of the Standard DatabaseCache to enhance the functionality
+        // To cache, not only the "main" table, but the node and link tables as well
+        $cache = new CachedGraphReport( $report, zermelo_cache_db() );
         $generatorInterface = new GraphGenerator( $cache );
         return $generatorInterface->toJson();
     }
