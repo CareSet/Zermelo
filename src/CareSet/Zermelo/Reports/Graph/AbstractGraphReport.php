@@ -12,20 +12,53 @@ use CareSet\Zermelo\Models\ZermeloReport;
 class AbstractGraphReport extends ZermeloReport
 {
     /**
-     * $NODES
+     * $nodeDefinitions
      * What the engine should consider as the 'noun' or 'subject'.
      * This field will determine which field to be used as nodes on a graph
      *
      * @var array
      */
-    public $NODES = [];
+    protected $nodeDefinitions = [];
 
     /**
-     * $LINKS
+     * $linkDefinitions
      * What the engine should consider the weighted links between the subjects.
      * This field is used to generate 'links' and link size between each nodes.
      *
      * @var array
      */
-    public $LINKS = [];
+    protected $linkDefinitions = [];
+
+    /**
+     * @return array
+     */
+    public function getNodeDefinitions(): array
+    {
+        return $this->nodeDefinitions;
+    }
+
+    /**
+     * @param array $nodeDefinitions
+     */
+    public function setNodeDefinitions(array $nodeDefinitions)
+    {
+        $this->nodeDefinitions = $nodeDefinitions;
+    }
+
+
+    /**
+     * @return array
+     */
+    public function getLinkDefinitions(): array
+    {
+        return $this->linkDefinitions;
+    }
+
+    /**
+     * @param array $linkDefinitions
+     */
+    public function setLinkDefinitions(array $linkDefinitions)
+    {
+        $this->linkDefinitions = $linkDefinitions;
+    }
 }

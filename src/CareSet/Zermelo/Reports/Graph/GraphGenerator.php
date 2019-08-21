@@ -13,7 +13,7 @@ class GraphGenerator extends AbstractGenerator
     protected $cache = null;
     protected $report = null;
 
-    public function __construct(DatabaseCache $cache)
+    public function __construct(CachedGraphReport $cache)
     {
         $this->cache = $cache;
         $this->report = $cache->getReport();
@@ -43,11 +43,11 @@ SELECT
 	0 AS is_img,
 	'' AS img_stub,
 	count_distinct_node AS type_count
-FROM $cache_db.$node_types_table	
+FROM {$this->cache->getNodeTypesTable()}	
 ";
         //lets load the node_types from the database...
         $node_types = [];
-        $node_types_result = DB::select(DB::raw($node_types_sql));
+        $node_types_result = ZermeloDatabase::connection($this->cache->getConnectionName())->select(DB::raw($node_types_sql));
         foreach ($node_types_result as $this_row) {
 
             //handle the differeces between json and mysql/php here for is_img
@@ -75,11 +75,11 @@ SELECT
 	id AS my_index,
 	link_type AS label,
 	count_distinct_link AS link_type_count
-FROM $cache_db.$link_types_table	
+FROM {$this->cache->getLinkTypesTable()}	
 ";
         //lets load the link_types from the database...
         $link_types = [];
-        $link_types_result = DB::select(DB::raw($link_types_sql));
+        $link_types_result = ZermeloDatabase::connection($this->cache->getConnectionName())->select(DB::raw($link_types_sql));
         foreach ($link_types_result as $this_row) {
 
             $link_types[$this_row->my_index] = [
@@ -97,12 +97,12 @@ SELECT
 	group_name AS id,
 	group_name AS name,
 	count_distinct_node AS group_count
-FROM $cache_db.$node_groups_table	
+FROM {$this->cache->getNodeGroupsTable()}	
 ";
 
         //lets load the link_types from the database...
         $node_groups = [];
-        $node_groups_result = DB::select(DB::raw($group_sql));
+        $node_groups_result = ZermeloDatabase::connection($this->cache->getConnectionName())->select(DB::raw($group_sql));
         foreach ($node_groups_result as $this_row) {
 
             $node_groups[$this_row->my_index] = [
@@ -126,18 +126,18 @@ SELECT
 	0 AS weight_sum,
 	0 AS degree,
 	nodes.id AS my_index
-FROM $cache_db.$nodes_table AS nodes
-LEFT JOIN $cache_db.$node_groups_table AS groups ON 
+FROM {$this->cache->getNodesTable()} AS nodes
+LEFT JOIN {$this->cache->getNodeGroupsTable()} AS groups ON 
 	groups.group_name =
     	node_group
-LEFT JOIN $cache_db.$node_types_table AS types ON 
+LEFT JOIN {$this->cache->getNodeTypesTable()} AS types ON 
 	types.node_type = 
     	nodes.node_type 
 ORDER BY nodes.id DESC
 ";
         //lets load the link_types from the database...
         $nodes = [];
-        $nodes_result = DB::select(DB::raw($nodes_sql));
+        $nodes_result = ZermeloDatabase::connection($this->cache->getConnectionName())->select(DB::raw($nodes_sql));
         foreach ($nodes_result as $this_row) {
 
             if (is_null($this_row->img)) {
@@ -164,27 +164,27 @@ ORDER BY nodes.id DESC
             ];
         }
 
-        //lets sort the links
+        //lets sort the links TODO this should be a link cache, right?
         $links_sql = "
 SELECT 
 	source_nodes.id AS `source`,
 	target_nodes.id AS `target`, 
 	`weight`, 
 	link_types.id AS `link_type`
-FROM $cache_db.$cache_table AS graph
-JOIN $cache_db.$nodes_table AS source_nodes ON 
+FROM {$this->cache->getTableName()} AS graph
+JOIN {$this->cache->getNodesTable()} AS source_nodes ON 
 	source_nodes.node_id =
     	graph.source_id
-JOIN $cache_db.$nodes_table AS target_nodes ON 
+JOIN {$this->cache->getNodesTable()} AS target_nodes ON 
 	target_nodes.node_id =
     	graph.target_id  
-JOIN $cache_db.$link_types_table AS link_types ON 
+JOIN {$this->cache->getLinkTypesTable()} AS link_types ON 
 	link_types.link_type =
     	graph.link_type
 ";
         //lets load the link_types from the database...
         $links = [];
-        $links_result = DB::select(DB::raw($links_sql));
+        $links_result = ZermeloDatabase::connection($this->cache->getConnectionName())->select(DB::raw($links_sql));
         foreach ($links_result as $this_row) {
 
             $links[] = [
@@ -201,18 +201,18 @@ JOIN $cache_db.$link_types_table AS link_types ON
 SELECT 
 	summary_key,
 	summary_value
-FROM $cache_db.$summary_table
+FROM {$this->cache->getSummaryTable()}
 ";
 
         $summary = [];
-        $summary_result = DB::select(DB::raw($summary_sql));
+        $summary_result = ZermeloDatabase::connection($this->cache->getConnectionName())->select(DB::raw($summary_sql));
         foreach ($summary_result as $this_row) {
             $summary[][$this_row->summary_key] = $this_row->summary_value;
         }
 
-        $time_elapsed = microtime(true) - $start_time;
+        //$time_elapsed = microtime(true) - $start_time;
 
-        $summary[]['seconds_to_process'] = $time_elapsed;
+        $summary[]['seconds_to_process'] = '9898989898';
 
         //now we put it all together to return the results...
         return [
@@ -220,7 +220,7 @@ FROM $cache_db.$summary_table
             'careset_code' => '1112223334',
             'Report_Name' => $report_name,
             'Report_Description' => $report_description,
-            'Report_Key' => $cache_table_name_key,
+            'Report_Key' => $this->cache->getKey(),
             'summary' => $summary,
             'config' => [], //not implemented..
             'groups' => $node_groups,
