@@ -9,22 +9,60 @@
 namespace CareSet\Zermelo\Reports\Graph;
 
 
-class LinkDefinition
+class LinkDefinition implements LinkDefinitionIF
 {
+    protected $source_node_definition;
+    protected $target_node_definition;
     protected $link_type;
     protected $weight;
 
+
     /**
      * LinkDefinition constructor.
+     * @param NodeDefinitionIF $source_node_definition
+     * @param NodeDefinitionIF $target_node_definition
      * @param $link_type
      * @param $weight
      */
-    public function __construct($link_type, $weight)
+    public function __construct(NodeDefinitionIF $source_node_definition, NodeDefinitionIF $target_node_definition, $link_type, $weight)
     {
+        $this->source_node_definition = $source_node_definition;
+        $this->target_node_definition = $target_node_definition;
         $this->link_type = $link_type;
         $this->weight = $weight;
     }
 
+    /**
+     * @return NodeDefinitionIF
+     */
+    public function getSourceNodeDefinition(): NodeDefinitionIF
+    {
+        return $this->source_node_definition;
+    }
+
+    /**
+     * @param NodeDefinitionIF $source_node_definition
+     */
+    public function setSourceNodeDefinition(NodeDefinitionIF $source_node_definition)
+    {
+        $this->source_node_definition = $source_node_definition;
+    }
+
+    /**
+     * @return NodeDefinitionIF
+     */
+    public function getTargetNodeDefinition(): NodeDefinitionIF
+    {
+        return $this->target_node_definition;
+    }
+
+    /**
+     * @param NodeDefinitionIF $target_node_definition
+     */
+    public function setTargetNodeDefinition(NodeDefinitionIF $target_node_definition)
+    {
+        $this->target_node_definition = $target_node_definition;
+    }
 
     /**
      * @return mixed
@@ -57,6 +95,5 @@ class LinkDefinition
     {
         $this->weight = $weight;
     }
-
 
 }

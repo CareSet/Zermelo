@@ -164,25 +164,8 @@ ORDER BY nodes.id DESC
             ];
         }
 
-        //lets sort the links TODO this should be a link cache, right?
-        $links_sql = "
-SELECT 
-	source_nodes.id AS `source`,
-	target_nodes.id AS `target`, 
-	`weight`, 
-	link_types.id AS `link_type`
-FROM {$this->cache->getTableName()} AS graph
-JOIN {$this->cache->getNodesTable()} AS source_nodes ON 
-	source_nodes.node_id =
-    	graph.source_id
-JOIN {$this->cache->getNodesTable()} AS target_nodes ON 
-	target_nodes.node_id =
-    	graph.target_id  
-JOIN {$this->cache->getLinkTypesTable()} AS link_types ON 
-	link_types.link_type =
-    	graph.link_type
-";
-        //lets load the link_types from the database...
+        // Retrieve the links from the DB
+        $links_sql = "SELECT * FROM `{$this->cache->getLinksTable()}`";
         $links = [];
         $links_result = ZermeloDatabase::connection($this->cache->getConnectionName())->select(DB::raw($links_sql));
         foreach ($links_result as $this_row) {
@@ -196,13 +179,11 @@ JOIN {$this->cache->getLinkTypesTable()} AS link_types ON
         }
 
         //lets export the summary data on the graph
-
         $summary_sql = "
-SELECT 
-	summary_key,
-	summary_value
-FROM {$this->cache->getSummaryTable()}
-";
+            SELECT 
+                summary_key,
+                summary_value
+            FROM {$this->cache->getSummaryTable()}";
 
         $summary = [];
         $summary_result = ZermeloDatabase::connection($this->cache->getConnectionName())->select(DB::raw($summary_sql));

@@ -2,14 +2,14 @@
 /**
  * Created by PhpStorm.
  * User: kchapple
- * Date: 8/20/19
- * Time: 10:26 AM
+ * Date: 8/23/19
+ * Time: 1:22 PM
  */
 
 namespace CareSet\Zermelo\Reports\Graph;
 
 
-interface LinkIF
+class NodeTypeDefinition
 {
 
 }

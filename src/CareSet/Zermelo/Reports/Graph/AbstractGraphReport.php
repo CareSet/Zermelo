@@ -30,6 +30,32 @@ class AbstractGraphReport extends ZermeloReport
     protected $linkDefinitions = [];
 
     /**
+     * Return an array of all of the node ID columns
+     */
+    public function getNodeIdColumns()
+    {
+        $nodeIdColumns = [];
+        foreach ($this->nodeDefinitions as $nodeDefinition) {
+            $nodeIdColumns[]= $nodeDefinition->getNodeId();
+        }
+
+        return $nodeIdColumns;
+    }
+
+    /**
+     * Return an array of all of the node Type columns
+     */
+    public function getNodeTypeColumns()
+    {
+        $nodeTypeColumns = [];
+        foreach ($this->nodeDefinitions as $nodeDefinition) {
+            $nodeTypeColumns[]= $nodeDefinition->getNodeType();
+        }
+
+        return $nodeTypeColumns;
+    }
+
+    /**
      * @return array
      */
     public function getNodeDefinitions(): array
