@@ -44,6 +44,7 @@ class CachedGraphReport extends DatabaseCache
         // GetSQL() function query. Then, we generate the auxillary graph cache tables below
         parent::__construct($report, $connectionName);
 
+        // Get our cache key from parent, and use it to name all of our auxiliary graph tables
         $cache_table_name_key = $this->getKey();
         $this->nodes_table = "nodes_$cache_table_name_key";
         $this->node_types_table = "node_types_$cache_table_name_key";
@@ -52,7 +53,7 @@ class CachedGraphReport extends DatabaseCache
         $this->link_types_table = "link_types_$cache_table_name_key";
         $this->summary_table = "summary_$cache_table_name_key";
 
-
+        // Only generate the aux tables (drop and re-create) if dictated by cache rules
         if ($this->getGeneratedThisRequest() === true) {
             $this->createGraphTables();
         }
@@ -187,9 +188,6 @@ class CachedGraphReport extends DatabaseCache
         $link_index = 0;
 
         // These are the columns of the table to treat as Nodes and Links
-        $nodeDefinitions = $this->getReport()->getNodeDefinitions();
-        $linkDefinitions = $this->getReport()->getLinkDefinitions();
-
 
         // Look at each field in our GetSQL() result table, and get all of our node types and link types, and
         // TODO Do some validation to make sure all of our nodes and links columns are actually in the table
@@ -241,45 +239,14 @@ class CachedGraphReport extends DatabaseCache
     private function createGraphTables()
     {
         $start_time = microtime(true);
-        $cache_table = $this->getTableName();
-        $connection_name = $this->getConnectionName();
         $sql = [];
 
-        $sql['delete current node table'] = "
-            DROP TABLE IF EXISTS $this->nodes_table;
-            ";
+        $sql['delete current node table'] = "DROP TABLE IF EXISTS $this->nodes_table;";
 
-        // Build the query that builds the nodes table. This will use all of the node definitions in our report, and
-        // union them together
-        $node_sql_parts = [];
-        foreach ($this->getReport()->getNodeDefinitions() as $nodeDefinition) {
-            if ($nodeDefinition instanceof NodeDefinitionIF) {
-                $node_sql = new \stdClass();
-                $node_sql->SELECT = "{$nodeDefinition->getNodeId()} AS `node_id`,
-                    `{$nodeDefinition->getNodeName()}` AS `node_name`,
-                    {$nodeDefinition->getNodeSizeFormula()} AS `node_size`,
-                    `{$nodeDefinition->getNodeType()}` AS `node_type`,
-                    `{$nodeDefinition->getNodeGroup()}` AS `node_group`,
-                    `{$nodeDefinition->getNodeLatitude()}` AS `node_latitude`,
-                    `{$nodeDefinition->getNodeLongitude()}` AS `node_longitude`,
-                    `{$nodeDefinition->getNodeImg()}` AS `node_img`";
-
-                $node_sql->GROUP_BY = "`{$nodeDefinition->getNodeId()}`,
-                    `{$nodeDefinition->getNodeName()}`,
-                    `{$nodeDefinition->getNodeSize()}`,
-                    `{$nodeDefinition->getNodeType()}`,
-                    `{$nodeDefinition->getNodeGroup()}`,
-                    `{$nodeDefinition->getNodeLatitude()}`,
-                    `{$nodeDefinition->getNodeLongitude()}`,
-                    `{$nodeDefinition->getNodeImg()}`";
-                $node_sql_parts[]= $node_sql;
-            }
-        }
-
-
-        //First we find all of the unique nodes in the from side of the table
-        //then union them will all of the unique nodes in the two side of the table..
-        //then we create a table of nodes that is the unique nodes shared between the two...
+        // Build the query that builds the nodes table. This will take the source and target nodes and union them together
+        // First we find all of the unique nodes in the from side of the table
+        // then union them will all of the unique nodes in the two side of the table..
+        // then we create a table of nodes that is the unique nodes shared between the two...
         $sql['create node cache table'] =
             "CREATE TABLE $this->nodes_table AS 
             SELECT  
@@ -291,19 +258,38 @@ class CachedGraphReport extends DatabaseCache
                 node_latitude,
                 node_longitude,
                 node_img
-            FROM (";
-
-        $count = 0;
-        foreach ($node_sql_parts as $node_sql_part) {
-            $sql['create node cache table'] .= "SELECT $node_sql_part->SELECT FROM `{$this->getTableName()}` GROUP BY $node_sql_part->GROUP_BY";
-            if ($count < count($node_sql_parts) - 1) {
-                $sql['create node cache table'] .= "\nUNION\n";
-            }
-            $count++;
-        }
-
-        $sql['create node cache table'] .= " ) AS node_union
-            GROUP BY node_id, node_name, node_type, node_group, node_longitude, node_latitude, node_img;";
+            FROM 
+            (
+                SELECT
+                    `source_id` AS node_id, 
+                    `source_name` AS node_name, 
+                    IF(MAX(`source_size`) > 0, MAX(`source_size`), 50) AS node_size,
+                    `source_type` AS node_type,
+                    `source_group` AS node_group, 
+                    `source_longitude` AS node_longitude, 
+                    `source_latitude` AS node_latitude, 
+                    `source_img` AS node_img
+                
+                FROM `{$this->getTableName()}`
+                GROUP BY `source_id`, `source_name`, `source_type`, `source_group`, `source_longitude`, `source_latitude`, `source_img`
+                
+                UNION 
+                
+                SELECT
+                    `target_id` AS node_id,
+                    `target_name` AS node_name,
+                    IF(MAX(`target_size`) > 0, MAX(`target_size`), 50) AS node_size,
+                    `target_type` AS node_type,
+                    `target_group` AS node_group,
+                    `target_longitude` AS node_longitude,
+                    `target_latitude` AS node_latitude,
+                    `target_img` AS node_img
+                
+                FROM `{$this->getTableName()}`
+                GROUP BY `target_id`, `target_name`, `target_type`, `target_group`, `target_longitude`, `target_latitude`, `target_img` 
+            ) 
+            AS node_union
+            GROUP BY node_id, node_name, node_type, node_group, node_longitude, node_latitude, node_img";
 
         // Let's add some indexes
         $sql["lets add an auto indexed primary key to the node table"] =
@@ -317,10 +303,11 @@ class CachedGraphReport extends DatabaseCache
             "UPDATE $this->nodes_table SET id = id - 1";
 
         // For all the IDs defined in the node definitions, add an index for them
-        foreach ($this->getReport()->getNodeDefinitions() as $nodeDefinition) {
-            $sql["doing joins is better with indexes source side"] =
-                "ALTER TABLE `{$this->getTableName()}` ADD INDEX(`{$nodeDefinition->getNodeId()}`);";
-        }
+        $sql["doing joins is better with indexes source side"] =
+            "ALTER TABLE `{$this->getTableName()}` ADD INDEX(`source_id`);";
+
+        $sql["doing joins is better with indexes, add to target side"] =
+            "ALTER TABLE `{$this->getTableName()}` ADD INDEX(`target_id`);";
 
         // At this point, we've set up creation of the nodes table. We're done with nodes!
         // Now we work on Links
@@ -332,18 +319,12 @@ class CachedGraphReport extends DatabaseCache
         // Gather all the IDs from the node definitions so we can concat them and count them
         // We wind up with a table containing all unique link types and a count of how many
         // node pairs there are of this link type
-        $id_concat = "";
-        foreach ($this->getReport()->getNodeDefinitions() as $nodeDefinition) {
-            $id_concat .= "`{$nodeDefinition->getNodeId()}`,";
-        }
-        $id_concat = rtrim($id_concat, ",");
-
-        $sql["create link type table"] = "
-            CREATE TABLE $this->link_types_table
+        $sql["create link type table"] =
+            "CREATE TABLE $this->link_types_table
             SELECT DISTINCT
                 link_type,
-                COUNT(DISTINCT(CONCAT($id_concat))) AS count_distinct_link
-            FROM $cache_table
+                COUNT(DISTINCT(CONCAT(`source_id`,`target_id`))) AS count_distinct_link
+            FROM `{$this->getTableName()}`
             GROUP BY link_type
             ";
 
@@ -356,16 +337,9 @@ class CachedGraphReport extends DatabaseCache
         // First drop the links table if it already exists
         $sql["drop links table"] = "DROP TABLE IF EXISTS $this->links_table;";
 
-        // Use the links definition to build the links table
-        // Each links definition contains the "source" and "target" node column
-        foreach ($this->getReport()->getLinkDefinitions() as $linkDefinition) {
-            if ($linkDefinition instanceof LinkDefinitionIF) {
-
-            }
-        }
-
-        $sql["create links table"] = "
-        CREATE TABLE `$this->links_table` 
+        // Build the links table
+        $sql["create links table"] =
+            "CREATE TABLE `$this->links_table` 
             SELECT 
                 source_nodes.id AS `source`,
                 target_nodes.id AS `target`, 
@@ -467,85 +441,19 @@ class CachedGraphReport extends DatabaseCache
             SELECT 
                 'links_count' AS summary_key,
                 COUNT(DISTINCT(CONCAT(source_id,target_id))) AS summary_value
-            FROM $cache_table";
+            FROM `{$this->getTableName()}`";
 
         //loop all over the sql commands and run each one in order...
         // The connection is a DB Connection to our CACHE DATABASE using the credentials
         // The connection is created in CareSet\Zermelo\Models\ZermeloDatabsse
         foreach ($sql as $this_sql) {
-            ZermeloDatabase::connection($connection_name)->statement(DB::raw($this_sql));
+            ZermeloDatabase::connection($this->getConnectionName())->statement(DB::raw($this_sql));
         }
+
+        $time_elapsed = microtime(true) - $start_time;
+        $processing_time_sql = "INSERT INTO $this->summary_table
+            SET summary_key = 'seconds_to_process',
+            SET summary_value = '$time_elapsed';";
+        ZermeloDatabase::connection($this->getConnectionName())->statement(DB::raw($processing_time_sql));
     }
-
-
-    /**
-     * @param $nodeDefinitions
-     * @param $linkDefinitions
-     *
-     * TODO This is beginning to port from old graph, but the table structures are so different, needs further consideration
-     * link types aren't columns, of the table with values for the link, rather the whole table represents a link for each
-     * row, and the type is a column with different values, and then the value is in the "weight" column
-     */
-    private function buildLinksTable($nodeDefinitions, $linkDefinitions) {
-        foreach ($linkDefinitions as $index => $weight) {
-//            $this->link_types[$index] = [
-//                'id' => $index,
-//                'field' => $weight,
-//            ];
-
-            /*
-                Actually has links
-            */
-            if (count($this->node_types) > 1) {
-                foreach ($this->node_types as $sourceIndex => $sourceSubject) {
-                    foreach ($this->node_types as $targetIndex => $targetSubject) {
-
-                        if ($targetIndex <= $sourceIndex) {
-                            continue;
-                        }
-
-                        if ($this->link_types[$index])
-                            $linkInsertSql = "
-                                INSERT INTO {$this->link_table}(source,target,link_type,weight)
-                                SELECT
-                                A.id as source,
-                                B.id as target,
-                                ? as link_type,
-                                sum(COALESCE(`{$weight}`,0)) as weight
-                                FROM {$this->getTableName()} as MASTER
-                                LEFT JOIN {$this->node_table} AS A on (MASTER.`{$sourceSubject['field']}` = A.value and A.type = ?)
-                                LEFT JOIN {$this->node_table} AS B on (MASTER.`{$targetSubject['field']}` = B.value and B.type = ?)
-                                group by A.id, B.id
-                                HAVING sum(COALESCE(`{$weight}`,0)) > 0
-                                ;
-                            ";
-                            ZermeloDatabase::connection()->statement($linkInsertSql, [$index, $sourceIndex, $targetIndex]);
-                    }
-                }
-
-            } else {
-
-                /*
-                    Does not have any link, but we need to insert a null link to determine the size of the nodes
-                */
-                $sourceIndex = 0;
-                $sourceSubject = $this->node_types[0];
-                ZermeloDatabase::connection()->statement("INSERT INTO {$this->link_table}(source,target,link_type,weight)
-                                SELECT
-                                A.id as source,
-                                null as target,
-                                ? as link_type,
-                                sum(COALESCE(`{$weight}`,0)) as weight
-                                FROM {$this->getTableName()} as MASTER
-                                INNER JOIN {$this->node_table} AS A on (MASTER.`{$sourceSubject['field']}` = A.value and A.type = ?)
-                                group by A.id
-                                HAVING sum(COALESCE(`{$weight}`,0)) > 0
-                                ;
-                                ", [$index, $sourceIndex]
-                );
-            }
-
-        }
-    }
-
 }

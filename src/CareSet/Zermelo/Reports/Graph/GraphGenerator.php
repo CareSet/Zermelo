@@ -191,10 +191,6 @@ ORDER BY nodes.id DESC
             $summary[][$this_row->summary_key] = $this_row->summary_value;
         }
 
-        //$time_elapsed = microtime(true) - $start_time;
-
-        $summary[]['seconds_to_process'] = '9898989898';
-
         //now we put it all together to return the results...
         return [
             'careset_name' => 'For backwards compatibility',
