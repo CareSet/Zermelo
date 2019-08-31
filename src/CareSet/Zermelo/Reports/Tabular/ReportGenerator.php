@@ -70,7 +70,11 @@ class ReportGenerator extends AbstractGenerator implements GeneratorInterface
         This makes sure no new columns were added or removed.
          */
         if (count($original_array_key) != count($mapped_header)) {
-            throw new UnexpectedMapRowException("Zermelo Report Error: Unexpected Map Row Exception");
+		if (count($original_array_key) > count($mapped_header)){
+            		throw new UnexpectedMapRowException("Zermelo Report Error: There are more values returned in the row than went into MapRow");
+		}else{
+            		throw new UnexpectedMapRowException("Zermelo Report Error: There are fewer values returned in the row than went into MapRow");
+		}
         }
 
 
