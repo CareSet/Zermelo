@@ -39,7 +39,7 @@ class ReportGenerator extends AbstractGenerator implements GeneratorInterface
         $mapped_header = []; //this is the result from the MapRow function
         $original_array_key = []; //this is the original field name from the table
         $fields = $this->cache->getColumns();
-
+	
         //convert stdClass to array
         $data_row = json_decode(json_encode($data_row), true);
         $has_data = true;
@@ -70,8 +70,10 @@ class ReportGenerator extends AbstractGenerator implements GeneratorInterface
         This makes sure no new columns were added or removed.
          */
         if (count($original_array_key) != count($mapped_header)) {
-		if (count($original_array_key) > count($mapped_header)){
-            		throw new UnexpectedMapRowException("Zermelo Report Error: There are more values returned in the row than went into MapRow");
+		if (count($original_array_key) < count($mapped_header)){
+			$diff = array_diff($mapped_header,$original_array_key);
+			$diff_text = var_export($diff,true);
+            		throw new UnexpectedMapRowException("Zermelo Report Error: There are more values returned in the row than went into MapRow. These field names have been added:  $diff_text");
 		}else{
             		throw new UnexpectedMapRowException("Zermelo Report Error: There are fewer values returned in the row than went into MapRow");
 		}
