@@ -60,6 +60,7 @@ class GraphPresenter extends AbstractPresenter
     {
         $parameterString = implode("/", $this->_report->getMergedParameters() );
         $graph_api_uri = "/{$this->getApiPrefix()}/{$this->getGraphPath()}/{$this->_report->getClassName()}/{$parameterString}";
+	$graph_api_uri = rtrim($graph_api_uri,'/'); //for when there is no parameterString
         return $graph_api_uri;
     }
 }

@@ -40,8 +40,6 @@ SELECT
 	id AS my_index,
 	node_type AS id,
 	node_type AS label,
-	CONCAT('/api/',node_type) AS data_url_stub,
-	CONCAT(node_type,'_dust') AS dust,
 	0 AS is_img,
 	'' AS img_stub,
 	count_distinct_node AS type_count
@@ -62,8 +60,6 @@ FROM $this->cache_db.{$this->cache->getNodeTypesTable()}
             $node_types[$this_row->my_index] = [
                 'id' => $this_row->id,
                 'label' => $this_row->label,
-                'data_url_stub' => $this_row->data_url_stub,
-                'dust' => $this_row->dust,
                 'is_img' => $is_img,
                 'img_stub' => $this_row->img_stub,
                 'type_count' => $this_row->type_count,
@@ -119,6 +115,7 @@ FROM $this->cache_db.{$this->cache->getNodeGroupsTable()}
 SELECT 
 	`node_name` AS name,
 	`node_latitude` AS latitude,
+	`node_json_url` AS json_url,
 	`node_longitude` AS longitude,
 	groups.id AS `group`,
 	node_size AS size,
@@ -135,7 +132,7 @@ LEFT JOIN $this->cache_db.{$this->cache->getNodeGroupsTable()} AS groups ON
 LEFT JOIN $this->cache_db.{$this->cache->getNodeTypesTable()} AS types ON 
 	types.node_type = 
     	nodes.node_type 
-ORDER BY nodes.id DESC
+ORDER BY nodes.id ASC
 ";
         //lets load the link_types from the database...
         $nodes = [];
@@ -150,11 +147,12 @@ ORDER BY nodes.id DESC
 
             //we would this version result in an object instead of an array?? confusing
 //		$nodes[$this_row->my_index] = [
-            $nodes[] = [
+            $nodes[(int) $this_row->my_index] = [
                 'name' => $this_row->name,
                 'short_name' => substr($this_row->name, 0, 20),
                 'longitude' => $this_row->longitude,
                 'latitiude' => $this_row->latitude,
+		'json_url' => $this_row->json_url,
                 'group' => (int)$this_row->group,
                 'size' => (int)$this_row->size,
                 'img' => $img,
@@ -165,6 +163,9 @@ ORDER BY nodes.id DESC
                 'my_index' => (int)$this_row->my_index,
             ];
         }
+
+	//nodes are built, but we want to make sure that it turns into an array in the json rather than object..
+	$nodes = array_values($nodes); //should return  a zero indexed array. not sure why this converts it to an array.. but it does....
 
         // Retrieve the links from the DB
         $links_sql = "SELECT * FROM $this->cache_db.`{$this->cache->getLinksTable()}`";

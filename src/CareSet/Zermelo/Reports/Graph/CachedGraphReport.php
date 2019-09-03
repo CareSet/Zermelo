@@ -263,6 +263,7 @@ CREATE TABLE $this->cache_db.$this->nodes_table (
   `node_group` varchar(255) CHARACTER SET utf8 NOT NULL DEFAULT '',
   `node_latitude` decimal(17,7) NOT NULL DEFAULT 0,
   `node_longitude` decimal(17,7) NOT NULL DEFAULT 0,
+  `node_json_url` varchar(2000) CHARACTER SET utf8 NOT NULL DEFAULT '',
   `node_img` varchar(1000) CHARACTER SET utf8 NOT NULL DEFAULT ''
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 ";
@@ -291,6 +292,7 @@ ALTER TABLE $this->cache_db.$this->nodes_table
                 node_group,
                 node_latitude,
                 node_longitude,
+		node_json_url,
                 node_img
             FROM 
             (
@@ -302,6 +304,7 @@ ALTER TABLE $this->cache_db.$this->nodes_table
                     `source_group` AS node_group, 
                     `source_longitude` AS node_longitude, 
                     `source_latitude` AS node_latitude, 
+		    `source_json_url` AS node_json_url,
                     `source_img` AS node_img
                 
                 FROM $this->cache_db.`{$this->getTableName()}`
@@ -317,6 +320,7 @@ ALTER TABLE $this->cache_db.$this->nodes_table
                     `target_group` AS node_group,
                     `target_longitude` AS node_longitude,
                     `target_latitude` AS node_latitude,
+		    `target_json_url` AS node_json_url,
                     `target_img` AS node_img
                 
                 FROM $this->cache_db.`{$this->getTableName()}`
