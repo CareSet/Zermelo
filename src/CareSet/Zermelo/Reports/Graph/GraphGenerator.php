@@ -123,7 +123,7 @@ SELECT
 	groups.id AS `group`,
 	node_size AS size,
 	node_img AS img,
-	nodes.id AS `type`,
+	types.id AS `type`,
 	`node_id` AS id,
 	0 AS weight_sum,
 	0 AS degree,
