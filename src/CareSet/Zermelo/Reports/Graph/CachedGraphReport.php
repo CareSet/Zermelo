@@ -16,6 +16,8 @@ use \DB;
 
 class CachedGraphReport extends DatabaseCache
 {
+    protected $cache_db = '_zermelo_cache';
+
     protected $nodes_table = null;
     protected $node_types_table = null;
     protected $node_groups_table = null;
@@ -52,6 +54,9 @@ class CachedGraphReport extends DatabaseCache
         $this->links_table = "links_$cache_table_name_key";
         $this->link_types_table = "link_types_$cache_table_name_key";
         $this->summary_table = "summary_$cache_table_name_key";
+
+	//TODO this should come from configuration...
+	$this->cache_db = '_zermelo_cache'; 
 
         // Only generate the aux tables (drop and re-create) if dictated by cache rules
         if ($this->getGeneratedThisRequest() === true) {
@@ -248,7 +253,7 @@ class CachedGraphReport extends DatabaseCache
         // then union them will all of the unique nodes in the two side of the table..
         // then we create a table of nodes that is the unique nodes shared between the two...
         $sql['create node cache table'] =
-            "CREATE TABLE $this->nodes_table AS 
+            "CREATE TABLE $this->cache_db.$this->nodes_table AS 
             SELECT  
                 node_id,
                 node_name,
@@ -293,77 +298,77 @@ class CachedGraphReport extends DatabaseCache
 
         // Let's add some indexes
         $sql["lets add an auto indexed primary key to the node table"] =
-            "ALTER TABLE $this->nodes_table ADD `id` INT(11) NOT NULL AUTO_INCREMENT FIRST, ADD PRIMARY KEY (`id`); ";
+            "ALTER TABLE $this->cache_db.$this->nodes_table ADD `id` INT(11) NOT NULL AUTO_INCREMENT FIRST, ADD PRIMARY KEY (`id`); ";
 
         $sql["add an index to the string id for the nodes, so tha we can join"] =
-            "ALTER TABLE $this->nodes_table ADD INDEX(`node_id`);";
+            "ALTER TABLE $this->cache_db.$this->nodes_table ADD INDEX(`node_id`);";
 
         //we do this because we need to have something that starts from zero for our JSON indexing..
         $sql["array that starts from zero"] =
-            "UPDATE $this->nodes_table SET id = id - 1";
+            "UPDATE $this->cache_db.$this->nodes_table SET id = id - 1";
 
         // For all the IDs defined in the node definitions, add an index for them
         $sql["doing joins is better with indexes source side"] =
-            "ALTER TABLE `{$this->getTableName()}` ADD INDEX(`source_id`);";
+            "ALTER TABLE $this->cache_db.`{$this->getTableName()}` ADD INDEX(`source_id`);";
 
         $sql["doing joins is better with indexes, add to target side"] =
-            "ALTER TABLE `{$this->getTableName()}` ADD INDEX(`target_id`);";
+            "ALTER TABLE $this->cache_db.`{$this->getTableName()}` ADD INDEX(`target_id`);";
 
         // At this point, we've set up creation of the nodes table. We're done with nodes!
         // Now we work on Links
 
         // Create the link types lookup table
         $sql["drop link type table"] =
-            "DROP TABLE IF EXISTS $this->link_types_table";
+            "DROP TABLE IF EXISTS $this->cache_db.$this->link_types_table";
 
         // Gather all the IDs from the node definitions so we can concat them and count them
         // We wind up with a table containing all unique link types and a count of how many
         // node pairs there are of this link type
         $sql["create link type table"] =
-            "CREATE TABLE $this->link_types_table
+            "CREATE TABLE $this->cache_db.$this->link_types_table
             SELECT DISTINCT
                 link_type,
                 COUNT(DISTINCT(CONCAT(`source_id`,`target_id`))) AS count_distinct_link
-            FROM `{$this->getTableName()}`
+            FROM $this->cache_db.`{$this->getTableName()}`
             GROUP BY link_type
             ";
 
         $sql["create unique id for link type table"] =
-            "ALTER TABLE $this->link_types_table ADD `id` INT(11) NOT NULL AUTO_INCREMENT FIRST, ADD PRIMARY KEY (`id`);";
+            "ALTER TABLE $this->cache_db.$this->link_types_table ADD `id` INT(11) NOT NULL AUTO_INCREMENT FIRST, ADD PRIMARY KEY (`id`);";
 
-        $sql["the link types table should start from zero"] = "UPDATE $this->link_types_table SET id = id - 1;";
+        $sql["the link types table should start from zero"] = "UPDATE $this->cache_db.$this->link_types_table SET id = id - 1;";
 
         // Now create the links table
         // First drop the links table if it already exists
-        $sql["drop links table"] = "DROP TABLE IF EXISTS $this->links_table;";
+        $sql["drop links table"] = "DROP TABLE IF EXISTS $this->cache_db.$this->links_table;";
 
         // Build the links table
         $sql["create links table"] =
-            "CREATE TABLE `$this->links_table` 
+            "CREATE TABLE $this->cache_db.`$this->links_table` 
             SELECT 
                 source_nodes.id AS `source`,
                 target_nodes.id AS `target`, 
                 `weight`, 
                 link_types.id AS `link_type`
-            FROM {$this->getTableName()} AS graph
-            JOIN {$this->nodes_table} AS source_nodes 
+            FROM $this->cache_db.{$this->getTableName()} AS graph
+            JOIN $this->cache_db.{$this->nodes_table} AS source_nodes 
             ON source_nodes.node_id = graph.source_id
-            JOIN {$this->nodes_table} AS target_nodes 
+            JOIN $this->cache_db.{$this->nodes_table} AS target_nodes 
             ON target_nodes.node_id = graph.target_id  
-            JOIN {$this->link_types_table} AS link_types 
+            JOIN $this->cache_db.{$this->link_types_table} AS link_types 
             ON link_types.link_type = graph.link_type
         ";
 
 
         //Sort the node type table...
 
-        $sql["drop node type table"] = "DROP TABLE IF EXISTS $this->node_types_table";
+        $sql["drop node type table"] = "DROP TABLE IF EXISTS $this->cache_db.$this->node_types_table";
 
         //we use the same "distinct on the results of a union of two distincts" method
         //that we used to sort the nodes... but this time we get a unique list of node types...
 
         $sql["create node type table"] =
-            "CREATE TABLE $this->node_types_table
+            "CREATE TABLE $this->cache_db.$this->node_types_table
             SELECT 	
                 node_type, 
                 COUNT(DISTINCT(node_id)) AS count_distinct_node
@@ -371,26 +376,26 @@ class CachedGraphReport extends DatabaseCache
                     SELECT DISTINCT 
                         source_type AS node_type,
                         source_id AS node_id
-                    FROM `{$this->getTableName()}`
+                    FROM $this->cache_db.`{$this->getTableName()}`
                 UNION 
                     SELECT DISTINCT 
                         target_type AS node_type,
                         target_id AS node_id
-                    FROM `{$this->getTableName()}`
+                    FROM $this->cache_db.`{$this->getTableName()}`
                 ) AS  merged_node_type
             GROUP BY node_type";
 
         $sql["create unique id for node type table"] =
-            "ALTER TABLE `{$this->node_types_table}` ADD `id` INT(11) NOT NULL AUTO_INCREMENT FIRST, ADD PRIMARY KEY (`id`);";
+            "ALTER TABLE $this->cache_db.`{$this->node_types_table}` ADD `id` INT(11) NOT NULL AUTO_INCREMENT FIRST, ADD PRIMARY KEY (`id`);";
 
-        $sql["the node types table should start from zero"] = "UPDATE {$this->node_types_table} SET id = id - 1";
+        $sql["the node types table should start from zero"] = "UPDATE $this->cache_db.{$this->node_types_table} SET id = id - 1";
 
         //we use the same "distinct on the results of a union of two distincts" method
         //that we used to sort the nodes... but this time we get a unique list of node types...
-        $sql["drop node group table"] = "DROP TABLE IF EXISTS {$this->node_groups_table}";
+        $sql["drop node group table"] = "DROP TABLE IF EXISTS $this->cache_db.{$this->node_groups_table}";
 
         $sql["create node group table"] =
-            "CREATE TABLE {$this->node_groups_table}
+            "CREATE TABLE $this->cache_db.{$this->node_groups_table}
             SELECT 	
                 group_name, 
                 COUNT(DISTINCT(node_id)) AS count_distinct_node
@@ -398,50 +403,50 @@ class CachedGraphReport extends DatabaseCache
                     SELECT DISTINCT 
                         source_group AS group_name,
                         source_id AS node_id
-                    FROM `{$this->getTableName()}`
+                    FROM $this->cache_db.`{$this->getTableName()}`
                 UNION 
                     SELECT DISTINCT 
                         target_type AS group_name,
                         target_id AS node_id
-                    FROM `{$this->getTableName()}`
+                    FROM $this->cache_db.`{$this->getTableName()}`
                 ) AS  merged_node_type
             GROUP BY group_name";
 
         $sql["create unique id for node group table"] =
-            "ALTER TABLE $this->node_groups_table ADD `id` INT(11) NOT NULL AUTO_INCREMENT FIRST, ADD PRIMARY KEY (`id`);";
+            "ALTER TABLE $this->cache_db.$this->node_groups_table ADD `id` INT(11) NOT NULL AUTO_INCREMENT FIRST, ADD PRIMARY KEY (`id`);";
 
         $sql["the node group table should start from zero"] =
-            "UPDATE $this->node_groups_table SET id = id - 1;";
+            "UPDATE $this->cache_db.$this->node_groups_table SET id = id - 1;";
 
-        $sql["drop the summary table"] = "DROP TABLE IF EXISTS $this->summary_table;";
+        $sql["drop the summary table"] = "DROP TABLE IF EXISTS $this->cache_db.$this->summary_table;";
 
         $sql["create the summary table with the group count"] =
-            "CREATE TABLE $this->summary_table AS 
+            "CREATE TABLE $this->cache_db.$this->summary_table AS 
             SELECT 
                 'group_count                            ' AS summary_key,
                 COUNT(DISTINCT(group_name))  AS summary_value
-            FROM $this->node_groups_table";
+            FROM $this->cache_db.$this->node_groups_table";
 
         $sql["add the type count"] =
-            "INSERT INTO $this->summary_table
+            "INSERT INTO $this->cache_db.$this->summary_table
             SELECT 
                 'type_count' AS summary_key,
                 COUNT(DISTINCT(node_type)) AS summary_value
-            FROM $this->node_types_table";
+            FROM $this->cache_db.$this->node_types_table";
 
         $sql["add the node count"] =
-            "INSERT INTO $this->summary_table
+            "INSERT INTO $this->cache_db.$this->summary_table
             SELECT 
                 'nodes_count' AS summary_key,
                 COUNT(DISTINCT(`id`)) AS summary_value
-            FROM $this->nodes_table";
+            FROM $this->cache_db.$this->nodes_table";
 
         $sql["add the edge count"] =
-            "INSERT INTO $this->summary_table
+            "INSERT INTO $this->cache_db.$this->summary_table
             SELECT 
                 'links_count' AS summary_key,
                 COUNT(DISTINCT(CONCAT(source_id,target_id))) AS summary_value
-            FROM `{$this->getTableName()}`";
+            FROM $this->cache_db.`{$this->getTableName()}`";
 
         //loop all over the sql commands and run each one in order...
         // The connection is a DB Connection to our CACHE DATABASE using the credentials
@@ -451,7 +456,7 @@ class CachedGraphReport extends DatabaseCache
         }
 
         $time_elapsed = microtime(true) - $start_time;
-        $processing_time_sql = "INSERT INTO $this->summary_table
+        $processing_time_sql = "INSERT INTO $this->cache_db.$this->summary_table
             SET summary_key = 'seconds_to_process',
             SET summary_value = '$time_elapsed';";
         ZermeloDatabase::connection($this->getConnectionName())->statement(DB::raw($processing_time_sql));

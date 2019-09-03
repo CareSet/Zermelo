@@ -12,6 +12,7 @@ class GraphGenerator extends AbstractGenerator
 {
     protected $cache = null;
     protected $report = null;
+    protected $cache_db = '_zermelo_cache'; //TODO this should be set in config
 
     public function __construct(CachedGraphReport $cache)
     {
@@ -30,6 +31,7 @@ class GraphGenerator extends AbstractGenerator
 
         $report_description = $this->report->getReportDescription();
         $report_name = $this->report->getReportName();
+	$cache_db = '_zermelo_cache'; //should be coming from config TODO
 
         //lets read in the node types
 
@@ -43,7 +45,7 @@ SELECT
 	0 AS is_img,
 	'' AS img_stub,
 	count_distinct_node AS type_count
-FROM {$this->cache->getNodeTypesTable()}	
+FROM $this->cache_db.{$this->cache->getNodeTypesTable()}	
 ";
         //lets load the node_types from the database...
         $node_types = [];
@@ -75,7 +77,7 @@ SELECT
 	id AS my_index,
 	link_type AS label,
 	count_distinct_link AS link_type_count
-FROM {$this->cache->getLinkTypesTable()}	
+FROM $this->cache_db.{$this->cache->getLinkTypesTable()}	
 ";
         //lets load the link_types from the database...
         $link_types = [];
@@ -97,7 +99,7 @@ SELECT
 	group_name AS id,
 	group_name AS name,
 	count_distinct_node AS group_count
-FROM {$this->cache->getNodeGroupsTable()}	
+FROM $this->cache_db.{$this->cache->getNodeGroupsTable()}	
 ";
 
         //lets load the link_types from the database...
@@ -126,11 +128,11 @@ SELECT
 	0 AS weight_sum,
 	0 AS degree,
 	nodes.id AS my_index
-FROM {$this->cache->getNodesTable()} AS nodes
-LEFT JOIN {$this->cache->getNodeGroupsTable()} AS groups ON 
+FROM $this->cache_db.{$this->cache->getNodesTable()} AS nodes
+LEFT JOIN $this->cache_db.{$this->cache->getNodeGroupsTable()} AS groups ON 
 	groups.group_name =
     	node_group
-LEFT JOIN {$this->cache->getNodeTypesTable()} AS types ON 
+LEFT JOIN $this->cache_db.{$this->cache->getNodeTypesTable()} AS types ON 
 	types.node_type = 
     	nodes.node_type 
 ORDER BY nodes.id DESC
@@ -165,7 +167,7 @@ ORDER BY nodes.id DESC
         }
 
         // Retrieve the links from the DB
-        $links_sql = "SELECT * FROM `{$this->cache->getLinksTable()}`";
+        $links_sql = "SELECT * FROM $this->cache_db.`{$this->cache->getLinksTable()}`";
         $links = [];
         $links_result = ZermeloDatabase::connection($this->cache->getConnectionName())->select(DB::raw($links_sql));
         foreach ($links_result as $this_row) {
@@ -183,7 +185,7 @@ ORDER BY nodes.id DESC
             SELECT 
                 summary_key,
                 summary_value
-            FROM {$this->cache->getSummaryTable()}";
+            FROM $this->cache_db.{$this->cache->getSummaryTable()}";
 
         $summary = [];
         $summary_result = ZermeloDatabase::connection($this->cache->getConnectionName())->select(DB::raw($summary_sql));
