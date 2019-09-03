@@ -252,9 +252,38 @@ class CachedGraphReport extends DatabaseCache
         // First we find all of the unique nodes in the from side of the table
         // then union them will all of the unique nodes in the two side of the table..
         // then we create a table of nodes that is the unique nodes shared between the two...
-        $sql['create node cache table'] =
-            "CREATE TABLE $this->cache_db.$this->nodes_table AS 
+
+	$sql['create the node cache table'] = "
+CREATE TABLE $this->cache_db.$this->nodes_table (
+  `id` int(11) NOT NULL,
+  `node_id` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `node_name` varchar(1000) CHARACTER SET utf8 DEFAULT NULL,
+  `node_size` bigint(20) DEFAULT NULL,
+  `node_type` varchar(1000) CHARACTER SET utf8 NOT NULL DEFAULT '',
+  `node_group` varchar(255) CHARACTER SET utf8 NOT NULL DEFAULT '',
+  `node_latitude` decimal(17,7) NOT NULL DEFAULT 0,
+  `node_longitude` decimal(17,7) NOT NULL DEFAULT 0,
+  `node_img` varchar(1000) CHARACTER SET utf8 NOT NULL DEFAULT ''
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+";
+	
+	//now we make rules to ensure that we have a SQL crash here if the node uniqueness rules are not followed.
+
+	$sql['enforce uniqueness on the node_id of the table..'] = "
+ALTER TABLE $this->cache_db.$this->nodes_table
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `node_id` (`node_id`);
+";
+
+	$sql['and auto increment the id'] = "
+ALTER TABLE $this->cache_db.$this->nodes_table
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+";
+
+        $sql['populate node cache table'] =
+            "INSERT INTO $this->cache_db.$this->nodes_table 
             SELECT  
+		NULL AS id,
                 node_id,
                 node_name,
                 MAX(node_size) AS node_size,
@@ -275,7 +304,7 @@ class CachedGraphReport extends DatabaseCache
                     `source_latitude` AS node_latitude, 
                     `source_img` AS node_img
                 
-                FROM `{$this->getTableName()}`
+                FROM $this->cache_db.`{$this->getTableName()}`
                 GROUP BY `source_id`, `source_name`, `source_type`, `source_group`, `source_longitude`, `source_latitude`, `source_img`
                 
                 UNION 
@@ -290,18 +319,11 @@ class CachedGraphReport extends DatabaseCache
                     `target_latitude` AS node_latitude,
                     `target_img` AS node_img
                 
-                FROM `{$this->getTableName()}`
+                FROM $this->cache_db.`{$this->getTableName()}`
                 GROUP BY `target_id`, `target_name`, `target_type`, `target_group`, `target_longitude`, `target_latitude`, `target_img` 
             ) 
             AS node_union
             GROUP BY node_id, node_name, node_type, node_group, node_longitude, node_latitude, node_img";
-
-        // Let's add some indexes
-        $sql["lets add an auto indexed primary key to the node table"] =
-            "ALTER TABLE $this->cache_db.$this->nodes_table ADD `id` INT(11) NOT NULL AUTO_INCREMENT FIRST, ADD PRIMARY KEY (`id`); ";
-
-        $sql["add an index to the string id for the nodes, so tha we can join"] =
-            "ALTER TABLE $this->cache_db.$this->nodes_table ADD INDEX(`node_id`);";
 
         //we do this because we need to have something that starts from zero for our JSON indexing..
         $sql["array that starts from zero"] =
@@ -342,9 +364,25 @@ class CachedGraphReport extends DatabaseCache
         // First drop the links table if it already exists
         $sql["drop links table"] = "DROP TABLE IF EXISTS $this->cache_db.$this->links_table;";
 
+	
+	$sql["create the links table with indexes"] = "
+CREATE TABLE $this->cache_db.`$this->links_table` (
+  `source` int(11) NOT NULL DEFAULT 0,
+  `target` int(11) NOT NULL DEFAULT 0,
+  `weight` decimal(15,5) NOT NULL,
+  `link_type` int(11) NOT NULL DEFAULT 0
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+";
+
+	$sql["primary key to prevent duplicates later on"] ="
+ALTER TABLE $this->cache_db.`$this->links_table`
+  ADD PRIMARY KEY (`source`,`target`,`link_type`);
+";
+
+
         // Build the links table
         $sql["create links table"] =
-            "CREATE TABLE $this->cache_db.`$this->links_table` 
+            "INSERT IGNORE $this->cache_db.`$this->links_table` 
             SELECT 
                 source_nodes.id AS `source`,
                 target_nodes.id AS `target`, 
@@ -420,8 +458,15 @@ class CachedGraphReport extends DatabaseCache
 
         $sql["drop the summary table"] = "DROP TABLE IF EXISTS $this->cache_db.$this->summary_table;";
 
+	$sql["create the summary table with varchar to be sage"] =  "
+CREATE TABLE $this->cache_db.$this->summary_table (
+  `summary_key` varchar(39) NOT NULL,
+  `summary_value` varchar(255) DEFAULT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+";
+
         $sql["create the summary table with the group count"] =
-            "CREATE TABLE $this->cache_db.$this->summary_table AS 
+            "INSERT INTO $this->cache_db.$this->summary_table 
             SELECT 
                 'group_count                            ' AS summary_key,
                 COUNT(DISTINCT(group_name))  AS summary_value
@@ -455,10 +500,18 @@ class CachedGraphReport extends DatabaseCache
             ZermeloDatabase::connection($this->getConnectionName())->statement(DB::raw($this_sql));
         }
 
+
         $time_elapsed = microtime(true) - $start_time;
+
+	//TODO this seems to fail regularly. Forcing the value to 1 to stabilize needs to be debugged
+	$time_elapsed = 1;
+	
         $processing_time_sql = "INSERT INTO $this->cache_db.$this->summary_table
-            SET summary_key = 'seconds_to_process',
-            SET summary_value = '$time_elapsed';";
+            SET 
+		summary_key = 'seconds_to_process',
+            	summary_value = '$time_elapsed'
+;
+";
         ZermeloDatabase::connection($this->getConnectionName())->statement(DB::raw($processing_time_sql));
     }
 }
