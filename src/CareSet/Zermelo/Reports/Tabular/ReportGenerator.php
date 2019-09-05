@@ -33,41 +33,34 @@ class ReportGenerator extends AbstractGenerator implements GeneratorInterface
     public function getHeader( bool $includeSummary = false )
     {
         $Table = clone $this->cache->getTable();
-        $data_row = $Table->first();
-
-        $headers = []; //this is used to store the headers before and after the column definition
+        $data_row_class = $Table->first();
         $mapped_header = []; //this is the result from the MapRow function
-        $original_array_key = []; //this is the original field name from the table
+
+        // Get the column names and their types (column definitions) directly from the database
         $fields = $this->cache->getColumns();
-	error_log("Fields:");
-//        error_log(print_r($fields));
-//	error_log(print_r($data_row));
-	//convert stdClass to array
-        $data_row = json_decode(json_encode($data_row), true);
+
+        // convert stdClass to array
+        $data_row = [];
+        foreach ($data_row_class as $key => $value) {
+            $data_row[$key] = $value;
+        }
+
         $has_data = true;
         if(!is_array($data_row)) {
             $data_row = [];
             $has_data = false;
         }
-        
+
         $original_array_key = array_keys($data_row);
 
         /*
         Run the MapRow once to get the proper column name from the Report
          */
-	    $first_row_num = 0;
-	    if ( $has_data ) {
+        $first_row_num = 0;
+        if ( $has_data ) {
             $data_row = $this->cache->MapRow( $data_row, $first_row_num );
-
-            // (#94) To fix error where strange encoding in first row breaks table
-            $mapped_and_encoded = [];
-            foreach ( $data_row as $mapped_key => $mapped_value ) {
-                error_log("$mapped_key => $mapped_value");
-		$mapped_and_encoded[$mapped_key]= utf8_encode( $mapped_value );
-            }
-            $mapped_header = array_keys( $mapped_and_encoded );
+            $mapped_header = array_keys( $data_row );
         }
-
 
         /*
         This makes sure no new columns were added or removed.
@@ -160,7 +153,7 @@ class ReportGenerator extends AbstractGenerator implements GeneratorInterface
             }
             $target_fields = implode(",", $target_fields);
             $ResultTable = clone $this->cache->getTable();
-            $result = json_decode(json_encode($ResultTable->selectRaw($target_fields)->first()), true);
+            $result = $ResultTable->selectRaw($target_fields)->first();
 
             /*
             Parse the result out into an associated array with the proper field name as the key
