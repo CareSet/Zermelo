@@ -246,7 +246,7 @@ class CachedGraphReport extends DatabaseCache
         $start_time = microtime(true);
         $sql = [];
 
-        $sql['delete current node table'] = "DROP TABLE IF EXISTS $this->nodes_table;";
+        $sql['delete current node table'] = "DROP TABLE IF EXISTS $this->cache_db.$this->nodes_table;";
 
         // Build the query that builds the nodes table. This will take the source and target nodes and union them together
         // First we find all of the unique nodes in the from side of the table
