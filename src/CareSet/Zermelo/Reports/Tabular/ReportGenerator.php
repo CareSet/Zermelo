@@ -39,8 +39,10 @@ class ReportGenerator extends AbstractGenerator implements GeneratorInterface
         $mapped_header = []; //this is the result from the MapRow function
         $original_array_key = []; //this is the original field name from the table
         $fields = $this->cache->getColumns();
-	
-        //convert stdClass to array
+	error_log("Fields:");
+//        error_log(print_r($fields));
+//	error_log(print_r($data_row));
+	//convert stdClass to array
         $data_row = json_decode(json_encode($data_row), true);
         $has_data = true;
         if(!is_array($data_row)) {
@@ -60,7 +62,8 @@ class ReportGenerator extends AbstractGenerator implements GeneratorInterface
             // (#94) To fix error where strange encoding in first row breaks table
             $mapped_and_encoded = [];
             foreach ( $data_row as $mapped_key => $mapped_value ) {
-                $mapped_and_encoded[$mapped_key]= mb_convert_encoding( $mapped_value, 'UTF-8', 'UTF-8' );
+                error_log("$mapped_key => $mapped_value");
+		$mapped_and_encoded[$mapped_key]= utf8_encode( $mapped_value );
             }
             $mapped_header = array_keys( $mapped_and_encoded );
         }

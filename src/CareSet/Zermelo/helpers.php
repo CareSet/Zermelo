@@ -6,6 +6,12 @@ function api_prefix()
     return $api_prefix;
 }
 
+function tree_api_prefix()
+{
+    $api_prefix = trim( config("zermelo.TREE_API_PREFIX"), "/ " );
+    return $api_prefix;
+}
+
 function tabular_api_prefix()
 {
     $api_prefix = trim( config("zermelo.TABULAR_API_PREFIX"), "/ " );

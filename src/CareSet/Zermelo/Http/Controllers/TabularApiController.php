@@ -14,18 +14,26 @@ class TabularApiController extends AbstractController
 {
     public function index( TabularReportRequest $request )
     {
+error_log("In index controller 1");
         $report = $request->buildReport();
+error_log("In index controller 2");
         $cache = new DatabaseCache( $report, zermelo_cache_db() );
+error_log("In index controller 3");
         $generator = new ReportGenerator( $cache );
+error_log("In index controller 4");
         return $generator->toJson();
     }
 
     public function summary( TabularReportRequest $request )
     {
+        error_log("In summary controller 1");
         $report = $request->buildReport();
+error_log("In summary controller 2");
         // Wrap the report in cache
         $cache = new DatabaseCache( $report, zermelo_cache_db() );
+error_log("In summary controller 3");
         $generator = new ReportSummaryGenerator( $cache );
+error_log("In summary controller 4");
         return $generator->toJson();
     }
 

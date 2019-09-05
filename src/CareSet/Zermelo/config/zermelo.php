@@ -25,6 +25,12 @@ return [
 
     /**
      * This is the prefix for the tabular API routes for retrieving data formatted
+     * For jQuery DataTables
+     */
+    'TREE_API_PREFIX' => env("TREE_API_PREFIX","ZermeloTree"),
+
+    /**
+     * This is the prefix for the tabular API routes for retrieving data formatted
      * For D3 and other graphing toolkits
      */
     'GRAPH_API_PREFIX'=>env("GRAPH_API_PREFIX","ZermeloGraph"),

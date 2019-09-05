@@ -124,6 +124,11 @@ Class ZermeloServiceProvider extends \Illuminate\Support\ServiceProvider
                 $this->loadRoutesFrom(__DIR__.'/routes/api.graph.php');
             });
 
+            $tree_api_prefix = config('zermelo.TREE_API_PREFIX');
+            Route::group( ['prefix' => $tree_api_prefix ], function() {
+                $this->loadRoutesFrom(__DIR__.'/routes/api.tree.php');
+            });
+
         });
     }
 
