@@ -72,6 +72,20 @@ abstract class AbstractZermeloInstallCommand extends Command
     }
 
     /**
+     * Merge the given configuration with the existing configuration.
+     *
+     * @param  string  $path
+     * @param  string  $key
+     * @return void
+     */
+    protected function mergeConfigFrom($path, $key)
+    {
+        $config = $this->laravel['config']->get($key, []);
+
+        $this->laravel['config']->set($key, array_merge(require $path, $config));
+    }
+
+    /**
      * Create the directories for the files.
      *
      * @return void
@@ -133,20 +147,27 @@ abstract class AbstractZermeloInstallCommand extends Command
             }
         }
 
-        // Test to see if old/current config is missing any "new" settings from the package
-        $newConfig = include $this->config_file;
-        $currentConfig = include config_path( $filename );
-        foreach ($newConfig as $key => $value) {
-            if (!isset($currentConfig[$key])) {
-                $this->error("Your current configuration file is missing required setting `{$key}`. Please refer to the package config `{$this->config_file}` to copy the default setting value.");
-            }
-        }
-
         if ($doCopy) {
             copy(
                 $this->config_file,
                 config_path($filename)
             );
+
+            $this->mergeConfigFrom(
+                config_path($filename), basename($filename, ".php") // use the key as the filename without extension
+            );
+        } else {
+            // Only if we are NOT copying the new config file, AND we have an old one
+            // test to see if old/current config is missing any "new" settings from the package
+            if (file_exists(config_path( $filename ))) {
+                $newConfig = include $this->config_file;
+                $currentConfig = include config_path($filename);
+                foreach ($newConfig as $key => $value) {
+                    if (!isset($currentConfig[$key])) {
+                        $this->error("Your current configuration file is missing required setting `{$key}`. Please refer to the package config `{$this->config_file}` to copy the default setting value.");
+                    }
+                }
+            }
         }
     }
 

@@ -117,14 +117,14 @@ class ZermeloInstallCommand extends AbstractZermeloInstallCommand
         // Write the database name to the master config
         config( ['zermelo.ZERMELO_CONFIG_DB' => $zermelo_config_db_name ] );
 
-        // Configure the database for usage
-        ZermeloDatabase::configure( $zermelo_config_db_name );
-
         $this->migrateDatabase( $zermelo_config_db_name, self::CONFIG_MIGRATIONS_PATH );
     }
 
     public function migrateDatabase( $dbname, $path )
     {
+        // unsure the database is configured for usage
+        ZermeloDatabase::configure( $dbname );
+
         Artisan::call('migrate', [
             '--force' => true,
             '--database' => $dbname,

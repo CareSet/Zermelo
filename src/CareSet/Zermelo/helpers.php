@@ -28,7 +28,7 @@ function zermelo_cache_db()
 {
     $db = config("zermelo.ZERMELO_CACHE_DB" );
     if ( empty($db)) {
-        throw new \Exception("Zermelo Cache DB not set in zermelo.php config file.");
+        info("Zermelo Cache DB not set in zermelo.php config file.");
     }
     return $db;
 }
@@ -37,7 +37,7 @@ function zermelo_config_db()
 {
     $db = config("zermelo.ZERMELO_CONFIG_DB" );
     if ( empty($db)) {
-        throw new \Exception("Zermelo Config DB not set in zermelo.php config file.");
+        info("Zermelo Config DB not set in zermelo.php config file.");
     }
     return $db;
 }
