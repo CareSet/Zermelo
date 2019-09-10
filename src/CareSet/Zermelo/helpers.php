@@ -49,13 +49,5 @@ function report_path()
     return app_path($parts[count($parts)-1]);
 }
 
-function bootstap_css()
-{
-    if ( config('zermelo.BOOTSTRAP_CSS_LOCATION') ) {
-        return asset( config( 'zermelo.BOOTSTRAP_CSS_LOCATION' ) );
-    } else {
-        return asset('vendor/CareSet/bootstrap/css/bootstrap.min.css');
-    }
-}
 
 
