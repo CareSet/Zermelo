@@ -4,7 +4,7 @@ namespace CareSet\Zermelo;
 
 use CareSet\Zermelo\Console\ZermeloInstallCommand;
 use CareSet\Zermelo\Console\ZermeloMakeDemoCommand;
-use CareSet\Zermelo\Console\ZermeloMakeReportCommand;
+use CareSet\Zermelo\Console\MakeCardsReportCommand;
 use CareSet\Zermelo\Models\ZermeloDatabase;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\File;
@@ -32,8 +32,7 @@ Class ZermeloServiceProvider extends \Illuminate\Support\ServiceProvider
          *  - Exports Assets
          */
         $this->commands([
-            ZermeloInstallCommand::class,
-            ZermeloMakeReportCommand::class
+            ZermeloInstallCommand::class
         ]);
 
         /*

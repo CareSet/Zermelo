@@ -45,13 +45,23 @@ abstract class AbstractZermeloInstallCommand extends Command
      */
     public function handle()
     {
+        $this->info("Creating directories....");
         $this->createDirectories();
+        $this->info("Done.");
 
+        $this->info("Exporting views....");
         $this->exportViews();
+        $this->info("Done.");
 
+        $this->info("exporting config....");
         $this->exportConfig();
+        $this->info("Done.");
 
+        $this->info("exporting assets....");
         $this->exportAssets();
+        $this->info("Done.");
+
+        $this->info("Installation Successful.");
     }
 
     /**
