@@ -111,7 +111,7 @@ Make your first Report
 1. In order to get your first report, you need to create a report file. The easiest way to create an new report file
 is to run: 
 
-	`php artisan make:zermelo [YourNewReportName]`
+	`php artisan zermelo:make_tabular [YourNewReportName]`
 
 To understand what this does, take a look at the example report model below.
 
