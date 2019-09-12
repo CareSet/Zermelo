@@ -8,14 +8,13 @@
 
 namespace CareSet\Zermelo\Http\Controllers;
 
-use CareSet\Zermelo\Http\Requests\GraphReportRequest;
+use CareSet\Zermelo\Http\Requests\ZermeloRequest;
 use CareSet\Zermelo\Reports\Graph\CachedGraphReport;
-use CareSet\Zermelo\Models\DatabaseCache;
 use CareSet\Zermelo\Reports\Graph\GraphGenerator;
 
 class GraphApiController
 {
-    public function index( GraphReportRequest $request )
+    public function index( ZermeloRequest $request )
     {
         $report = $request->buildReport();
 

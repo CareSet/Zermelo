@@ -2,48 +2,39 @@
 
 namespace CareSet\Zermelo\Http\Controllers;
 
-use CareSet\Zermelo\Http\Requests\TabularReportRequest;
-use CareSet\Zermelo\Models\ZermeloMeta;
+use CareSet\Zermelo\Http\Requests\ZermeloRequest;
 use CareSet\Zermelo\Models\DatabaseCache;
 use CareSet\Zermelo\Reports\Tabular\ReportGenerator;
 use CareSet\Zermelo\Reports\Tabular\ReportSummaryGenerator;
 use DB;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
-class TabularApiController extends AbstractController
+class TabularApiController extends AbstractApiController
 {
-    public function index( TabularReportRequest $request )
+    public function index( ZermeloRequest $request )
     {
-error_log("In index controller 1");
         $report = $request->buildReport();
-error_log("In index controller 2");
         $cache = new DatabaseCache( $report, zermelo_cache_db() );
-error_log("In index controller 3");
         $generator = new ReportGenerator( $cache );
-error_log("In index controller 4");
         return $generator->toJson();
     }
 
-    public function summary( TabularReportRequest $request )
+    public function summary( ZermeloRequest $request )
     {
-        error_log("In summary controller 1");
         $report = $request->buildReport();
-error_log("In summary controller 2");
         // Wrap the report in cache
         $cache = new DatabaseCache( $report, zermelo_cache_db() );
-error_log("In summary controller 3");
         $generator = new ReportSummaryGenerator( $cache );
-error_log("In summary controller 4");
         return $generator->toJson();
     }
 
     /**
      * Generate the download for the targeted report. This relies on the cached version of the ReportJSON
-     * @param TabularReportRequest $request Tabular request for report
+     * @param ZermeloRequest $request Tabular request for report
      * @return CSV download
      *
      */
-    public function download( TabularReportRequest $request )
+    public function download( ZermeloRequest $request )
     {
         $report = $request->buildReport();
         $connectionName = zermelo_cache_db();

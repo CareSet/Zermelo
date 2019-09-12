@@ -42,6 +42,13 @@ abstract class ZermeloReport
 	 */
 	protected $_input = [];
 
+    /**
+     * @var array
+	 * This is where custom view varialbes are stored, can access these varialbe on the view without having
+	 * to pass them through the API
+     */
+	protected $_view_variables = [];
+
 	/*
 	 * Store the column name and direction of the default sort order to pass to UI
 	 */
@@ -103,6 +110,16 @@ abstract class ZermeloReport
 		$this->setHowLongToCacheInSeconds( $this->HOW_LONG_TO_CACHE_IN_SECONDS );
 
 		$this->_socketService = $socketService;
+	}
+
+	public function pushViewVariable($key, $value)
+	{
+		$this->_view_variables[$key] = $value;
+	}
+
+	public function getViewVariables()
+	{
+		return $this->_view_variables;
 	}
 
 

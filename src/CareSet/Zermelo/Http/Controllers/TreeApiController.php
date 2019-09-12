@@ -2,14 +2,14 @@
 
 namespace CareSet\Zermelo\Http\Controllers;
 
-use CareSet\Zermelo\Http\Requests\TreeReportRequest;
+use CareSet\Zermelo\Http\Requests\ZermeloRequest;
 use CareSet\Zermelo\Reports\Tree\CachedTreeReport;
 use CareSet\Zermelo\Reports\Tree\TreeReportGenerator;
 use CareSet\Zermelo\Reports\Tree\TreeReportSummaryGenerator;
 
 class TreeApiController
 {
-    public function index( TreeReportRequest $request )
+    public function index( ZermeloRequest $request )
     {
         $report = $request->buildReport();
         $cache = new CachedTreeReport( $report, zermelo_cache_db() );
@@ -17,7 +17,7 @@ class TreeApiController
         return $generator->toJson();
     }
 
-    public function summary( TreeReportRequest $request )
+    public function summary( ZermeloRequest $request )
     {
         $report = $request->buildReport();
         // Wrap the report in cache
