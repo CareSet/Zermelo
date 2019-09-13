@@ -3,10 +3,10 @@
 namespace CareSet\Zermelo\Models;
 
 use Carbon\Carbon;
-use CareSet\Zermelo\Interfaces\ReportInterface;
+use CareSet\Zermelo\Interfaces\ZermeloReportInterface;
 use Illuminate\Support\Facades\DB;
 
-class DatabaseCache implements ReportInterface
+class DatabaseCache
 {
     protected $exists = false;
     protected $doClearCache = false;
@@ -38,6 +38,7 @@ class DatabaseCache implements ReportInterface
             $this->generatedThisRequest = true;
         }
 
+        // Get the column names from the cache/result table
         $this->columns = ZermeloDatabase::getTableColumnDefinition($this->getTableName(), $this->connectionName);
 
         return true;

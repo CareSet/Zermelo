@@ -9,11 +9,12 @@
  *
  */
 namespace CareSet\Zermelo\Models;
+use CareSet\Zermelo\Interfaces\ZermeloReportInterface;
 use CareSet\Zermelo\Services\SocketService;
 use Mockery\Exception;
 use \Request;
 
-abstract class ZermeloReport
+abstract class ZermeloReport implements ZermeloReportInterface
 {
 	/**
 	 * $_code
@@ -48,6 +49,13 @@ abstract class ZermeloReport
 	 * to pass them through the API
      */
 	protected $_view_variables = [];
+
+    /**
+     * @var null
+	 *
+	 * User remember token passed to view
+     */
+	protected $_token = null;
 
 	/*
 	 * Store the column name and direction of the default sort order to pass to UI
@@ -121,6 +129,16 @@ abstract class ZermeloReport
 	{
 		return $this->_view_variables;
 	}
+
+    public function getToken()
+    {
+        return $this->_token;
+    }
+
+    public function setToken( $token )
+    {
+        $this->_token = $token;
+    }
 
 
     /**

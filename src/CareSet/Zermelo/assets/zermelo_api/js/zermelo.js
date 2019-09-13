@@ -90,7 +90,7 @@ var Zermelo = function( reportURI, downlaodURI, options ) {
     this.pushGlobalSearchFilter = function(value) {
         if ( value != "" ) {
             that.searchFilters.push({
-                "_": data.search.value
+                "_": value
             });
         }
     }

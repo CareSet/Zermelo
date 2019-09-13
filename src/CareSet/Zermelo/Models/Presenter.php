@@ -12,29 +12,12 @@ class Presenter
 {
     protected $_report = null;
     protected $_token = null;
-    protected $_view = null;
     protected $_view_variables = [];
 
     public function __construct(ZermeloReport $report)
     {
         $this->_report = $report;
         $this->_view_variables = $report->getViewVariables();
-    }
-
-    /**
-     * @return null
-     */
-    public function getView()
-    {
-        return $this->_view;
-    }
-
-    /**
-     * @param null $view
-     */
-    public function setView($view)
-    {
-        $this->_view = $view;
     }
 
     public function getSocketwrenchUri()

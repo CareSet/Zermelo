@@ -32,8 +32,6 @@ class ReportGenerator extends AbstractGenerator implements GeneratorInterface
 
     public function getHeader( bool $includeSummary = false )
     {
-        $Table = clone $this->cache->getTable();
-        $data_row_class = $Table->first();
         $mapped_header = []; //this is the result from the MapRow function
 
         // Get the column names and their types (column definitions) directly from the database
@@ -41,12 +39,12 @@ class ReportGenerator extends AbstractGenerator implements GeneratorInterface
 
         // convert stdClass to array
         $data_row = [];
-        foreach ($data_row_class as $key => $value) {
+        foreach ($fields as $key => $value) {
             $data_row[$key] = $value;
         }
 
         $has_data = true;
-        if(!is_array($data_row)) {
+        if(count($data_row) == 0) {
             $data_row = [];
             $has_data = false;
         }

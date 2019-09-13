@@ -28,19 +28,20 @@ class AbstractGenerator
     {
         foreach($filters as $field=>$value)
         {
+            $urldecodedvalue =urldecode($value);
             if($field == '_')
             {
                 $fields = ZermeloDatabase::getTableColumnDefinition( $this->cache->getTableName(), zermelo_cache_db() );
-                $this->cache->getTable()->where(function($q) use($fields,$value)
+                $this->cache->getTable()->where(function($q) use($fields,$urldecodedvalue)
                 {
                     foreach ($fields as $field) {
                         $field_name = $field['Name'];
-                        $q->orWhere($field_name, 'LIKE', '%' . $value . '%');
+                        $q->orWhere($field_name, 'LIKE', '%' . $urldecodedvalue . '%');
                     }
                 });
             } else
             {
-                $this->cache->getTable()->Where($field,'LIKE','%'.$value.'%');
+                $this->cache->getTable()->Where($field,'LIKE','%'.$urldecodedvalue.'%');
             }
         }
     }

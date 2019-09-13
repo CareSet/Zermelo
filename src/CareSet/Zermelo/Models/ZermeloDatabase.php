@@ -126,12 +126,11 @@ class ZermeloDatabase
      */
     public static function getTableColumnDefinition( $table_name, $connectionName ): array
     {
-            $result = self::connection($connectionName)->select("SHOW COLUMNS FROM {$table_name}");
+        $result = self::connection($connectionName)->select("SHOW COLUMNS FROM {$table_name}");
         if ($result) {
             $column_meta = [];
             foreach ($result as $column) {
-error_log($column->Field);                
-$column_meta[$column->Field] = [
+            $column_meta[$column->Field] = [
                     'Name' => $column->Field,
                     'Type' => self::basicTypeFromNativeType($column->Type),
                 ];
