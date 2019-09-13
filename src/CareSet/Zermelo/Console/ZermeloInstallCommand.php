@@ -29,6 +29,8 @@ class ZermeloInstallCommand extends AbstractZermeloInstallCommand
         // Do view, config and asset installing first
         parent::handle();
 
+        $this->info("Setting up cache and config databases...");
+
         // If there are any config changes from the installation command, we track with this flag in case
         // we need to write an updated config file.
         $config_changes = false;
@@ -64,6 +66,24 @@ class ZermeloInstallCommand extends AbstractZermeloInstallCommand
         } else {
             $this->migrateDatabase( $zermelo_config_db_name, self::CONFIG_MIGRATIONS_PATH );
         }
+
+        // Check encoding and warn if there's non-matching encodings
+        $encodingResult = DB::connection()->select("
+            SHOW VARIABLES 
+            WHERE ( Variable_name LIKE 'character\_set\_%' OR Variable_name LIKE 'collation%'  ) AND 
+            Variable_name != 'character_set_filesystem' AND Variable_name != 'character_set_system'");
+        if (count($encodingResult) > 0) {
+            $this->comment("You have mismatched character sets which may cause issues with your data");
+            $headers = ['Variable_name', 'Value'];
+            $array = [];
+            foreach($encodingResult as $value) {
+                $row = [$value->Variable_name, $value->Value];
+                $array[]= $row;
+            }
+            $this->table($headers, $array);
+        }
+
+        $this->info("Done.");
 
         if ( ! $this->option('force') ) {
             if ( $this->confirm("Would you like to use your previously installed Bootstrap CSS file?" )) {
