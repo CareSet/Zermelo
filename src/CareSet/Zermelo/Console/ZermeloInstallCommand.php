@@ -73,7 +73,7 @@ class ZermeloInstallCommand extends AbstractZermeloInstallCommand
             WHERE ( Variable_name LIKE 'character\_set\_%' OR Variable_name LIKE 'collation%'  ) AND 
             Variable_name != 'character_set_filesystem' AND Variable_name != 'character_set_system'");
         if (count($encodingResult) > 0) {
-            $this->comment("You have mismatched character sets which may cause issues with your data");
+            $this->comment("You have mismatched character sets which may cause issues with displaying your data");
             $headers = ['Variable_name', 'Value'];
             $array = [];
             foreach($encodingResult as $value) {
