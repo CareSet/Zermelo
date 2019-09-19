@@ -67,21 +67,7 @@ class ZermeloInstallCommand extends AbstractZermeloInstallCommand
             $this->migrateDatabase( $zermelo_config_db_name, self::CONFIG_MIGRATIONS_PATH );
         }
 
-        // Check encoding and warn if there's non-matching encodings
-        $encodingResult = DB::connection()->select("
-            SHOW VARIABLES 
-            WHERE ( Variable_name LIKE 'character\_set\_%' OR Variable_name LIKE 'collation%'  ) AND 
-            Variable_name != 'character_set_filesystem' AND Variable_name != 'character_set_system'");
-        if (count($encodingResult) > 0) {
-            $this->comment("You have mismatched character sets which may cause issues with displaying your data");
-            $headers = ['Variable_name', 'Value'];
-            $array = [];
-            foreach($encodingResult as $value) {
-                $row = [$value->Variable_name, $value->Value];
-                $array[]= $row;
-            }
-            $this->table($headers, $array);
-        }
+        Artisan::call('zermelo:debug', [], $this->getOutput());
 
         $this->info("Done.");
 

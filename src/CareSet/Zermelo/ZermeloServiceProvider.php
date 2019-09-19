@@ -2,6 +2,7 @@
 
 namespace CareSet\Zermelo;
 
+use CareSet\Zermelo\Console\ZermeloDebugCommand;
 use CareSet\Zermelo\Console\ZermeloInstallCommand;
 use CareSet\Zermelo\Console\ZermeloMakeDemoCommand;
 use CareSet\Zermelo\Console\MakeCardsReportCommand;
@@ -32,7 +33,8 @@ Class ZermeloServiceProvider extends \Illuminate\Support\ServiceProvider
          *  - Exports Assets
          */
         $this->commands([
-            ZermeloInstallCommand::class
+            ZermeloInstallCommand::class,
+            ZermeloDebugCommand::class
         ]);
 
         /*
