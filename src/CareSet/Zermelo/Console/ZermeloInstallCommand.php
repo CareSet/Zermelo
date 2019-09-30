@@ -22,6 +22,13 @@ class ZermeloInstallCommand extends AbstractZermeloInstallCommand
                     {--database= : Pass in the database name}
                     {--force : Overwrite existing views and database by default}';
 
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Install the backend Zermelo API';
+
     const CONFIG_MIGRATIONS_PATH = 'vendor/careset/zermelo/database/migrations';
 
     public function handle()
