@@ -84,14 +84,23 @@ class SocketService
     }
 
 
-   /*
-	Does the grunt work for fetching a specific socket.
-   */
+    /**
+     * @param $key
+     * @return mixed|null
+     * @throws \Exception
+     *
+     * Given a "key" or a wrench lookup string, get the "active" socket. This could be
+     * the default socket, if none has been explicitly selected by the user, or the active
+     * socket for this wrench as selected by the user via the data options user interface.
+     */
     public function fetchSocketForWrenchKey( $key )
     {
+        // Get the wrench model by lookup string from the config database
         $wrench = Wrench::where( 'wrench_lookup_string', $key )->first();
-	//TODO It is not at all obvious what this code block is doing. This needs documentation...
         if ( $wrench !== null ) {
+
+            // Search the "active" sockets for this wrench's selected socket. If the user has
+            // selected a socket for this wrench label via the user interface, it will be found
             $foundSocket = null;
             foreach ( $this->activeSockets as $activeSocket ) {
                 if ( $wrench->id === $activeSocket->wrench_id ) {

@@ -14,6 +14,6 @@ class Wrench extends AbstractZermeloModel
 
     public function sockets()
     {
-        return $this->hasMany(Socket::class );
+        return $this->hasMany(Socket::class )->orderBy('wrench_label');
     }
 }
