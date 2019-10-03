@@ -7,6 +7,7 @@ use CareSet\Zermelo\Console\ZermeloInstallCommand;
 use CareSet\Zermelo\Console\ZermeloMakeDemoCommand;
 use CareSet\Zermelo\Console\MakeCardsReportCommand;
 use CareSet\Zermelo\Models\ZermeloDatabase;
+use CareSet\Zermelo\Services\SocketService;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
@@ -65,8 +66,22 @@ Class ZermeloServiceProvider extends \Illuminate\Support\ServiceProvider
         }
 	}
 
+    /**
+     * @param Router $router
+     *
+     * This function is called after all providers have been registered,
+     * and the database hass been set up.
+     */
 	public function boot( Router $router )
 	{
+        // Validate DB permissions.
+
+
+        // Validate that there is only one is_default_socket for a wrench, throw an exception
+        // if there is a wrench with Zero default sockets, or a wrench with more than one
+        // default socket, as this can result unexpected behavior
+        SocketService::checkIsDefaultSocket();
+
         // routes
         $this->registerApiRoutes();
 

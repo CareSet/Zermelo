@@ -123,4 +123,40 @@ class SocketService
         return $foundSocket;
     }
 
+    /**
+     * Check the default socket in sockets table to make sure that
+     * each wrench as one, and only one, default socket
+     */
+    public static function checkIsDefaultSocket()
+    {
+        // Fetch all the sockets
+        $sockets = Socket::all();
+
+        // Count the default sockets for each
+        $default_hist = [];
+        foreach ($sockets as $socket) {
+
+            if (!isset($default_hist[$socket->wrench->wrench_label])) {
+                $default_hist[$socket->wrench->wrench_label] = 0;
+            }
+
+            if ($socket->is_default_socket == 1) {
+                $default_hist[$socket->wrench->wrench_label]++;
+            }
+        }
+
+        $message = "";
+        foreach ($default_hist as $label => $count) {
+            if ($count > 1) {
+                $message.= "Too many default sockets ($count) for Wrench `$label`\n";
+            } else if ($count == 0) {
+                $message.= "No default socket for Wrench `$label`\n";
+            }
+        }
+
+        if ($message) {
+            throw new \Exception($message);
+        }
+    }
+
 }
