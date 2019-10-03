@@ -54,15 +54,42 @@ Class ZermeloServiceProvider extends \Illuminate\Support\ServiceProvider
         }
 
         // Register the cache database connection if we have a zermelo db
+        $no_cache_database = false;
         $zermelo_cache_db = zermelo_cache_db();
         if ( ZermeloDatabase::doesDatabaseExist( $zermelo_cache_db ) ) {
             ZermeloDatabase::configure( $zermelo_cache_db );
+        } else {
+            $no_cache_database = true;
         }
 
         // Register and configure the config DB
+        $no_config_database = false;
         $zermelo_config_db = zermelo_config_db();
         if ( ZermeloDatabase::doesDatabaseExist( $zermelo_config_db ) ) {
             ZermeloDatabase::configure( $zermelo_config_db );
+        } else {
+            $no_config_database = true;
+        }
+
+        // The following block spits out an error message that indicates why Zermelo probably couldn't connect
+        // to the cache and config databases, due to permissions error. If we are running in web server, tell
+        // user to check the .env file, if we are running an artisan command, we can provide more information
+        // about what user is attempting to connect and potentially how to fix the issue.
+        if ( $no_cache_database === true ||
+            $no_config_database === true) {
+            $message = "Zermelo is unable to connect to cache or config database,\n";
+            $message .= "Please check the username and password in your .env file's database credentials and try again.\n";
+
+            // If We are running install/client mode output some more information
+            if (php_sapi_name() == 'cli') {
+                $default = config( 'database.default' );
+
+                $username = config( "database.connections.$default.username" );
+                $message .= "You are trying to connect with mysql user `$username`, you may have to run the following commands:\n";
+                $message .= "GRANT ALL on _zermelo_cache TO $username@localhost\n";
+                $message .= "GRANT ALL on _zermelo_config TO $username@localhost\n";
+            }
+            throw new \Exception($message);
         }
 	}
 
@@ -74,9 +101,6 @@ Class ZermeloServiceProvider extends \Illuminate\Support\ServiceProvider
      */
 	public function boot( Router $router )
 	{
-        // Validate DB permissions.
-
-
         // Validate that there is only one is_default_socket for a wrench, throw an exception
         // if there is a wrench with Zero default sockets, or a wrench with more than one
         // default socket, as this can result unexpected behavior
