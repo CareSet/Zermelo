@@ -70,6 +70,14 @@ var Zermelo = function( reportURI, downlaodURI, options ) {
 
     /**
      *  Get all search filters, including column and global search filters
+     *  Search filters are stored in key/value pairs like this:
+     *  [
+     *      { search_column_1: value },
+     *      { search_column_2: value }
+     *  ]
+     *
+     *  This format is a legacy API format, and could be changed in the future
+     *  to be more developer-friendly by using a format similar to sockets.
      *
      * @returns {Array}
      */
