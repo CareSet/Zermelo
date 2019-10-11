@@ -50,10 +50,8 @@ Look in [Basic Installation](documentation/BasicInstall.md) for complete install
 For a quick start, assuming your Laravel instance already has access to the DB that it needs
 
 ```bash
-    $ composer require careset/zermelo
-    $ composer require careset/zermelobladetabular
-    $ php artisan install:zermelo
-    $ php artisan install:zermelobladetabular
+    $ composer require careset/zermelo_installer
+    $ php artisan zermelo:install
 ```
 This will install and configure zermelo, and create an app/Reports for you to add reports too.
 
