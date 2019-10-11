@@ -10,8 +10,8 @@
 CREATE TABLE IF NOT EXISTS `socket` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `wrench_id` int(11) NOT NULL,
-  `wrench_value` varchar(1024) NOT NULL,
-  `wrench_label` varchar(1024) NOT NULL,
+  `socket_value` varchar(1024) NOT NULL,
+  `socket_label` varchar(1024) NOT NULL,
   `is_default_socket` tinyint(1) NOT NULL,
   `socketsource_id` int(11) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS `socket` (
 -- Dumping data for table `socket`
 --
 
-INSERT INTO `socket` (`id`, `wrench_id`, `wrench_value`, `wrench_label`, `is_default_socket`, `socketsource_id`, `created_at`, `updated_at`) VALUES
+INSERT INTO `socket` (`id`, `wrench_id`, `socket_value`, `socket_label`, `is_default_socket`, `socketsource_id`, `created_at`, `updated_at`) VALUES
 (1, 1, 'customer.jobTitle=\'Purchasing Manager\'', 'Purchasing Manager Only', 0, 1, NULL, NULL),
 (2, 1, 'customer.jobTitle=\'Owner\'', 'Owner Only', 0, 1, NULL, NULL),
 (3, 1, 'customer.jobTitle IN (\'Purchasing Manager\',\'Owner\')', 'Purchasing Managers or Owners Only', 0, 1, '2019-04-17 05:00:00', '2019-04-17 05:00:00'),

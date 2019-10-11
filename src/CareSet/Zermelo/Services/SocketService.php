@@ -19,6 +19,9 @@ class SocketService
 
     /**
      * @param $input
+     *
+     * Input comes in the form of an array withe the wrench ID as the index, and socket ID as value
+     *
      */
     public function setSocketsFromApiInput( $input )
     {
@@ -28,20 +31,20 @@ class SocketService
             $userId = $user->id;
             // First delete our old settings
             SocketUser::where('user_id', $userId)->delete();
-            foreach ( $input as $setting ) {
+            foreach ($input as $wrenchId => $socketId) {
                 // Save the user's setting
                 $socketUser = new SocketUser([
                     'user_id' => $userId,
-                    'wrench_id' => $setting['wrenchId'],
-                    'current_chosen_socket' => $setting['socketId']
+                    'wrench_id' => $wrenchId,
+                    'current_chosen_socket' => $socketId
                 ]);
                 $socketUser->save();
             }
         }
 
         // Now set the active sockets for the view (we do this even if there's no user for the current request)
-        foreach ( $input as $setting ) {
-            $socket = Socket::find( $setting[ 'socketId' ] );
+        foreach ($input as $wrenchId => $socketId) {
+            $socket = Socket::find( $socketId);
             $this->activeSockets[] = $socket;
         }
 

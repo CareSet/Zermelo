@@ -202,7 +202,12 @@ abstract class ZermeloReport implements ZermeloReportInterface
 
 	public function isActiveSocket($id)
 	{
-		return isset($this->_activeSockets[$id]);
+		$active = false;
+		if (isset($this->_activeSockets[$id])) {
+			$active = true;
+		}
+
+		return $active;
 	}
 
 	public function getActiveWrenches()

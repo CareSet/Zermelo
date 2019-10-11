@@ -17,8 +17,8 @@ class CreateSocketsAndWrenches extends Migration
 //        CREATE TABLE `socket` (
 //    `id` int(11) NOT NULL,
 //  `wrench_id` int(11) NOT NULL,
-//  `wrench_value` varchar(1000) NOT NULL,
-//  `wrench_label` varchar(1000) NOT NULL,
+//  `socket_value` varchar(1000) NOT NULL,
+//  `socket_label` varchar(1000) NOT NULL,
 //  `is_default_socket` tinyint(4) NOT NULL DEFAULT 0,
 //  `socketsource_id` int(11) NOT NULL,
 //  `created_at` datetime NOT NULL,
@@ -28,8 +28,8 @@ class CreateSocketsAndWrenches extends Migration
         Schema::create('socket', function (Blueprint $table) {
             $table->increments('id');
             $table->integer( 'wrench_id' );
-            $table->string( 'wrench_value', 1024 );
-            $table->string('wrench_label', 1024);
+            $table->string( 'socket_value', 1024 );
+            $table->string('socket_label', 1024);
             $table->boolean( 'is_default_socket' );
             $table->integer( 'socketsource_id');
             $table->timestamps();
