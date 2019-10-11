@@ -40,7 +40,7 @@ class ReportGenerator extends AbstractGenerator implements GeneratorInterface
         // convert stdClass to array
         $data_row = [];
         foreach ($fields as $key => $value) {
-            $data_row[$key] = $value;
+            $data_row[$key] = "";
         }
 
         $has_data = true;
