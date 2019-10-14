@@ -23,7 +23,7 @@ class CreateSocketsAndWrenches extends Migration
 //  `socketsource_id` int(11) NOT NULL,
 //  `created_at` datetime NOT NULL,
 //  `updated_at` datetime NOT NULL
-//) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+//) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
 
         Schema::create('socket', function (Blueprint $table) {
             $table->increments('id');
@@ -40,7 +40,7 @@ class CreateSocketsAndWrenches extends Migration
 //  `socketsource_name` varchar(255) NOT NULL,
 //  `created_at` datetime NOT NULL,
 //  `updated_at` datetime NOT NULL
-//) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+//) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
 
         Schema::create('socketsource', function (Blueprint $table) {
             $table->increments('id');
@@ -55,7 +55,7 @@ class CreateSocketsAndWrenches extends Migration
 //  `current_chosen_socket_id` int(11) NOT NULL,
 //  `created_at` datetime NOT NULL,
 //  `updated_at` datetime NOT NULL
-//) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+//) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
 
         Schema::create('socket_user', function (Blueprint $table) {
             $table->increments('id');
@@ -72,7 +72,7 @@ class CreateSocketsAndWrenches extends Migration
 //  `wrench_label` varchar(255) NOT NULL,
 //  `created_at` datetime NOT NULL,
 //  `updated_at` datetime NOT NULL
-//) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+//) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
 
         Schema::create('wrench', function (Blueprint $table) {
             $table->increments('id');
