@@ -265,7 +265,7 @@ CREATE TABLE $this->cache_db.$this->nodes_table (
   `node_longitude` decimal(17,7) NOT NULL DEFAULT 0,
   `node_json_url` varchar(2000) CHARACTER SET utf8 NOT NULL DEFAULT '',
   `node_img` varchar(1000) CHARACTER SET utf8 NOT NULL DEFAULT ''
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
 ";
 	
 	//now we make rules to ensure that we have a SQL crash here if the node uniqueness rules are not followed.
