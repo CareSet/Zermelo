@@ -60,6 +60,8 @@ class ZermeloDebugCommand extends Command
             $this->table($headers, $array);
 		$this->comment("Please consider just switching everything to utf8mb4_unicode_ci");
 		$this->comment("Because https://stackoverflow.com/questions/766809/whats-the-difference-between-utf8-general-ci-and-utf8-unicode-ci/766996#766996");	
-        }
+        }else{
+		$this->comment("character sets and collations look like they are all utf8mb4, so thats good");
+	}
     }
 }
