@@ -327,7 +327,7 @@ ALTER TABLE $this->cache_db.$this->nodes_table
                 GROUP BY `target_id`, `target_name`, `target_type`, `target_group`, `target_longitude`, `target_latitude`, `target_img` 
             ) 
             AS node_union
-            GROUP BY node_id, node_name, node_type, node_group, node_longitude, node_latitude, node_img";
+            GROUP BY node_id, node_name";
 
         //we do this because we need to have something that starts from zero for our JSON indexing..
         $sql["array that starts from zero"] =
