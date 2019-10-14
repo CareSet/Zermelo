@@ -55,12 +55,12 @@ class ZermeloInstallCommand extends AbstractZermeloInstallCommand
         }
 
         $create_zermelo_config_db = true;
-        if ( ZermeloDatabase::doesDatabaseExist( $zermelo_config_db_name ) &&
-            ! $this->option('force') ) {
-
-            if ( !$this->confirm("The Zermelo database '".$zermelo_config_db_name."' already exists. Do you want to DROP it and recreate it?")) {
+	//deleting the centralized configuration of wrenches and sockets that already exist in a database
+	//would be a disaster. We should never overwrite a configuration database.
+	//if someone wants a new one, they can create it themselves and then we will create it if it is missing..
+        if ( ZermeloDatabase::doesDatabaseExist( $zermelo_config_db_name )) {
                 $create_zermelo_config_db = false;
-            }
+		$this->info("The database $zermelo_config_db_name already exists... using it");
         }
 
         if ( $create_zermelo_cache_db ) {
