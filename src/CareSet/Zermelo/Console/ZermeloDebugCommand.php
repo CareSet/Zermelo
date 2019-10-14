@@ -46,7 +46,7 @@ class ZermeloDebugCommand extends Command
 		AND 
 			Variable_name != 'character_set_system'
 		AND 
-			Value != 'utf8mb4_unicode_ci'
+			Value NOT LIKE 'utf8mb4%'
 ");
 
         if (count($encodingResult) > 0) {
