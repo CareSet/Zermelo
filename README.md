@@ -355,8 +355,8 @@ CREATE TABLE `socket_user` (
 
 CREATE TABLE `wrench` (
   `id` int(11) NOT NULL,
-  `wrench_lookup_string` varchar(255) NOT NULL,
-  `wrench_label` varchar(255) NOT NULL,
+  `wrench_lookup_string` varchar(200) NOT NULL,
+  `wrench_label` varchar(200) NOT NULL,
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
@@ -390,7 +390,8 @@ ALTER TABLE `socket_user`
 --
 ALTER TABLE `wrench`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `wrench_lookup_string` (`wrench_lookup_string`);
+  ADD UNIQUE KEY `wrench_lookup_string` (`wrench_lookup_string`),
+  ADD UNIQUE KEY `wrench_label` (`wrench_label`);
 
 ```
 

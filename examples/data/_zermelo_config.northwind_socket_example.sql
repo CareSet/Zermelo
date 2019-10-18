@@ -40,12 +40,16 @@ INSERT INTO `socket` (`id`, `wrench_id`, `socket_value`, `socket_label`, `is_def
 
 CREATE TABLE IF NOT EXISTS `wrench` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `wrench_lookup_string` varchar(1024) NOT NULL,
-  `wrench_label` varchar(1024) NOT NULL,
+  `wrench_lookup_string` varchar(200) NOT NULL,
+  `wrench_label` varchar(200) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX(wrench_label),
+  UNIQUE INDEX(wrench_lookup_string)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
+
+
 
 --
 -- Dumping data for table `wrench`

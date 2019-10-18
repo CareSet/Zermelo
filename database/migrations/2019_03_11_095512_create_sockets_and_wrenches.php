@@ -76,9 +76,11 @@ class CreateSocketsAndWrenches extends Migration
 
         Schema::create('wrench', function (Blueprint $table) {
             $table->increments('id');
-            $table->string( 'wrench_lookup_string', 1024 );
-            $table->string( 'wrench_label', 1024 );
+            $table->string( 'wrench_lookup_string', 200 );
+            $table->string( 'wrench_label', 200 );
             $table->timestamps();
+	    $table->unqiue('wrench');
+	    $table->unqiue('wrench_lookup_string');
         });
     }
 
