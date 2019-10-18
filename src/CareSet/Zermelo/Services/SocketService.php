@@ -157,7 +157,14 @@ class SocketService
             }
         }
 
-        if ($message) {
+	/* This should not interfere with cli operations of php... */
+
+	$is_cli = false;
+	if (php_sapi_name() == "cli") {
+		$is_cli = true;
+	}
+
+        if ($message && $is_cli) {
             throw new \Exception($message);
         }
     }
