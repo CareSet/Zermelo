@@ -129,6 +129,8 @@ class SocketService
     /**
      * Check the default socket in sockets table to make sure that
      * each wrench as one, and only one, default socket
+     * TODO, make a whole logging and warning system : https://github.com/CareSet/Zermelo/issues/107 
+     * 
      */
     public static function checkIsDefaultSocket()
     {
