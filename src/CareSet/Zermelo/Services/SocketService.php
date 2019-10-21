@@ -139,13 +139,16 @@ class SocketService
         $default_hist = [];
         foreach ($sockets as $socket) {
 
-            if (!isset($default_hist[$socket->wrench->wrench_label])) {
-                $default_hist[$socket->wrench->wrench_label] = 0;
-            }
+	    if(is_object($socket->wrench)){ //to account for cases where we have sockets without wrenches
+            	if (!isset($default_hist[$socket->wrench->wrench_label])) {
+                	$default_hist[$socket->wrench->wrench_label] = 0;
+            	}
+	
 
-            if ($socket->is_default_socket == 1) {
-                $default_hist[$socket->wrench->wrench_label]++;
-            }
+     		if ($socket->is_default_socket == 1) {
+               		$default_hist[$socket->wrench->wrench_label]++;
+            	}
+	    }
         }
 
         $message = "";
