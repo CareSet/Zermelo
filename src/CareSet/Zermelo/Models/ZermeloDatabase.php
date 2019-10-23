@@ -59,6 +59,7 @@ class ZermeloDatabase
 
         // In case the database in the database.php or .env file doesn't exist, we can safely
         // set this to null so the select call will work, otherwise, we get a mysterious error
+	$previous_mysql_database = config('database.connections.mysql.database');
         config(["database.connections.mysql.database" => null]);
 
         try {
@@ -66,6 +67,10 @@ class ZermeloDatabase
         } catch ( \Exception $e ) {
             $db = null;
         }
+
+	//now that this is done, lets restore the previous database 
+        config(["database.connections.mysql.database" => $previous_mysql_database]);
+
         if ( empty( $db ) ) {
             return false;
         } else {
