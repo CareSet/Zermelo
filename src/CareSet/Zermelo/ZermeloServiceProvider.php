@@ -103,8 +103,11 @@ TO '$username'@'%'
             }
             throw new \Exception($message);
         }
-	}
+	}//end register function..
 
+
+	public $is_socket_ok = false; //start assuming it is not. 
+	public $is_socket_checked = false;
     /**
      * @param Router $router
      *
@@ -113,19 +116,22 @@ TO '$username'@'%'
      */
 	public function boot( Router $router )
 	{
-        // Validate that there is only one is_default_socket for a wrench, throw an exception
-        // if there is a wrench with Zero default sockets, or a wrench with more than one
-        // default socket, as this can result unexpected behavior
-        SocketService::checkIsDefaultSocket();
+        	// Validate that there is only one is_default_socket for a wrench, throw an exception
+        	// if there is a wrench with Zero default sockets, or a wrench with more than one
+        	// default socket, as this can result unexpected behavior
+		if(!$this->is_socket_checked){
+        		$this->is_socket_ok = SocketService::checkIsDefaultSocket();
+			$this->is_socket_checked = true;
+		}
 
-        // routes
-        $this->registerApiRoutes();
+        	// routes
 
-        // Boot our reports, but only in web mode. We don't care to register reports
-        // during composer package discovery, or installation
-        if (php_sapi_name() !== 'cli') {
-            $this->registerReports();
-        }
+        	// Boot our reports, but only in web mode. We don't care to register reports
+        	// during composer package discovery, or installation
+        	if (php_sapi_name() !== 'cli') {
+            		$this->registerApiRoutes();
+            		$this->registerReports();
+        	}
 	}
 
     /**

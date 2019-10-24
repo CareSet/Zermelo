@@ -134,6 +134,29 @@ class SocketService
      */
     public static function checkIsDefaultSocket()
     {
+
+	//Note with lots of sockets 80k and a few hundred wrenches...
+	//the code below causes the entire system to crash. 
+	//the code calls the socket objects many many times. 
+	//This needs to be converted into a single raw SQL statement. The following SQL statement should have no results: 
+
+/*
+SELECT wrench_id 
+FROM socket 
+GROUP BY `wrench_id`
+HAVING SUM(is_default_socket) > 1
+UNION 
+SELECT wrench_id 
+FROM socket
+GROUP BY wrench_id
+HAVING SUM(is_default_socket) = 0
+*/
+
+	//until then lets protect ourselves from this massive performance hit not running the code below
+	return(true); 
+
+	
+
         // Fetch all the sockets
         $sockets = Socket::all();
 
