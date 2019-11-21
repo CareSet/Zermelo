@@ -89,14 +89,15 @@ Class ZermeloServiceProvider extends \Illuminate\Support\ServiceProvider
 		$message .= "
 GRANT 
       SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER, LOCK TABLES 
-ON `\_zermelo\_cache`.* 
-TO '$username'@'%' 
+ON `_zermelo_cache`.* 
+TO '$username'@'localhost' 
+;
 ";
 		$message .= "
 GRANT 
    SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER, LOCK TABLES 
-ON `\_zermelo\_config`.* 
-TO '$username'@'%' 
+ON `_zermelo_config`.* 
+TO '$username'@'localhost' 
 ;
 ";
 
