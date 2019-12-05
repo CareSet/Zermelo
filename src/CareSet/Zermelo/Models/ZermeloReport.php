@@ -446,7 +446,48 @@ abstract class ZermeloReport implements ZermeloReportInterface
                 throw new Exception($error);
 	}
 
+    /**
+     * @return null|string
+	 *
+	 * Return the footer of the report. This string will be placed in the footer element
+     * at the bottom of the page.
+     */
+	public function GetReportFooter(): ?string
+	{
+		$footer = <<<FOOTER
 
+FOOTER;
+
+		return $footer;
+	}
+
+    /**
+     * @return null|string
+	 *
+	 * Add a string here to put in the class of the footer element of the report layout
+     */
+	public function GetReportFooterClass(): ?string
+	{
+		// Add "fixed centered" to have your footer fixed to the bottom, and/or centered
+		// This will be put in the class= attribute of the footer
+		return "";
+	}
+
+    /**
+     * @return null|string
+	 *
+	 * This will place the enclosed Javascript in a <script> tag just before
+	 * the body of your view. Note, there is no need to include a script tag
+	 * in this string. The content of this string is not HTML encoded, and is passed
+	 * raw to the view.
+     */
+	public function GetReportJS(): ?string
+	{
+		$javascript = <<<JS
+			//alert("place javascript code here");
+JS;
+		return $javascript;
+	}
 
 
 	public function setRequestFormInput( $request_form_input )

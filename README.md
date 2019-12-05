@@ -76,8 +76,8 @@ This is a good place to start if you are just exploring the system. Read, [Runni
 
 ### Configuration Notes 
 1. Edit the file `config/zermelo.php` to change core zermelo settings
-1. Edit the file `config/zermelobladetabular.php` to change settings specific to zermelo blade tabular view package.
-1. Earlier in the Basic Installation you've already created vagrant@homestead:~/code/zermelo-demo/app/Reports$ namespace and directory.  If desired, you can create a differently named report namespace.
+2. Edit the file `config/zermelobladetabular.php` to change settings specific to zermelo blade tabular view package.
+3. Earlier in the Basic Installation you've already created an app/Reports directory. If desired, you can create a differently named report directory, but you must also change the namespace.
 	Change the REPORT_NAMESPACE setting in config/zermelo.php to something else...
 	
     /**
@@ -86,17 +86,15 @@ This is a good place to start if you are just exploring the system. Read, [Runni
     'REPORT_NAMESPACE' =>env("REPORT_NAMESPACE","app\Reports"),
 
 	... like "Zermelo" and then create a ~/code/zermelo-demo/app/Zermelo directory to place your example report in. Note: you will also need to change the namespace of Northwind\*Reports.php files to "namespace app\Zermelo;" if you change the REPORT\_NAMESPACE.
-1. If you ran these commands as root user, you'll have to change the ownership of the php files so they are readable
+4. If you ran these commands as root user, you'll have to change the ownership of the php files so they are readable
 by the webserver.
-1. If the reports don't run take a look at: `[project-root]/storage/logs/laravel.log` for errors
+5. If the reports don't run take a look at: `[project-root]/storage/logs/laravel.log` for errors
 
 ### Update to New Version of zermelo
 In project home dir:
 
-	$ composer require careset/zermelo
-	$ composer require careset/zermelobladetabular
-	$ php artisan install:zermelo
-	$ php artisan install:zermelobladetabular
+	$ composer update careset/zermelo*
+	$ php artisan zermelo:install
 
 When you install the zermelobladetabular package, Just Say No to 'replace' all those files EXCEPT:
 	'The [zermelo/tabular.blade.php] view already exists'  Y  (replace it!)
@@ -119,6 +117,78 @@ To understand what this does, take a look at the example report model below.
 4. Enjoy seeing your data in an automatically pagable [Datatables](https://datatables.net/) display!!
 5. Various functions and constants in the report file can dramatically change how the report is displayed on the front end. Use them to change the reports (a good first hack is to use the MapRow function to link one report to another report)
 
+## Features / Function Reference
+
+#### Basics
+
+**GetSQL()**
+This is the core of the report. Implement this function in your report child class, adding 
+your SQL query to populate the report. The column names in your SELECT statement become the 
+headers of your report by default.
+
+**GetReportName()**
+Implement this function to return the title of the report.
+
+**GetReportDescription()**
+Implement this function, and the returned string will be printed in the description block below title of the report. The string is not 
+escaped, and is passed raw to the report, so it is possible to print HTML (form elements, for example)
+
+**GetReportFooter()**
+Implement this function to return a string that will be displayed within the footer tag
+at the bottom of the report layout. The string is not 
+                                    escaped, and is passed raw to the report, so it is possible to print HTML (form elements, for example)
+
+**GetReportFooterClass()**
+Implement this class to add specific class to your footer. Add "fixed" to make your footer
+fixed to the bottom, and add "centered" to center your footer content. For example, 
+implement this function to return "fixed centered" for your footer to be fixed, and it's
+content centered.
+
+#### Row and Header Manipulation
+
+**MapRow(array $row, int $row_number)**
+Implement this method to modify tabular cell content. When displaying to the tabular view, your 
+report child class can chose to modify the content of each row cell.
+
+**OverrideHeader(array &$format, array &$tags)**
+Implement this method to verride a default column format or add additional column tag to be sent back to the front end
+
+#### Cache Configuration
+
+**isCacheEnabled()**
+Turn caching on and off. Default is "false" which means cache is off.
+
+**howLongToCacheInSeconds()**
+If cache is enabled, we use this setting to configure how long we wish to retain the cached report.
+
+#### Add custom Javascript 
+
+**GetReportJS()**
+Implement this function to return a string that will be placed in a script tag before the closing body tag of the
+report. Do not include script tags. This is for JS only. The string is not escaped, and is
+passed raw to the report.
+
+### API functions available in GetSQL()
+
+**getInput($key = null)**
+Use this function to get the value of of a GET parameter passed to the report. You can 
+use this in your GetSQL() function to affect your query based on additional parameters
+passed in the request query string.
+
+**pushViewVariable($key, $value)**
+Use this function to pass a variable to the view without going through request/response cycle. The key parameter is a string, and will be
+available on the view template as a php variable. For example, if you have the following in your GetSWL() function:
+
+```$this->pushViewVariable('extra_var',true)```
+  
+then your variable will be available in the view as $extra_var with a value of 'true'.
+
+```
+@if ($extra_var === true)
+<p>ExtraVar Is True!</p>
+@endif
+
+```
 
 ### Example Report Model
 To see full list of functions and variables, please see the ZermeloReport model - 
@@ -278,6 +348,50 @@ class ExampleReport extends AbstractTabularReport
                 //returning null here results in no indexing happening on the cached results table
                 return(null);
 
+    }
+    
+    /**
+     * @return null|string
+     *
+     * Return the footer of the report. This string will be placed in the footer element
+     * at the bottom of the page. 
+     */
+    public function GetReportFooter(): ?string
+    {
+        $footer = <<<FOOTER
+            <p>Made with love by CareSet</>
+FOOTER;
+
+        return $footer;
+    }
+    
+    /**
+     * @return null|string
+     *
+     * Add a string here to put in the class of the footer element of the report layout
+     */
+    public function GetReportFooterClass(): ?string
+    {
+        // Add "fixed centered" to have your footer fixed to the bottom, and/or centered
+        // This will be put in the class= attribute of the footer
+        return "";
+    }
+
+    /**
+     * @return null|string
+     *
+     * This will place the enclosed Javascript in a <script> tag just before
+     * the body of your view. Note, there is no need to include a script tag
+     * in this string. The content of this string is not HTML encoded, and is passed
+     * raw to the view.
+     */
+    public function GetReportJS(): ?string
+    {
+        $javascript = <<<JS
+            alert("place javascript code here");
+
+JS;
+        return $javascript;
     }
 
     /**

@@ -13,6 +13,7 @@
 namespace CareSet\Zermelo\Models;
 
 
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -65,6 +66,11 @@ class ZermeloDatabase
         try {
             $db = DB::select( $query, [ $database ] );
         } catch ( \Exception $e ) {
+            // If the database in our configuration file doesn't exist, we have a problem,
+            // So let's blow up.
+            if ($e->getCode() == 1049) {
+                throw $e;
+            }
             $db = null;
         }
 
