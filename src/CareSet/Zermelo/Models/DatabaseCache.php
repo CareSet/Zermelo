@@ -199,37 +199,41 @@ class DatabaseCache
 
 			} catch(\Illuminate\Database\QueryException $ex){
 
-				$column_number_wrong_text = 'Insert value list does not match column list:';
 
-				$message = $ex->getMessage();
-
-				if(strpos($message,$column_number_wrong_text) !== false){
-					//then we have the wrong number of SQL problem here... 
-					$new_message = "
-Zermelo Error: SQL Column Number Mismatch. 
+				//these database errors deserve better human readable responses...
+				//they are common problems with Zermelo reports..
+				//so lets catch them and make sure that they are clear to end users..
+				$messages_to_filter = [
+					
+				'Insert value list does not match column list:' => 
+"Zermelo Error: SQL Column Number Mismatch. 
 It looks like there was more than one SQL statement in this report, but the two reports did not have exactly the same number of columns... which they must for the reporting engine to work. 
 The specific error message from the database was:
-" . $message ;
-					throw new \Exception($new_message);
-				}else{
-
-
-					$data_too_long_link_type_error = "Data too long for column 'link_type'";
-					if(strpos($message,$data_too_long_link_type_error) !== false){
-						$new_message = "
-Zermelo Error: The first link_type column needs to have the longest name. 
+",
+				"Data too long for column 'link_type'" => 
+"Zermelo Error: The first link_type column needs to have the longest name. 
 It should not be that way, but it is... 
 The specific error message from the database was: 
-" . $message;
+",
 
+				];
+
+
+				$original_message = $ex->getMessage();
+
+				foreach($messages_to_filter as $find_me => $say_me){
+
+					if(strpos($original_message,$find_me) !== false){
+
+						$new_message = $say_me . $original_message;
 						throw new \Exception($new_message);
 
-					}else{
-						//no new information to add here... 
-						throw $ex;
 					}
 				}
 
+				//if we get here then it is an "original" SQL error message..
+				//no new information to add here... lets just re throw the original error
+				throw $ex;
 
 			}
 
