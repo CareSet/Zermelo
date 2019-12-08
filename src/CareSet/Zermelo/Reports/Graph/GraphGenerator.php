@@ -37,12 +37,12 @@ class GraphGenerator extends AbstractGenerator
 
         $node_types_sql = "
 SELECT 
-	id AS my_index,
-	node_type AS id,
-	node_type AS label,
+	CAST(CONVERT(id USING utf8) AS binary) AS my_index,
+	CAST(CONVERT(node_type USING utf8) AS binary) AS id,
+	CAST(CONVERT(node_type USING utf8) AS binary) AS label,
 	0 AS is_img,
 	'' AS img_stub,
-	count_distinct_node AS type_count
+	CAST(CONVERT(count_distinct_node USING utf8) AS binary) AS type_count
 FROM $this->cache_db.{$this->cache->getNodeTypesTable()}	
 ";
         //lets load the node_types from the database...
@@ -70,9 +70,9 @@ FROM $this->cache_db.{$this->cache->getNodeTypesTable()}
 
         $link_types_sql = "
 SELECT 
-	id AS my_index,
-	link_type AS label,
-	count_distinct_link AS link_type_count
+	CAST(CONVERT(id USING utf8) AS binary) AS my_index,
+	CAST(CONVERT(link_type USING utf8) AS binary) AS label,
+	CAST(CONVERT(count_distinct_link USING utf8) AS binary) AS link_type_count
 FROM $this->cache_db.{$this->cache->getLinkTypesTable()}	
 ";
         //lets load the link_types from the database...
@@ -91,10 +91,10 @@ FROM $this->cache_db.{$this->cache->getLinkTypesTable()}
 
         $group_sql = "
 SELECT 
-	id AS my_index,
-	group_name AS id,
-	group_name AS name,
-	count_distinct_node AS group_count
+	CAST(CONVERT(id USING utf8) AS binary) AS my_index,
+	CAST(CONVERT(group_name USING utf8) AS binary) AS id,
+	CAST(CONVERT(group_name USING utf8) AS binary) AS name,
+	CAST(CONVERT(count_distinct_node USING utf8) AS binary) AS group_count
 FROM $this->cache_db.{$this->cache->getNodeGroupsTable()}	
 ";
 
@@ -113,18 +113,18 @@ FROM $this->cache_db.{$this->cache->getNodeGroupsTable()}
         //lets sort the nodes
         $nodes_sql = "
 SELECT 
-	`node_name` AS name,
-	`node_latitude` AS latitude,
-	`node_json_url` AS json_url,
-	`node_longitude` AS longitude,
-	groups.id AS `group`,
-	node_size AS size,
-	node_img AS img,
-	types.id AS `type`,
-	`node_id` AS id,
+	CAST(CONVERT(`node_name` USING utf8) AS binary) AS name,
+	CAST(CONVERT(`node_latitude` USING utf8) AS binary) AS latitude,
+	CAST(CONVERT(`node_json_url` USING utf8) AS binary) AS json_url,
+	CAST(CONVERT(`node_longitude` USING utf8) AS binary) AS longitude,
+	CAST(CONVERT(groups.id USING utf8) AS binary) AS `group`,
+	CAST(CONVERT(node_size USING utf8) AS binary) AS size,
+	CAST(CONVERT(node_img USING utf8) AS binary) AS img,
+	CAST(CONVERT(types.id USING utf8) AS binary) AS `type`,
+	CAST(CONVERT(`node_id` USING utf8) AS binary) AS id,
 	0 AS weight_sum,
 	0 AS degree,
-	nodes.id AS my_index
+	CAST(CONVERT(nodes.id USING utf8) AS binary) AS my_index
 FROM $this->cache_db.{$this->cache->getNodesTable()} AS nodes
 LEFT JOIN $this->cache_db.{$this->cache->getNodeGroupsTable()} AS groups ON 
 	groups.group_name =
