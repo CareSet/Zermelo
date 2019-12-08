@@ -551,6 +551,21 @@ JS;
 		return null;
 	}
 
+	/**
+	 * This is a convience function that is intended to make it easier to quote database parameters 
+	 * That originate from the user.
+	 *
+	 * @return string of escaped SQL 
+	 */
+	public function quote($quote_me): ?string
+	{
+
+		return \DB::connection()->getPdo()->quote($quote_me);
+
+	}
+
+
+
 	
 /*
 	This function gets string that indicates the current state of the SQL, without considering things that could 
