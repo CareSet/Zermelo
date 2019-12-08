@@ -226,6 +226,7 @@ class ExampleReport extends AbstractTabularReport
     *   $this->getCode() - which will give the first url segment after the report name
     *   $this->getParameters() - which will give an array of every later url segment after the getCode value
     *   $this->getInput() - which will give _GET parameters (etc?)
+    *   $this->quote($something_you_got_from_the_user) - This wrapper to the PDO quote function is good for preventing SQL injection
     * 	$this->setInput($key,$new_value) - a way to override _GET parameters (i.e. for initializing a sort for instance)
     * 		For instance $this->setInput('order',[0 => ['order_by_me' => 'asc']]); will order the report, to start by the order_by_me column ASC. 
     *		This replicates what is being passed from the front end data tables to the backend to make sorting work.. 
