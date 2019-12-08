@@ -75,7 +75,7 @@ This is a good place to start if you are just exploring the system. Read, [Runni
 
 
 ### Configuration Notes 
-1. Edit the file `config/zermelo.php` to change core zermelo settings
+1. Edit the file `config/zermelo.php` to change core zermelo setting these values are explained there and in [Configuration Documentation](documentation/ConfigFile.md)s
 2. Edit the file `config/zermelobladetabular.php` to change settings specific to zermelo blade tabular view package.
 3. Earlier in the Basic Installation you've already created an app/Reports directory. If desired, you can create a differently named report directory, but you must also change the namespace.
 	Change the REPORT_NAMESPACE setting in config/zermelo.php to something else...
