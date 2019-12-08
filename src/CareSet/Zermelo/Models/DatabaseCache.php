@@ -192,11 +192,32 @@ class DatabaseCache
                         ZermeloDatabase::connection($this->connectionName)->statement(DB::raw("CREATE TABLE {$temp_cache_table->from} AS {$query}"));
                     } else {
                         //for all subsequent queries we use INSERT INTO to merely add data to the table in question..
-                        ZermeloDatabase::connection($this->connectionName)->statement(DB::raw("INSERT INTO {$temp_cache_table->from} {$query}"));
+			try {
+                        	ZermeloDatabase::connection($this->connectionName)->statement(DB::raw("INSERT INTO {$temp_cache_table->from} {$query}"));
+
+			} catch(\Illuminate\Database\QueryException $ex){
+
+				$column_number_wrong_text = 'Insert value list does not match column list:';
+
+				$message = $ex->getMessage();
+
+				if(strpos($message,$column_number_wrong_text) !== false){
+					//then we have the wrong number of SQL problem here... 
+					$new_message = "
+Error: SQL Column Number Mismatch. 
+It looks like there was more than one SQL statement in this report, but the two reports did not have exactly the same number of columns... which they must for the reporting engine to work. 
+The specific error message from the database was:
+" . $message ;
+					throw new \Exception($new_message);
+				}
+
+
+			}
+
                     }
                 } else {
                     //this allows us to database maintainance tasks using UPDATES etc.
-                    //not that non-select statements are executed in the same order as they are provideded in the contents of the returned SQL
+                    //note that non-select statements are executed in the same order as they are provided in the contents of the returned SQL
                     ZermeloDatabase::connection($this->connectionName)->statement(DB::raw($query));
                 }
             }
