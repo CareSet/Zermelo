@@ -129,7 +129,7 @@ class DatabaseCache
     */
     public function getIndividualQueries()
     {
-        $sql = $this->report->getSQL();
+        $sql = $this->report->GetSQL();
 
         if (!$sql) {
             return false;
