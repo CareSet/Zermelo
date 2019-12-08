@@ -183,8 +183,10 @@ class DatabaseCache
 
         $queries = $this->getIndividualQueries();
 
-        if ($queries) {
-            foreach ($this->getIndividualQueries() as $index => $query) {
+	if ($queries) {
+    	    //just in case someone uses an associated array... 
+	    $indexed_queries = array_values($queries);
+            foreach ($indexed_queries as $index => $query) {
 
                 if (strpos(strtoupper($query), "SELECT", 0) === 0) {
                     if ($index == 0) {
@@ -204,11 +206,28 @@ class DatabaseCache
 				if(strpos($message,$column_number_wrong_text) !== false){
 					//then we have the wrong number of SQL problem here... 
 					$new_message = "
-Error: SQL Column Number Mismatch. 
+Zermelo Error: SQL Column Number Mismatch. 
 It looks like there was more than one SQL statement in this report, but the two reports did not have exactly the same number of columns... which they must for the reporting engine to work. 
 The specific error message from the database was:
 " . $message ;
 					throw new \Exception($new_message);
+				}else{
+
+
+					$data_too_long_link_type_error = "Data too long for column 'link_type'";
+					if(strpos($message,$data_too_long_link_type_error) !== false){
+						$new_message = "
+Zermelo Error: The first link_type column needs to have the longest name. 
+It should not be that way, but it is... 
+The specific error message from the database was: 
+" . $message;
+
+						throw new \Exception($new_message);
+
+					}else{
+						//no new information to add here... 
+						throw $ex;
+					}
 				}
 
 
