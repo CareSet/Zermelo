@@ -177,7 +177,7 @@ passed in the request query string.
 
 **pushViewVariable($key, $value)**
 Use this function to pass a variable to the view without going through request/response cycle. The key parameter is a string, and will be
-available on the view template as a php variable. For example, if you have the following in your GetSWL() function:
+available on the view template as a php variable. For example, if you have the following in your GetSQL() function:
 
 ```$this->pushViewVariable('extra_var',true)```
   
