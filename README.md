@@ -175,6 +175,13 @@ Use this function to get the value of of a GET parameter passed to the report. Y
 use this in your GetSQL() function to affect your query based on additional parameters
 passed in the request query string.
 
+**setInput($key, $new_value)**
+A useful but dangerous function that allows for specific reports to override the input that comes from a 
+user before it is used.
+
+**setDefaultSortOrder($column, $direction)**
+This is a helper function for setInput() that allows to set a default order in the UI on the tabular view.
+
 **pushViewVariable($key, $value)**
 Use this function to pass a variable to the view without going through request/response cycle. The key parameter is a string, and will be
 available on the view template as a php variable. For example, if you have the following in your GetSQL() function:
