@@ -47,6 +47,13 @@ class TabularApiController extends AbstractApiController
         $reportGenerator = new ReportGenerator( $cache );
         $collection = $reportGenerator->getCollection();
 
+        // File name download should include MD5 from the contents of getCode #48
+        if ($report->getCode()) {
+            $filename = $report->GetReportName() . '-'.$report->getCode().'.csv';
+        } else {
+            $filename = $report->GetReportName() . '.csv';
+        }
+
         $response = new StreamedResponse( function() use ( $header, $collection ) {
             // Open output stream
             $handle = fopen('php://output', 'w');
@@ -65,7 +72,7 @@ class TabularApiController extends AbstractApiController
         }, 200, [
             'Content-Description' => 'File Transfer',
             'Content-Type' => 'text/csv',
-            'Content-Disposition' => 'attachment; filename="'.$report->GetReportName().'.csv"',
+            'Content-Disposition' => 'attachment; filename="'.$filename.'"',
             'Content-Type' => 'application/octet-stream',
             'Expires' => '0',
             'Cache-Control' => 'must-revalidate',
