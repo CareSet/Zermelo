@@ -42,9 +42,11 @@ class ReportGenerator extends AbstractGenerator implements GeneratorInterface
 
         // convert stdClass to array
         $data_row = [];
-        foreach ($first_row_of_data as $key => $value) {
-            $data_row[$key] = $value;  //MapRow needs  at least one row of real data to function properly...
-        }
+	if(!is_null($first_row_of_data)){
+        	foreach ($first_row_of_data as $key => $value) {
+            		$data_row[$key] = $value;  //MapRow needs  at least one row of real data to function properly...
+       		}
+	}
 
         $has_data = true;
         if(count($data_row) == 0) {
