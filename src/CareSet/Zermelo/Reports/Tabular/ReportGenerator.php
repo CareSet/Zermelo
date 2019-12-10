@@ -40,7 +40,7 @@ class ReportGenerator extends AbstractGenerator implements GeneratorInterface
         // convert stdClass to array
         $data_row = [];
         foreach ($fields as $key => $value) {
-            $data_row[$key] = $value; //MapRow needs  at least one row of real data to function properly...
+            $data_row[$key] = ""; 
         }
 
         $has_data = true;
@@ -56,7 +56,9 @@ class ReportGenerator extends AbstractGenerator implements GeneratorInterface
          */
         $first_row_num = 0;
         if ( $has_data ) {
-            $data_row = $this->cache->MapRow( $data_row, $first_row_num );
+		//MapRow always requires at least one row of real data to work properly. 
+		//That means this call will always crash. 
+        //    $data_row = $this->cache->MapRow( $data_row, $first_row_num );
             $mapped_header = array_keys( $data_row );
         }
 
