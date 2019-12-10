@@ -79,7 +79,7 @@ class CreateSocketsAndWrenches extends Migration
             $table->string( 'wrench_lookup_string', 200 );
             $table->string( 'wrench_label', 200 );
             $table->timestamps();
-	    $table->unique('wrench');
+	    $table->unique('wrench_label');
 	    $table->unique('wrench_lookup_string');
         });
     }

@@ -87,11 +87,7 @@ Class ZermeloServiceProvider extends \Illuminate\Support\ServiceProvider
                 $username = config( "database.connections.$default.username" );
                 $message .= "You are trying to connect with mysql user `$username`, you may have to run the following commands:\n";
 		$message .= "
-GRANT 
-      SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER, LOCK TABLES 
-ON `_zermelo_cache`.* 
-TO '$username'@'localhost' 
-;
+GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER, LOCK TABLES ON `_zermelo_cache`.* TO '$username'@'localhost';
 ";
 		$message .= "
 GRANT 
@@ -102,7 +98,7 @@ TO '$username'@'localhost'
 ";
 
             }
-            throw new \Exception($message);
+            echo ($message);
         }
 	}//end register function..
 
