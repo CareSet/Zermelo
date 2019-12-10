@@ -149,7 +149,7 @@ ORDER BY nodes.id ASC
 //		$nodes[$this_row->my_index] = [
             $nodes[(int) $this_row->my_index] = [
                 'name' => $this_row->name,
-                'short_name' => substr($this_row->name, 0, 20),
+                'short_name' => substr($this_row->name, 0, 50),
                 'longitude' => $this_row->longitude,
                 'latitiude' => $this_row->latitude,
 		'json_url' => $this_row->json_url,
