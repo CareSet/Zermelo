@@ -34,13 +34,16 @@ class ReportGenerator extends AbstractGenerator implements GeneratorInterface
     {
         $mapped_header = []; //this is the result from the MapRow function
 
+        $Table = clone $this->cache->getTable();
+        $first_row_of_data = $Table->first();
+
         // Get the column names and their types (column definitions) directly from the database
         $fields = $this->cache->getColumns();
 
         // convert stdClass to array
         $data_row = [];
-        foreach ($fields as $key => $value) {
-            $data_row[$key] = ""; 
+        foreach ($first_row_of_data as $key => $value) {
+            $data_row[$key] = $value;  //MapRow needs  at least one row of real data to function properly...
         }
 
         $has_data = true;
@@ -55,10 +58,10 @@ class ReportGenerator extends AbstractGenerator implements GeneratorInterface
         Run the MapRow once to get the proper column name from the Report
          */
         $first_row_num = 0;
-        if ( $has_data ) {
-		//MapRow always requires at least one row of real data to work properly. 
-		//That means this call will always crash. 
-        //    $data_row = $this->cache->MapRow( $data_row, $first_row_num );
+        if ( $has_data ) { //this means that the first row had results..
+		//but here we are not sure if MapRow might change column names or add columns or even delete columns..
+		//so we have to run it on the first row of actual data and then see what columns come back..
+            $data_row = $this->cache->MapRow( $data_row, $first_row_num );
             $mapped_header = array_keys( $data_row );
         }
 
