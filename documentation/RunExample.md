@@ -15,8 +15,14 @@ the Zermelo project.
 
 These test databases work for both major CareSet projects: [DURC](https://github.com/CareSet/DURC) and Zermelo (this one).  
 
-1. Load these databases and verify that they exist using your favorite database administration tool 
+1. Load these databases and verify that they exist using your favorite database administration tool.  
 
+    ```
+    $ git clone https://github.com/CareSet/MyWind_Test_Data.git
+    $ cd MyWind_Test_Data/
+    $ php load_databases.php
+    ```
+    
 2. Then copy the example reports from [project-root]/vendor/careset/zermelo/examples/reports into your app/Reports directory. 
 You will need to create the app/Reports directory if it does not exist. From your project root:
 
