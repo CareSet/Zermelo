@@ -53,7 +53,19 @@ Class ZermeloServiceProvider extends \Illuminate\Support\ServiceProvider
                 __DIR__.'/config/zermelo.php', 'zermelo'
             );
         }
+	}//end register function..
 
+
+	public $is_socket_ok = false; //start assuming it is not. 
+	public $is_socket_checked = false;
+    /**
+     * @param Router $router
+     *
+     * This function is called after all providers have been registered,
+     * and the database hass been set up.
+     */
+	public function boot( Router $router )
+	{
         // Register the cache database connection if we have a zermelo db
         $no_cache_database = false;
         $zermelo_cache_db = zermelo_cache_db();
@@ -87,8 +99,8 @@ Class ZermeloServiceProvider extends \Illuminate\Support\ServiceProvider
 
                 $username = config( "database.connections.$default.username" );
                 $message .= "You are trying to connect with mysql user `$username`, you may have to run the following commands:\n";
-		        $message .= "GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER, LOCK TABLES ON `_zermelo_cache`.* TO '$username'@'localhost';";
-		        $message .= "GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER, LOCK TABLES ON `_zermelo_config`.* TO '$username'@'localhost' ;";
+                $message .= "GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER, LOCK TABLES ON `_zermelo_cache`.* TO '$username'@'localhost';";
+                $message .= "GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER, LOCK TABLES ON `_zermelo_config`.* TO '$username'@'localhost' ;";
 
                 // Since this register function runs during package auto-discovery, and maybe at other times, we just
                 // want to show errors while we're installing. So let's check if we're installing.
@@ -100,19 +112,7 @@ Class ZermeloServiceProvider extends \Illuminate\Support\ServiceProvider
 
             throw new \Exception($message);
         }
-	}//end register function..
 
-
-	public $is_socket_ok = false; //start assuming it is not. 
-	public $is_socket_checked = false;
-    /**
-     * @param Router $router
-     *
-     * This function is called after all providers have been registered,
-     * and the database hass been set up.
-     */
-	public function boot( Router $router )
-	{
         	// Validate that there is only one is_default_socket for a wrench, throw an exception
         	// if there is a wrench with Zero default sockets, or a wrench with more than one
         	// default socket, as this can result unexpected behavior
