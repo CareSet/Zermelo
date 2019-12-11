@@ -49,21 +49,56 @@ class ZermeloInstallCommand extends AbstractZermeloInstallCommand
         $zermelo_config_db_name = config( 'zermelo.ZERMELO_CONFIG_DB' );
 
         $create_zermelo_cache_db = true;
+        $no_cache_database = false;
         if ( ZermeloDatabase::doesDatabaseExist( $zermelo_cache_db_name ) &&
             ! $this->option('force') ) {
 
             if ( !$this->confirm("The Zermelo database '".$zermelo_cache_db_name."' already exists. Do you want to DROP it and recreate it?")) {
                 $create_zermelo_cache_db = false;
             }
+        } else {
+            $no_cache_database = true;
         }
 
         $create_zermelo_config_db = true;
-	//deleting the centralized configuration of wrenches and sockets that already exist in a database
-	//would be a disaster. We should never overwrite a configuration database.
-	//if someone wants a new one, they can create it themselves and then we will create it if it is missing..
+        $no_config_database = false;
+	    //deleting the centralized configuration of wrenches and sockets that already exist in a database
+	    //would be a disaster. We should never overwrite a configuration database.
+	    //if someone wants a new one, they can create it themselves and then we will create it if it is missing..
         if ( ZermeloDatabase::doesDatabaseExist( $zermelo_config_db_name )) {
-                $create_zermelo_config_db = false;
-		$this->info("The database $zermelo_config_db_name already exists... using it");
+            $create_zermelo_config_db = false;
+		    $this->info("The database $zermelo_config_db_name already exists... using it");
+        } else {
+            $no_config_database = true;
+        }
+
+        // The following block spits out an error message that indicates why Zermelo probably couldn't connect
+        // to the cache and config databases, due to permissions error. If we are running in web server, tell
+        // user to check the .env file, if we are running an artisan command, we can provide more information
+        // about what user is attempting to connect and potentially how to fix the issue.
+        if ( $no_cache_database === true ||
+            $no_config_database === true) {
+            $message = "Zermelo is unable to connect to cache or config database,\n";
+            $message .= "Please check the username and password in your .env file's database credentials and try again.\n";
+
+            // If We are running install/client mode output some more information
+            if (php_sapi_name() == 'cli') {
+                $default = config( 'database.default' );
+
+                $username = config( "database.connections.$default.username" );
+                $message .= "You are trying to connect with mysql user `$username`, you may have to run the following commands:\n";
+                $message .= "GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER, LOCK TABLES ON `_zermelo_cache`.* TO '$username'@'localhost';";
+                $message .= "GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER, LOCK TABLES ON `_zermelo_config`.* TO '$username'@'localhost' ;";
+
+                // Since this register function runs during package auto-discovery, and maybe at other times, we just
+                // want to show errors while we're installing. So let's check if we're installing.
+                $is_installing = Config::get('zermelo:install_api.running');
+                if ($is_installing === true) {
+                    die($message);
+                }
+            }
+
+            throw new \Exception($message);
         }
 
         if ( $create_zermelo_cache_db ) {

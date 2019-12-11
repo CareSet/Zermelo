@@ -67,50 +67,15 @@ Class ZermeloServiceProvider extends \Illuminate\Support\ServiceProvider
 	public function boot( Router $router )
 	{
         // Register the cache database connection if we have a zermelo db
-        $no_cache_database = false;
         $zermelo_cache_db = zermelo_cache_db();
         if ( ZermeloDatabase::doesDatabaseExist( $zermelo_cache_db ) ) {
             ZermeloDatabase::configure( $zermelo_cache_db );
-        } else {
-            $no_cache_database = true;
         }
 
         // Register and configure the config DB
-        $no_config_database = false;
         $zermelo_config_db = zermelo_config_db();
         if ( ZermeloDatabase::doesDatabaseExist( $zermelo_config_db ) ) {
             ZermeloDatabase::configure( $zermelo_config_db );
-        } else {
-            $no_config_database = true;
-        }
-
-        // The following block spits out an error message that indicates why Zermelo probably couldn't connect
-        // to the cache and config databases, due to permissions error. If we are running in web server, tell
-        // user to check the .env file, if we are running an artisan command, we can provide more information
-        // about what user is attempting to connect and potentially how to fix the issue.
-        if ( $no_cache_database === true ||
-            $no_config_database === true) {
-            $message = "Zermelo is unable to connect to cache or config database,\n";
-            $message .= "Please check the username and password in your .env file's database credentials and try again.\n";
-
-            // If We are running install/client mode output some more information
-            if (php_sapi_name() == 'cli') {
-                $default = config( 'database.default' );
-
-                $username = config( "database.connections.$default.username" );
-                $message .= "You are trying to connect with mysql user `$username`, you may have to run the following commands:\n";
-                $message .= "GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER, LOCK TABLES ON `_zermelo_cache`.* TO '$username'@'localhost';";
-                $message .= "GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER, LOCK TABLES ON `_zermelo_config`.* TO '$username'@'localhost' ;";
-
-                // Since this register function runs during package auto-discovery, and maybe at other times, we just
-                // want to show errors while we're installing. So let's check if we're installing.
-                $is_installing = Config::get('zermelo:install_api.running');
-                if ($is_installing) {
-                    die($message);
-                }
-            }
-
-            throw new \Exception($message);
         }
 
         	// Validate that there is only one is_default_socket for a wrench, throw an exception

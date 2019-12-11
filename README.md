@@ -100,6 +100,10 @@ When you install the zermelobladetabular package, Just Say No to 'replace' all t
 	'The [zermelo/tabular.blade.php] view already exists'  Y  (replace it!)
 	'The [zermelo/layouts/tabular.blade.php] view already exists.' Y  (replace it!)
 
+### Uninstall Zermelo
+In project home dir:
+
+    $ composer remove careset/zermelo*    
 
 Make your first Report
 ------------------
