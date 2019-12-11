@@ -86,19 +86,18 @@ Class ZermeloServiceProvider extends \Illuminate\Support\ServiceProvider
 
                 $username = config( "database.connections.$default.username" );
                 $message .= "You are trying to connect with mysql user `$username`, you may have to run the following commands:\n";
-		$message .= "
-GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER, LOCK TABLES ON `_zermelo_cache`.* TO '$username'@'localhost';
-";
-		$message .= "
-GRANT 
-   SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER, LOCK TABLES 
-ON `_zermelo_config`.* 
-TO '$username'@'localhost' 
-;
-";
+		        $message .= "GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER, LOCK TABLES ON `_zermelo_cache`.* TO '$username'@'localhost';";
+		        $message .= "GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER, LOCK TABLES ON `_zermelo_config`.* TO '$username'@'localhost' ;";
 
+                // Since this register function runs during package auto-discovery, and maybe at other times, we just
+                // want to show errors while we're installing. So let's check if we're installing.
+                $is_installing = Config::get('zermelo:install_api.running');
+                if ($is_installing) {
+                    die($message);
+                }
             }
-            echo ($message);
+
+            throw new \Exception($message);
         }
 	}//end register function..
 

@@ -36,6 +36,9 @@ class ZermeloInstallCommand extends AbstractZermeloInstallCommand
         // Do view, config and asset installing first
         parent::handle();
 
+        // Let the system know that we are running the installer
+        Config::set('zermelo:install_api.running', true);
+
         $this->info("Setting up cache and config databases...");
 
         // If there are any config changes from the installation command, we track with this flag in case
@@ -67,7 +70,7 @@ class ZermeloInstallCommand extends AbstractZermeloInstallCommand
             $this->runZermeloInitialCacheMigration( $zermelo_cache_db_name );
         }
 
-        // Do we need to create the cache database, or do we migrate only?
+        // Do we need to create the config database, or do we migrate only?
         if ( $create_zermelo_config_db ) {
             $this->runZermeloInitialConfigMigration( $zermelo_config_db_name );
         } else {
