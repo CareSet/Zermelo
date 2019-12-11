@@ -9,6 +9,7 @@ use CareSet\Zermelo\Console\MakeCardsReportCommand;
 use CareSet\Zermelo\Models\ZermeloDatabase;
 use CareSet\Zermelo\Services\SocketService;
 use Illuminate\Routing\Router;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
 
