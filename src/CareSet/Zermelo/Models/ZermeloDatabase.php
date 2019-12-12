@@ -58,6 +58,13 @@ class ZermeloDatabase
         }
     }
 
+    /**
+     * @param $database
+     * @return bool|null
+     * @throws \Exception
+     *
+     * Returns true if DB exists, and false if it does not, NULL if the state of existence cannot be determined.
+     */
     public static function doesDatabaseExist( $database )
     {
         $query = "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME =  ?";
@@ -70,21 +77,52 @@ class ZermeloDatabase
         try {
             $db = DB::select( $query, [ $database ] );
         } catch ( \Exception $e ) {
-            // If the database in our configuration file doesn't exist, we have a problem,
-            // So let's blow up.
+
             if ($e->getCode() == 1049) {
-                throw $e;
+                // If the database in our configuration file doesn't exist, we have a problem,
+                // So let's blow up.
+                throw new \Exception($e->getMessage()."\n\nPlease make sure the database in your .env file exists.", $e->getCode());
+            } else if ($e->getCode() == 1045) {
+                // If the user doens't have authorization, we have a problem.
+                $default = config( 'database.default' ); // Get default connection
+                $username = config( "database.connections.$default.username" ); // Get username for default connection
+                $message = "\n\nPlease check your user credentials and permissions and try again. Here are some suggestions:";
+                $message .= "\n* `$username` may not exist.";
+                $message .= "\n* `$username` may have the incorrect password in your .env file.";
+                $message .= "\n* `$username` may have insufficient permissions and you may have to run the following command:\n";
+                $message .= "\tGRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER, LOCK TABLES ON `$database`.* TO '$username'@'localhost';\n";
+                throw new \Exception($e->getMessage().$message, $e->getCode());
+            } else if ($e->getCode() == 1044) {
+                $default = config( 'database.default' ); // Get default connection
+                $default_db = config( "database.connections.$default.database" );
+                $username = config( "database.connections.$default.username" ); // Get username for default connection
+                $message = "\n\nPlease make sure that the database in your .env file exists, and your mysql user in your .env file has permissions on it.";
+                $message .= "\nSELECT user from mysql.db where db='$default_db';"; // SHOW GRANTS FOR ken@localhost;;
+                $message .= "\n* `$username` may have insufficient permissions and you may have to run the following command:\n";
+                $message .= "\tGRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER, LOCK TABLES ON `$default_db`.* TO '$username'@'localhost';\n";
+                throw new \Exception($e->getMessage().$message, $e->getCode());
             }
+
             $db = null;
         }
 
 	//now that this is done, lets restore the previous database 
 //       config(["database.connections.mysql.database" => $previous_mysql_database]);
 
-        if ( empty( $db ) ) {
-            return false;
-        } else {
+        // The DB exists if the schema name in the query matches our database
+        $db_exists = false;
+        if ( is_array($db) &&
+            isset($db[0]) &&
+            $db[0]->SCHEMA_NAME == $database) {
+            $db_exists = true;
+        }
+
+        if ($db_exists) {
             return true;
+        } else if ($db_exists === false) {
+            return false;
+        } else if ($db == null) {
+            return null;
         }
     }
 
