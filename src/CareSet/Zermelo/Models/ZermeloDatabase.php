@@ -50,8 +50,12 @@ class ZermeloDatabase
 
     public static function connection($connectionName)
     {
-        //
-        return DB::connection( $connectionName );
+        try {
+            return DB::connection($connectionName);
+        } catch(\Exception $e) {
+            $message = $e->getMessage()." You may have a permissions error with your database user. Please Refer to the Zermelo troubleshooting guide <a href='https://github.com/CareSet/Zermelo#troubleshooting'>https://github.com/CareSet/Zermelo#troubleshooting</a>";
+            throw new \Exception($message, $e->getCode(), $e);
+        }
     }
 
     public static function doesDatabaseExist( $database )
