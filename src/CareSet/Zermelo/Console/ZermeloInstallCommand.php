@@ -73,7 +73,7 @@ class ZermeloInstallCommand extends AbstractZermeloInstallCommand
 
         // The following block spits out an error message that indicates why Zermelo probably couldn't create
         // the cache database if the DB still doesn't exist after attempting to create it
-        if (ZermeloDatabase::doesDatabaseExist($zermelo_cache_db_name)) {
+        if (!ZermeloDatabase::doesDatabaseExist($zermelo_cache_db_name)) {
             $message = "Zermelo is unable to create the cache database,\n";
             $message .= "Please check the username and password in your .env file's database credentials and try again.\n";
             $default = config( 'database.default' );
@@ -93,7 +93,7 @@ class ZermeloInstallCommand extends AbstractZermeloInstallCommand
 
         // The following block spits out an error message that indicates why Zermelo probably couldn't create
         // the config database if the DB still doesn't exist after attempting to create it
-        if (ZermeloDatabase::doesDatabaseExist($zermelo_config_db_name)) {
+        if (!ZermeloDatabase::doesDatabaseExist($zermelo_config_db_name)) {
             $message = "Zermelo is unable to create the config database,\n";
             $message .= "Please check the username and password in your .env file's database credentials and try again.\n";
             $default = config( 'database.default' );

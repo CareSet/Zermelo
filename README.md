@@ -101,9 +101,12 @@ When you install the zermelobladetabular package, Just Say No to 'replace' all t
 	'The [zermelo/layouts/tabular.blade.php] view already exists.' Y  (replace it!)
 
 ### Uninstall Zermelo
-In project home dir:
+You can uninstall the composer packages by running 'composer remove' to remove the requirements in composer.json, and
+to remove the packages from the vendor directory. In project home dir:
 
-    $ composer remove careset/zermelo*    
+    $ composer remove careset/zermelo*  
+    $ composer clear-cache
+    
 
 Make your first Report
 ------------------
