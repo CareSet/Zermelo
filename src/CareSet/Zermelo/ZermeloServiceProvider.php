@@ -64,37 +64,42 @@ Class ZermeloServiceProvider extends \Illuminate\Support\ServiceProvider
      * This function is called after all providers have been registered,
      * and the database hass been set up.
      */
-	public function boot( Router $router )
-	{
-        // Register the cache database connection if we have a zermelo db
-        $zermelo_cache_db = zermelo_cache_db();
-        if ( ZermeloDatabase::doesDatabaseExist( $zermelo_cache_db ) ) {
-            ZermeloDatabase::configure( $zermelo_cache_db );
+    public function boot( Router $router )
+    {
+        if (php_sapi_name() !== 'cli' ||
+            (php_sapi_name() == 'cli' && Config::get('zermelo:install_api.running') === true)) {
+            // Register the cache database connection if we have a zermelo db,
+            // but only if we're running a web route, or running the installer (not during
+            // package discovery trigered by 'composer require')
+            $zermelo_cache_db = zermelo_cache_db();
+            if (ZermeloDatabase::doesDatabaseExist($zermelo_cache_db)) {
+                ZermeloDatabase::configure($zermelo_cache_db);
+            }
+
+            // Register and configure the config DB
+            $zermelo_config_db = zermelo_config_db();
+            if ( ZermeloDatabase::doesDatabaseExist( $zermelo_config_db ) ) {
+                ZermeloDatabase::configure( $zermelo_config_db );
+            }
+
+            // Validate that there is only one is_default_socket for a wrench, throw an exception
+            // if there is a wrench with Zero default sockets, or a wrench with more than one
+            // default socket, as this can result unexpected behavior
+            if (!$this->is_socket_checked) {
+                $this->is_socket_ok = SocketService::checkIsDefaultSocket();
+                $this->is_socket_checked = true;
+            }
         }
 
-        // Register and configure the config DB
-        $zermelo_config_db = zermelo_config_db();
-        if ( ZermeloDatabase::doesDatabaseExist( $zermelo_config_db ) ) {
-            ZermeloDatabase::configure( $zermelo_config_db );
+        // routes
+
+        // Boot our reports, but only in web mode. We don't care to register reports
+        // during composer package discovery, or installation
+        if (php_sapi_name() !== 'cli') {
+            $this->registerApiRoutes();
+            $this->registerReports();
         }
-
-        	// Validate that there is only one is_default_socket for a wrench, throw an exception
-        	// if there is a wrench with Zero default sockets, or a wrench with more than one
-        	// default socket, as this can result unexpected behavior
-		if(!$this->is_socket_checked){
-        		$this->is_socket_ok = SocketService::checkIsDefaultSocket();
-			$this->is_socket_checked = true;
-		}
-
-        	// routes
-
-        	// Boot our reports, but only in web mode. We don't care to register reports
-        	// during composer package discovery, or installation
-        	if (php_sapi_name() !== 'cli') {
-            		$this->registerApiRoutes();
-            		$this->registerReports();
-        	}
-	}
+    }
 
     /**
      * Register the application's Zermelo reports.

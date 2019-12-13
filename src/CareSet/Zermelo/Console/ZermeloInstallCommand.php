@@ -33,6 +33,9 @@ class ZermeloInstallCommand extends AbstractZermeloInstallCommand
 
     public function handle()
     {
+        // Tell the system that the installer is running
+        Config::set('zermelo:install_api.running', true);
+        
         // Do view, config and asset installing first
         parent::handle();
 
