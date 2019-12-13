@@ -53,7 +53,7 @@ class ZermeloInstallCommand extends AbstractZermeloInstallCommand
             $cache_db_exists = ZermeloDatabase::doesDatabaseExist($zermelo_cache_db_name);
         } catch (\Exception $e) {
             $this->error($e->getMessage());
-            return;
+            exit();
         }
 
         $create_zermelo_cache_db = true;
@@ -72,7 +72,7 @@ class ZermeloInstallCommand extends AbstractZermeloInstallCommand
             $config_db_exists = ZermeloDatabase::doesDatabaseExist($zermelo_config_db_name);
         } catch (\Exception $e) {
             $this->error($e->getMessage());
-            return;
+            exit();
         }
 
         //deleting the centralized configuration of wrenches and sockets that already exist in a database
