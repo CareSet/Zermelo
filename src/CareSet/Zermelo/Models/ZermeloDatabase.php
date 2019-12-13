@@ -89,10 +89,11 @@ class ZermeloDatabase
                 $message = "\n\nPlease check your user credentials and permissions and try again. Here are some suggestions:";
                 $message .= "\n* `$username` may not exist.";
                 $message .= "\n* `$username` may have the incorrect password in your .env file.";
-                $message .= "\n* `$username` may have insufficient permissions and you may have to run the following command:\n";
-                $message .= "\tGRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER, LOCK TABLES ON `$database`.* TO '$username'@'localhost';\n";
+                //$message .= "\n* `$username` may have insufficient permissions and you may have to run the following command:\n";
+                //$message .= "\tGRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER, LOCK TABLES ON `$database`.* TO '$username'@'localhost';\n";
                 throw new \Exception($e->getMessage().$message, $e->getCode());
             } else if ($e->getCode() == 1044) {
+                // Access Denied
                 $default = config( 'database.default' ); // Get default connection
                 $default_db = config( "database.connections.$default.database" );
                 $username = config( "database.connections.$default.username" ); // Get username for default connection

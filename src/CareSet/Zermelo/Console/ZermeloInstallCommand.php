@@ -113,7 +113,7 @@ class ZermeloInstallCommand extends AbstractZermeloInstallCommand
         // Do we need to create the config database, or do we migrate only?
         if ( $create_zermelo_config_db ) {
             try {
-                $this->info("Running intial config migration...");
+                $this->warning("Running intial config migration...");
                 $this->runZermeloInitialConfigMigration($zermelo_config_db_name);
             } catch (\Exception $e) {
                 $create_config_failed = true;
