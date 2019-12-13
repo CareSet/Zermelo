@@ -89,8 +89,6 @@ class ZermeloDatabase
                 $message = "\n\nPlease check your user credentials and permissions and try again. Here are some suggestions:";
                 $message .= "\n* `$username` may not exist.";
                 $message .= "\n* `$username` may have the incorrect password in your .env file.";
-                //$message .= "\n* `$username` may have insufficient permissions and you may have to run the following command:\n";
-                //$message .= "\tGRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER, LOCK TABLES ON `$database`.* TO '$username'@'localhost';\n";
                 throw new \Exception($e->getMessage().$message, $e->getCode());
             } else if ($e->getCode() == 1044) {
                 // Access Denied
@@ -111,12 +109,26 @@ class ZermeloDatabase
 	//now that this is done, lets restore the previous database 
 //       config(["database.connections.mysql.database" => $previous_mysql_database]);
 
+
         // The DB exists if the schema name in the query matches our database
         $db_exists = false;
         if ( is_array($db) &&
             isset($db[0]) &&
             $db[0]->SCHEMA_NAME == $database) {
             $db_exists = true;
+        } else {
+            // Let's make sure that the database REALLY doesn't exist, not that we just don't have permission to see
+            try {
+                $query = "CREATE DATABASE IF NOT EXISTS `$database`;";
+                DB::statement( $query );
+            } catch ( \Exception $e ) {
+                $default = config( 'database.default' ); // Get default connection
+                $username = config( "database.connections.$default.username" ); // Get username for default connection
+                $message = "\n\nYou may not have permission to the database `$database` to query its existence.";
+                $message .= "\n* `$username` may have insufficient permissions and you may have to run the following command:\n";
+                $message .= "\tGRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER, LOCK TABLES ON `$database`.* TO '$username'@'localhost';\n";
+                throw new \Exception($e->getMessage().$message, $e->getCode());
+            }
         }
 
         if ($db_exists) {
