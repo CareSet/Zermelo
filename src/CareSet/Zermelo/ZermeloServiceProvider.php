@@ -66,11 +66,9 @@ Class ZermeloServiceProvider extends \Illuminate\Support\ServiceProvider
      */
     public function boot( Router $router )
     {
-        if (php_sapi_name() !== 'cli' ||
-            (php_sapi_name() == 'cli' && Config::get('zermelo:install_api.running') === true)) {
+        if (php_sapi_name() !== 'cli') {
             // Register the cache database connection if we have a zermelo db,
-            // but only if we're running a web route, or running the installer (not during
-            // package discovery trigered by 'composer require')
+            // but only if we're running a web route, not during install commands
             $zermelo_cache_db = zermelo_cache_db();
             if (ZermeloDatabase::doesDatabaseExist($zermelo_cache_db)) {
                 ZermeloDatabase::configure($zermelo_cache_db);
