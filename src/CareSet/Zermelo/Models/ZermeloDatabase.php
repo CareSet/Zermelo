@@ -96,8 +96,9 @@ class ZermeloDatabase
                 $default = config( 'database.default' ); // Get default connection
                 $default_db = config( "database.connections.$default.database" );
                 $username = config( "database.connections.$default.username" ); // Get username for default connection
-                $message = "\n\nPlease make sure that the database in your .env file exists, and your mysql user in your .env file has permissions on it.";
-                $message .= "\nSELECT user from mysql.db where db='$default_db';"; // SHOW GRANTS FOR ken@localhost;;
+                $message = "\n\nPlease make sure that your mysql user in your .env file has permissions on `$default_db`.";
+                $message .= "\n* Run this mysql command to list users who have access:\n";
+                $message .= "\tSELECT user from mysql.db where db='$default_db';"; // SHOW GRANTS FOR ken@localhost;;
                 $message .= "\n* `$username` may have insufficient permissions and you may have to run the following command:\n";
                 $message .= "\tGRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER, LOCK TABLES ON `$default_db`.* TO '$username'@'localhost';\n";
                 throw new \Exception($e->getMessage().$message, $e->getCode());
