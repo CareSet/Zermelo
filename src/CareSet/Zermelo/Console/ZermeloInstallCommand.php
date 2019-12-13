@@ -106,6 +106,7 @@ class ZermeloInstallCommand extends AbstractZermeloInstallCommand
             $message .= "GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER, LOCK TABLES ON `_zermelo_cache`.* TO '$username'@'localhost';\n";
 
             $this->error($message);
+            exit();
         }
 
         $create_config_failed = false;
@@ -134,6 +135,7 @@ class ZermeloInstallCommand extends AbstractZermeloInstallCommand
             $message .= "GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER, LOCK TABLES ON `_zermelo_config`.* TO '$username'@'localhost';";
 
             $this->error($message);
+            exit();
         }
 
         Artisan::call('zermelo:debug', [], $this->getOutput());
