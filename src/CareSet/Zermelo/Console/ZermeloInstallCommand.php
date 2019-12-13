@@ -48,9 +48,16 @@ class ZermeloInstallCommand extends AbstractZermeloInstallCommand
         $zermelo_cache_db_name = config( 'zermelo.ZERMELO_CACHE_DB' );
         $zermelo_config_db_name = config( 'zermelo.ZERMELO_CONFIG_DB' );
         
-        
+        // Check if our cache database exists, so we know whether to create it or not.
+        try {
+            $cache_db_exists = ZermeloDatabase::doesDatabaseExist($zermelo_cache_db_name);
+        } catch (\Exception $e) {
+            $this->error($e->getMessage());
+            return;
+        }
+
         $create_zermelo_cache_db = true;
-        if ( ZermeloDatabase::doesDatabaseExist( $zermelo_cache_db_name ) &&
+        if ($cache_db_exists === true &&
             ! $this->option('force') ) {
 
             if ( !$this->confirm("The Zermelo database '".$zermelo_cache_db_name."' already exists. Do you want to DROP it and recreate it?")) {
@@ -58,11 +65,21 @@ class ZermeloInstallCommand extends AbstractZermeloInstallCommand
             }
         }
 
+
+        // See if the config database exists already. If we can't run the query (exception is thrown)
+        // display the error message and exit.
+        try {
+            $config_db_exists = ZermeloDatabase::doesDatabaseExist($zermelo_config_db_name);
+        } catch (\Exception $e) {
+            $this->error($e->getMessage());
+            return;
+        }
+
+        //deleting the centralized configuration of wrenches and sockets that already exist in a database
+        //would be a disaster. We should never overwrite a configuration database.
+        //if someone wants a new one, they can create it themselves and then we will create it if it is missing..
         $create_zermelo_config_db = true;
-	    //deleting the centralized configuration of wrenches and sockets that already exist in a database
-	    //would be a disaster. We should never overwrite a configuration database.
-	    //if someone wants a new one, they can create it themselves and then we will create it if it is missing..
-        if ( ZermeloDatabase::doesDatabaseExist( $zermelo_config_db_name )) {
+        if ($config_db_exists === true) {
             $create_zermelo_config_db = false;
 		    $this->info("The database $zermelo_config_db_name already exists... using it");
         }
