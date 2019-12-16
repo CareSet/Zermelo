@@ -23,6 +23,14 @@ These test databases work for both major CareSet projects: [DURC](https://github
     $ php load_databases.php
     ```
     
+    To install the sockets data for the NorthwindCustomerSocketReport.php 'mysql source' the data in examples/
+    ```
+    cd [project-root]
+    mysql 
+    use _zermelo_config;
+    source vendor/careset/zermelo/examples/data/_zermelo_config.northwind_socket_example.sql;
+    ```
+    
 2. Then copy the example reports from [project-root]/vendor/careset/zermelo/examples/reports into your app/Reports directory. 
 You will need to create the app/Reports directory if it does not exist. From your project root:
 
