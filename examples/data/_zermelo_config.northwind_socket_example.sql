@@ -56,8 +56,8 @@ CREATE TABLE IF NOT EXISTS `wrench` (
 --
 
 INSERT INTO `wrench` (`id`, `wrench_lookup_string`, `wrench_label`, `created_at`, `updated_at`) VALUES
-(1, 'job_title_filter', 'Job Title Filter', NULL, NULL),
-(2, 'big_state_filter', 'Limit Report to certain states', '2019-04-17 05:00:00', '2019-04-17 05:00:00');
+(1, 'MyWind_job_title_filter', 'Job Title Filter', NULL, NULL),
+(2, 'MyWind_big_state_filter', 'Limit Report to certain states', '2019-04-17 05:00:00', '2019-04-17 05:00:00');
 
 --
 -- Indexes for dumped tables
