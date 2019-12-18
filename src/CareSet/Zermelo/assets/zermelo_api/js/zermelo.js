@@ -68,6 +68,10 @@ var Zermelo = function( reportURI, downlaodURI, options ) {
         });
     };
 
+    this.setSockets = function(newSockets) {
+        that.sockets = newSockets;
+    }
+
     /**
      *  Get all search filters, including column and global search filters
      *  Search filters are stored in key/value pairs like this:
@@ -206,6 +210,7 @@ var Zermelo = function( reportURI, downlaodURI, options ) {
         on: this.on,
         serverDownloadRequest: this.serverDownloadRequest,
         pushSocket: this.pushSocket,
+        setSockets: this.setSockets,
         getDownloadURI: this.getDownloadURI,
         pushGlobalSearchFilter: this.pushGlobalSearchFilter,
         pushColumnSearchFilter: this.pushColumnSearchFilter,

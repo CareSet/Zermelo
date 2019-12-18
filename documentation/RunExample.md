@@ -30,7 +30,7 @@ These test databases work for both major CareSet projects: [DURC](https://github
     use _zermelo_config;
     source vendor/careset/zermelo/examples/data/_zermelo_config.northwind_socket_example.sql;
     ```
-    
+
 2. Then copy the example reports from [project-root]/vendor/careset/zermelo/examples/reports into your app/Reports directory. 
 You will need to create the app/Reports directory if it does not exist. From your project root:
 
@@ -51,4 +51,5 @@ Example Report tabular views
 ``` 
     [base_url]/Zermelo/NorthwindProductReport
 ```
+
 
