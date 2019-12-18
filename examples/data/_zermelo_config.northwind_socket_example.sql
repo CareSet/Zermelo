@@ -30,7 +30,8 @@ INSERT INTO `socket` (`id`, `wrench_id`, `socket_value`, `socket_label`, `is_def
 (3, 1, 'customer.jobTitle IN (\'Purchasing Manager\',\'Owner\')', 'Purchasing Managers or Owners Only', 0, 1, '2019-04-17 05:00:00', '2019-04-17 05:00:00'),
 (5, 1, 'CHAR_LENGTH(customer.jobTitle) > 0 ', 'Any Job Title', 1, 1, '2019-04-17 05:00:00', '2019-04-17 05:00:00'),
 (6, 2, 'stateProvince IN (\'NY\', \'TX\', \'FL\', \'CA\')', 'Largest States Only', 0, 1, '2019-04-17 05:00:00', '2019-04-17 05:00:00'),
-(7, 2, '', 'Any States', 1, 1, '2019-04-17 05:00:00', '2019-04-17 05:00:00');
+(7, 2, '', 'Any States', 1, 1, '2019-04-17 05:00:00', '2019-04-17 05:00:00'),
+(8, 3, 'MyWind_northwind_data.order', 'Only Order Table', 1, 1, '2019-04-17 05:00:00', '2019-04-17 05:00:00');
 
 -- --------------------------------------------------------
 
@@ -57,7 +58,8 @@ CREATE TABLE IF NOT EXISTS `wrench` (
 
 INSERT INTO `wrench` (`id`, `wrench_lookup_string`, `wrench_label`, `created_at`, `updated_at`) VALUES
 (1, 'MyWind_job_title_filter', 'Job Title Filter', NULL, NULL),
-(2, 'MyWind_big_state_filter', 'Limit Report to certain states', '2019-04-17 05:00:00', '2019-04-17 05:00:00');
+(2, 'MyWind_big_state_filter', 'Limit Report to certain states', '2019-04-17 05:00:00', '2019-04-17 05:00:00'),
+(3, 'MyWind_order_year_db_table', 'Limit Report to Order table', '2019-04-17 05:00:00', '2019-04-17 05:00:00');
 
 --
 -- Indexes for dumped tables
