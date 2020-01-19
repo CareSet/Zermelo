@@ -163,16 +163,18 @@ Implement this method to verride a default column format or add additional colum
 #### Cache Configuration
 
 **isCacheEnabled()**
-Turn caching on and off. Default is "false" which means cache is off.
+Turn caching on and off. Default is to return *false* which means cache is off. If you set this function to return *true*, this will enable the caching.
+**Creating** the cache table always happens, but when the cache is enabled, the cache is used to answer subsequent queries
+rather than re-running the original query. This can cause confusing results (i.e. changing the underlying data does not change the content of the report when the cache is used) and as a result, it is off by default. But for many large and slow queries, caching is nessecary. 
 
 **howLongToCacheInSeconds()**
-If cache is enabled, we use this setting to configure how long we wish to retain the cached report.
+If cache is enabled, we use this setting to configure how long we wish to retain the cached report, before re-running the original query. 
 
 #### Add custom Javascript 
 
 **GetReportJS()**
 Implement this function to return a string that will be placed in a script tag before the closing body tag of the
-report. Do not include script tags. This is for JS only. The string is not escaped, and is
+report. Do not include script tags. This function should return JS code only. The string is not escaped, and is
 passed raw to the report.
 
 ### API functions available in GetSQL()
@@ -184,10 +186,19 @@ passed in the request query string.
 
 **setInput($key, $new_value)**
 A useful but dangerous function that allows for specific reports to override the input that comes from a 
-user before it is used.
+user before it is used. Use this carefuly, since this will make changing the setting in the user interface not function properly. 
+TODO (have the UX note that a setting is frozen) 
 
-**setDefaultSortOrder($column, $direction)**
-This is a helper function for setInput() that allows to set a default order in the UI on the tabular view.
+**setDefaultSortOrder($sort_array)**
+This is a helper function for setInput() that allows to set a default order in the UI on tabular (and tabular derived) views.
+The sort_array argument takes the form: 
+ $sort_order = [
+ ['order_count' => 'desc'],
+ ['name' => 'asc']
+ ];
+
+This would result in listing the rows with the most orders at the top and when several rows had the same number of orders would be listed alphabetically
+
 
 **pushViewVariable($key, $value)**
 Use this function to pass a variable to the view without going through request/response cycle. The key parameter is a string, and will be
