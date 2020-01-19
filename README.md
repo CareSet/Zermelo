@@ -189,6 +189,9 @@ A useful but dangerous function that allows for specific reports to override the
 user before it is used. Use this carefuly, since this will make changing the setting in the user interface not function properly. 
 TODO (have the UX note that a setting is frozen) 
 
+**setDefaultInput($key, $new_value)**
+This will set a input variable to starting value.. until the value is reset in the UX. (unlike setInput it will not override user values)
+
 **setDefaultSortOrder($sort_array)**
 This is a helper function for setInput() that allows to set a default order in the UI on tabular (and tabular derived) views.
 The sort_array argument takes the form: 
