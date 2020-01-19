@@ -62,7 +62,7 @@ abstract class ZermeloReport implements ZermeloReportInterface
 	 */
 	private $_default_sort_order = [];
 
-	private $_isCacheEnabled = null;
+	private $_isCacheEnabled = false; //cache is always off by default. 
 
 	private $_howLongToCacheInSeconds = null;
 
