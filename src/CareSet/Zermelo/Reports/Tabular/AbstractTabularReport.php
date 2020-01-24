@@ -79,32 +79,4 @@ abstract class AbstractTabularReport extends ZermeloReport
      */
     public $SUGGEST_NO_SUMMARY = [];
 
-    /**
-     * setDefaultSortOrder
-     * This will set an input value unless one has already been set, allows report to define things like default sorts (etc)
-     * But if the user changes things, it will be allowed to override.
-     * @return void
-     */
-    public function setDefaultSortOrder($column, $direction)
-    {
-        // Make sure that there is an order component of the input,
-        // if not, just ignore
-        if ( isset( $this->_input['order'] ) ) {
-
-            // Check to see if we already have this column set
-            // by the user from the UI
-            $alreadySet = false;
-            foreach ( $this->_input[ 'order' ] as $order ) {
-                if ( isset( $order[$column] ) ) {
-                    $alreadySet = true;
-                    break;
-                }
-            }
-
-            // If the column isn't set by the UI, then impose our will (the default behavior)
-            if ( !$alreadySet ) {
-                array_push( $this->_input[ 'order' ], [ $column => $direction ] );
-            }
-        }
-    }
 }
