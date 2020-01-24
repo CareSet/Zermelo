@@ -332,7 +332,8 @@ abstract class ZermeloReport implements ZermeloReportInterface
 	/**
 	 * setInput
  	 * a useful but dangerous function that allows for specific reports to override the input that comes from a user before it is used.
-	 *
+	 * if you want to set the input to a default, without overriding the user input (which this does, then look at setDefaultInput
+         * or the setDefaultSortOrder command... setDefaultSortOrder understands how to sort by more than one thing!!!
 	 * @return void
 	 */
 	public function setInput($key, $new_value)
@@ -340,6 +341,39 @@ abstract class ZermeloReport implements ZermeloReportInterface
 		$this->_input[$key] = $new_value;
 		return(true);
 	}
+
+	/**
+	 * setInput
+ 	 * a useful but dangerous function that allows for specific reports to override the input that comes from a user before it is used.
+	 * if you want to set the input to a default, without overriding the user input (which this does, then look at setDefaultInput
+	 * @return void
+	 */
+	public function setDefaultInput($key, $new_value)
+	{
+
+		if(isset($this_input[$key])){
+			//then do nothing.. the value has already been set...
+		}else{
+			$this->_input[$key] = $new_value;
+		}
+		return(true);
+	}
+	
+	/**
+	* setDefaultSortOrder
+	* This accepts an array of [column => 'asc'/'desc'] values... and will then call setDefaultInput to put into the right place... 
+	* for example $sort_array = [[ 'order_count' => 'desc'],['name' => 'desc']] 
+	* would return a list that is ordered with the most orders at the top, and when the order count is the same, it would alphabetize on name 
+	* after that.
+	* @return void
+	*
+        */
+	public function setDefaultSortOrder($sort_array){
+
+		return $this->setDefaultInput('order', $sort_array);
+
+	}
+
 
 
 	/**
