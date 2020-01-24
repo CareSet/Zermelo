@@ -308,7 +308,7 @@ ALTER TABLE $this->cache_db.$this->nodes_table
                     `source_img` AS node_img
                 
                 FROM $this->cache_db.`{$this->getTableName()}`
-                GROUP BY `source_id`, `source_name`, `source_type`, `source_group`, `source_longitude`, `source_latitude`, `source_img`
+                GROUP BY `source_id`, `source_name`, `source_type`, `source_group`, `source_longitude`, `source_latitude`, `source_json_url`, `source_img`
                 
                 UNION 
                 
@@ -324,10 +324,11 @@ ALTER TABLE $this->cache_db.$this->nodes_table
                     `target_img` AS node_img
                 
                 FROM $this->cache_db.`{$this->getTableName()}`
-                GROUP BY `target_id`, `target_name`, `target_type`, `target_group`, `target_longitude`, `target_latitude`, `target_img` 
+                GROUP BY `target_id`, `target_name`, `target_type`, `target_group`, `target_longitude`, `target_latitude`, `target_json_url`, `target_img` 
             ) 
             AS node_union
-            GROUP BY node_id, node_name";
+            GROUP BY node_id, node_name, node_type, node_group, node_latitude, node_longitude, node_json_url, node_img
+";
 
         //we do this because we need to have something that starts from zero for our JSON indexing..
         $sql["array that starts from zero"] =
@@ -425,7 +426,8 @@ ALTER TABLE $this->cache_db.`$this->links_table`
                         target_id AS node_id
                     FROM $this->cache_db.`{$this->getTableName()}`
                 ) AS  merged_node_type
-            GROUP BY node_type";
+            GROUP BY node_type
+	";
 
         $sql["create unique id for node type table"] =
             "ALTER TABLE $this->cache_db.`{$this->node_types_table}` ADD `id` INT(11) NOT NULL AUTO_INCREMENT FIRST, ADD PRIMARY KEY (`id`);";
