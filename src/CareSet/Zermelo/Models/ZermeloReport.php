@@ -43,18 +43,18 @@ abstract class ZermeloReport implements ZermeloReportInterface
 	 */
 	protected $_input = [];
 
-    /**
-     * @var array
+    	/**
+     	 * @var array
 	 * This is where custom view varialbes are stored, can access these varialbe on the view without having
 	 * to pass them through the API
-     */
+     	 */
 	protected $_view_variables = [];
 
-    /**
-     * @var null
+    	/**
+     	 * @var null
 	 *
 	 * User remember token passed to view
-     */
+     	*/
 	protected $_token = null;
 
 	/*
@@ -71,29 +71,29 @@ abstract class ZermeloReport implements ZermeloReportInterface
 	private $_activeWrenches = []; // Array wrenches that are "in use" for this report
 	private $_activeSockets = []; // Array of sockets that are "currently selected" for the active wrenches
 
-    /**
-     * Should we enable the cache on this table?
-     * This will improve the performance of very large and complex queries by only running the SQL once and then storing
-     * the results in a dynamically creqted table in the _cache database.
-     * But it also creates hard to debug update errors that are very confusing when changing GetSQL() contents.
-     */
-    protected $CACHE_ENABLED = true;
+    	/**
+     	 * Should we enable the cache on this table?
+     	 * This will improve the performance of very large and complex queries by only running the SQL once and then storing
+     	 * the results in a dynamically creqted table in the _cache database.
+     	 * But it also creates hard to debug update errors that are very confusing when changing GetSQL() contents.
+     	 */
+    	protected $CACHE_ENABLED = true;
 
 
-    /**
-     * How much time should pass (in seconds) before you update your _cache table for this report?
-     * this only has an effect when isCacheEnabled is turned on.
-     */
-    protected $HOW_LONG_TO_CACHE_IN_SECONDS = 600;
+    	/**
+      	 * How much time should pass (in seconds) before you update your _cache table for this report?
+     	 * this only has an effect when isCacheEnabled is turned on.
+     	 */
+    	protected $HOW_LONG_TO_CACHE_IN_SECONDS = 600;
 
 
-    /**
-     * $INDICIES
-     * The system will attempt to create an index out of these columns when creating the cache
-     *
-     * @var array
-     */
-    public $INDICIES = [];
+    	/**
+     	 * $INDICIES
+     	 * The system will attempt to create an index out of these columns when creating the cache
+     	 *
+     	 * @var array
+     	 */
+    	public $INDICIES = [];
 
 	/**
 	 * __construct
@@ -109,13 +109,21 @@ abstract class ZermeloReport implements ZermeloReportInterface
 	 * @param array $Input - Additional optional parameters, usually through Request type input
 	 * @return void
 	 */
-	public function __construct(?string $Code, array $Parameters = [], array $Input = [], SocketService $socketService)
+	public function __construct(?string $Code, array $Parameters = [], array $Input = [])
 	{
 		$this->_code = $Code;
 		$this->_parameters = $Parameters;
 		$this->_input = $Input;
 		$this->setIsCacheEnabled( $this->CACHE_ENABLED );
 		$this->setHowLongToCacheInSeconds( $this->HOW_LONG_TO_CACHE_IN_SECONDS );
+
+		//the only way to communicate sockets is by indentifying them in the form input..
+		//which means that if they are not here in the Input, then they should not exist... 
+        	$socketService = new SocketService();
+        	if ( isset($Input['sockets']) ) {
+            		$socketService->setSocketsFromApiInput( $Input[ 'sockets' ] );
+        	}
+
 
 		$this->_socketService = $socketService;
 	}
@@ -130,24 +138,24 @@ abstract class ZermeloReport implements ZermeloReportInterface
 		return $this->_view_variables;
 	}
 
-    public function getToken()
-    {
-        return $this->_token;
-    }
+    	public function getToken()
+    	{
+        	return $this->_token;
+    	}
 
-    public function setToken( $token )
-    {
-        $this->_token = $token;
-    }
+    	public function setToken( $token )
+    	{
+        	$this->_token = $token;
+    	}
 
 
-    /**
-     * @param string|null $wrenchName
+    	/**
+     	 * @param string|null $wrenchName
 	 *
 	 * Get all of the sockets and their labels for a given wrenchName
 	 * 
 	 * The last setting is saved before we get here in the ReportBuilder
-     */
+     	 */
 	public function getAllSockets( string $wrenchName = null )
 	{
 		$sockets = null;
@@ -166,14 +174,14 @@ abstract class ZermeloReport implements ZermeloReportInterface
 
         	return $sockets;
 	}
-    /**
-     * @param string|null $wrenchName
+    	/**
+     	 * @param string|null $wrenchName
 	 *
 	 * Get the user-selected socket for this wrench, or the default
 	 * if a user_socket is not set.
 	 *
 	 * The last setting is saved before we get here in the ReportBuilder
-     */
+     	 */
 	public function getSocket( string $wrenchName = null )
 	{
 		$socket = null;
@@ -227,49 +235,55 @@ abstract class ZermeloReport implements ZermeloReportInterface
 	}
 
 
-    /**
-     * Get the URI key for the resource.
-     * @return string
-     */
-    public static function uriKey()
-    {
-    	return class_basename(get_called_class());
-        // return Str::plural(Str::snake(class_basename(get_called_class()), '-'));
-    }
+    	/**
+     	 * Get the URI key for the resource.
+     	 * @return string
+     	 */
+    	public static function uriKey()
+    	{
+    		return class_basename(get_called_class());
+        	// return Str::plural(Str::snake(class_basename(get_called_class()), '-'));
+    	}
 
-    /**
-     * Should we enable the cache on this table?
-     * This will improve the performance of very large and complex queries by only running the SQL once and then storing
-     * the results in a dynamically creqted table in the _cache database.
-     * But it also creates hard to debug update errors that are very confusing when changing GetSQL() contents.
-     */
-    public function isCacheEnabled()
+    	/**
+     	 * Should we enable the cache on this table?
+     	 * This will improve the performance of very large and complex queries by only running the SQL once and then storing
+     	 * the results in a dynamically creqted table in the _cache database.
+     	 * But it also creates hard to debug update errors that are very confusing when changing GetSQL() contents.
+         * By default, we set this to false in the template. We expect this function to be overridden in most implementing classes
+	 * TODO Should this be an abstract function to ensure that debugging is possible?
+     	 */
+    	public function isCacheEnabled()
 	{
-        return $this->_isCacheEnabled;
-    }
-
-    public function setIsCacheEnabled( $isCacheEnabled )
+        	return $this->_isCacheEnabled;
+    	}
+	/**
+	 * Turn the cache on or off. 
+	 * 
+	 * @param boolean $isCacheEnabled whether this should be on or off... 
+	 */
+    	public function setIsCacheEnabled( $isCacheEnabled = false)
 	{
 		$this->_isCacheEnabled = $isCacheEnabled;
 	}
 
 
-    /**
-     * How much time should pass (in seconds) before you update your _cache table for this report?
-     * this only has an effect when isCacheEnabled is turned on.
-     */
-    public function howLongToCacheInSeconds()
+    	/**
+     	 * How much time should pass (in seconds) before you update your _cache table for this report?
+     	 * this only has an effect when isCacheEnabled is turned on.
+     	 */
+    	public function howLongToCacheInSeconds()
 	{
-        return $this->_howLongToCacheInSeconds; //ten minutes by default
-    }
+        	return $this->_howLongToCacheInSeconds; //ten minutes by default
+    	}
 
-    /**
+    	/**
 	 * @param null $howLongToCacheInSeconds
 	 */
-    public function setHowLongToCacheInSeconds( $howLongToCacheInSeconds )
-    {
-        $this->_howLongToCacheInSeconds = $howLongToCacheInSeconds;
-    }
+    	public function setHowLongToCacheInSeconds( $howLongToCacheInSeconds )
+    	{
+        	$this->_howLongToCacheInSeconds = $howLongToCacheInSeconds;
+    	}
 	
 	/**
 	 * getCode
@@ -302,19 +316,19 @@ abstract class ZermeloReport implements ZermeloReportInterface
 	
 
 
-    /**
-     * @param $key
-     * @return bool|mixed
+    	/**
+     	 * @param $key
+     	 * @return bool|mixed
 	 *
 	 * Get value of an input parameter by key, return false OW
-     */
+     	 */
 	public function getParameter( $key )
 	{
 		if ( isset( $this->_parameters[$key] ) ) {
-            return $this->_parameters[ $key ];
-        }
+            		return $this->_parameters[ $key ];
+        	}
 
-        return false;
+        	return false;
 	}
 
 	/**
@@ -418,7 +432,8 @@ abstract class ZermeloReport implements ZermeloReportInterface
 	{
                 //this function should have been overridden by a child class (i.e. a specific report) if this is being called
                 //then the child report is missing the GetSQL() function, which is one of the few required functions.
-                $error = "The requested Zermelo Report class exists, but does not have the GetSQL() function defined, this is a required function";
+		$this_class = get_class($this);
+                $error = "The requested Zermelo Report class ($this_class)  exists, but does not have the GetSQL() function defined, this is a required function";
                 throw new Exception($error);
 	}
 	/**
@@ -480,26 +495,24 @@ abstract class ZermeloReport implements ZermeloReportInterface
                 throw new Exception($error);
 	}
 
-    /**
-     * @return null|string
+    	/**
+     	 * @return null|string
 	 *
 	 * Return the footer of the report. This string will be placed in the footer element
-     * at the bottom of the page.
-     */
+     	 * at the bottom of the page.
+     	 */
 	public function GetReportFooter(): ?string
 	{
-		$footer = <<<FOOTER
-
-FOOTER;
+		$footer = "<!-- placeholder for Zermelo Report Footer HTML -->";
 
 		return $footer;
 	}
 
-    /**
-     * @return null|string
+    	/**
+     	 * @return null|string
 	 *
 	 * Add a string here to put in the class of the footer element of the report layout
-     */
+     	 */
 	public function GetReportFooterClass(): ?string
 	{
 		// Add "fixed centered" to have your footer fixed to the bottom, and/or centered
@@ -507,18 +520,18 @@ FOOTER;
 		return "";
 	}
 
-    /**
-     * @return null|string
+    	/**
+     	 * @return null|string
 	 *
 	 * This will place the enclosed Javascript in a <script> tag just before
 	 * the body of your view. Note, there is no need to include a script tag
 	 * in this string. The content of this string is not HTML encoded, and is passed
 	 * raw to the view.
-     */
+     	 */
 	public function GetReportJS(): ?string
 	{
 		$javascript = <<<JS
-			//alert("place javascript code here");
+			//alert("placeholder for report javascript");
 JS;
 		return $javascript;
 	}
@@ -529,12 +542,12 @@ JS;
 		$this->_request_form_input = $request_form_input;
 	}
 
-    /**
-     * @param bool $json
-     * @return array|string
+    	/**
+     	 * @param bool $json
+      	 * @return array|string
 	 *
 	 * If json is true, return JSON, otherwise return parameter string
-     */
+     	 */
 	public function getRequestFormInput( $json = true )
 	{
 		if ( $json ) {
@@ -601,17 +614,20 @@ JS;
 
 
 	
-/*
-	This function gets string that indicates the current state of the SQL, without considering things that could 
-	be temporarily modifying what is shown on the screen, (like order and filter commands from datatables) 
-        This function should be used to generate the name of the cache table, as well as data download functionality..
-        Basically, this determines when a specific data request is different.
-        There are lots of inputs to the system that might be considered..
-        But if they do not change the SQL from GetSQL() in the end they do not matter
-        So we actually use an md5 on the SQL from the report to make the key.
-        If the SQL changes, then the inputs matter enough to be cached in a different table
-        And if the SQL output does not change, then it is really the same cache..
-*/
+	/**
+	 * Return a unique identifier for a given SQL command
+	 * This function gets string that indicates the current state of the SQL, without considering things that could 
+	 * be temporarily modifying what is shown on the screen, (like order and filter commands from datatables) 
+         * This function should be used to generate the name of the cache table, as well as data download functionality..
+         * Basically, this determines when a specific data request is different.
+         * There are lots of inputs to the system that might be considered..
+         * But if they do not change the SQL from GetSQL() in the end they do not matter
+         * So we actually use an md5 on the SQL from the report to make the key.
+         * If the SQL changes, then the inputs matter enough to be cached in a different table
+         * And if the SQL output does not change, then it is really the same cache..
+	 * 
+	 * @param string $prefix a short prefix to put ahead of the md5 when we make the identifier
+	 **/
 	public function getDataIdentityKey($prefix = ''): string{
 
 	        $shortenedPrefix = $prefix;
@@ -642,7 +658,31 @@ JS;
 
 
 
+	/**
+	 * 	Function to that provides custom Code/Input/Form to run a test report
+         *	This function must either return false, or an array with the parameters to call the constructor for the report!!
+	 * 
+	 * 	@return must return either boolean false or an array of tests where each test is formed with 'Code' => string, 'Parameters' => [], 'Input' => [])
+	 */
+	public static function testMeWithThis(){
 
+
+		$return_structure = [
+			'Code' => 'first_uri_arg',
+			'Parameters' => ['second_uri_arg', 'third_uri_arg', 'and_so_on'],
+			'Input' => ['GET_variable_one' => 'GET_value_one','GET_variable_two' => 'GET_value_two','POST_variable_one' => 'POST_value_one','POST_and_so_on' => 'POST_and_so_forth'],
+			];
+
+
+		$all_the_tests = []; //we can have many tests..
+		$all_the_tests[] = $return_structure;
+
+		//return($return_structure); //its just an example...
+
+		return(false); //unless the child report cares enough to implement the testMeWithThis class
+
+
+	}
 
 }
 
