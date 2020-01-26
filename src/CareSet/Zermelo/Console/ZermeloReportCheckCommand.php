@@ -79,23 +79,20 @@ CREATE TABLE IF NOT EXISTS $zermelo_cache_db_name._ReportTestLog (
 	$is_durc = $this->option('include_durc');
 
 	$Dir = new \DirectoryIterator($report_dir);
-	foreach ($Dir as $FileInfo) {
-    		if (!$FileInfo->isDot()) {
-        		$this_file = $FileInfo->getFilename();
+	foreach(glob($report_dir . "/*.php") as $this_file){
 
 			if($is_durc){
 				//then every file gets added to the list!!
-				$file_list[] = $report_dir .'/'.  $this_file;
+				$file_list[] = $this_file;
 			}else{
 				//then only custom (non DURC generated) results are being tested
 				if(strpos($this_file,'DURC_') !== false){
 					$is_match_durc = true;
 				}else{
 					$is_match_durc = false;
-					$file_list[] = $report_dir . '/'. $this_file;
+					$file_list[] = $this_file;
 				}
 			}
-    		}
 	}
 	
 	if($is_debug) { echo "Testing the following reports\n"; }
@@ -182,6 +179,11 @@ CREATE TABLE IF NOT EXISTS $zermelo_cache_db_name._ReportTestLog (
 						}
 
 						$stmt = $pdo->query($this_sql); //we just need to know if it runs... 
+
+						$i = 0;
+						while($row = $stmt->fetch(\PDO::FETCH_ASSOC) && $i < 10){
+							$i++;
+						}
 
 						$success_count++;
 
