@@ -47,6 +47,12 @@ class ZermeloReportCheckCommand extends Command
 
 	$zermelo_cache_db_name = config( 'zermelo.ZERMELO_CACHE_DB' );
 
+	$delete_log_sql = "
+DROP TABLE IF EXISTS $zermelo_cache_db_name._ReportTestLog
+";
+
+	DB::statement($delete_log_sql);
+
 	$create_log_sql = "
 
 CREATE TABLE IF NOT EXISTS $zermelo_cache_db_name._ReportTestLog (
@@ -238,7 +244,7 @@ VALUES
 
 			//echo "Running\n$insert_log_sql\n";
 
-			$pdo->exec($insert_log_sql);
+			DB::statement($insert_log_sql);
 
 			echo "$file_with_problem\n\t\t$error_message\n";
 		
