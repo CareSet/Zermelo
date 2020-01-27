@@ -54,7 +54,6 @@ DROP TABLE IF EXISTS $zermelo_cache_db_name._ReportTestLog
 	DB::statement($delete_log_sql);
 
 	$create_log_sql = "
-
 CREATE TABLE IF NOT EXISTS $zermelo_cache_db_name._ReportTestLog (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `error_type` varchar(190) COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -70,8 +69,6 @@ CREATE TABLE IF NOT EXISTS $zermelo_cache_db_name._ReportTestLog (
 
 	DB::statement($create_log_sql);
 	
-
-
 	$report_dir = report_path(); //from helpers.php
 
 	$file_list = [];
@@ -128,6 +125,12 @@ CREATE TABLE IF NOT EXISTS $zermelo_cache_db_name._ReportTestLog (
 			'Input',
 		];
 
+	
+		//see if we can manually set this..
+		//very unsure why this is not respecting the sql parameters from the /config/database.php mysql modes configuration... 
+		//still this does seem to work... and it forces the ONLY_FULL_GROUP_BY which is the big change that we are trying to account for (right now)
+		\DB::statement("SET SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';");
+
 		foreach($test_cases as $this_test_case){
 			
 			foreach($need_these as $need_this){
@@ -172,18 +175,22 @@ CREATE TABLE IF NOT EXISTS $zermelo_cache_db_name._ReportTestLog (
 				$success_count = 0;
 				$fail_count = 0;
 				foreach($sql_array as $this_sql){
-			
+		
+					$class_array = explode('\\',$class);
+					$simple_class = array_pop($class_array);
+	
 					try {
 						if($is_debug){
 							echo "Processing $this_file $class by running \n $this_sql";
 						}
+						
+						$drop_table_sql = "DROP TABLE IF EXISTS $zermelo_cache_db_name._TC_$simple_class";
+
+						DB::statement($drop_table_sql);
+
+						$this_sql = "CREATE TABLE $zermelo_cache_db_name._TC_$simple_class AS " . $this_sql;
 
 						$stmt = $pdo->query($this_sql); //we just need to know if it runs... 
-
-						$i = 0;
-						while($row = $stmt->fetch(\PDO::FETCH_ASSOC) && $i < 10){
-							$i++;
-						}
 
 						$success_count++;
 
@@ -252,6 +259,21 @@ VALUES
 		
 		}
 	}
+
+	$sql_mode_sql = "
+SELECT 
+	@@sql_mode AS just_sql_mode,
+	@@SESSION.sql_mode AS session_sql_mode,
+	@@GLOBAL.sql_mode AS global_sql_mode
+;
+";
+
+	$stmt = $pdo->query($sql_mode_sql);
+	$results = $stmt->fetchAll();
+
+	var_export($results);
+	
+
 
     }
 }
