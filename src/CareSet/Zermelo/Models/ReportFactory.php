@@ -9,12 +9,12 @@ use Illuminate\Http\Request;
 class ReportFactory
 {
     /**
-     * @param Request $request
-     * @param $report_name
-     * @param $parameter_string
+     * @param $reportClass
+     * @param ZermeloRequest $request
      * @return ZermeloReport
      *
-     * Build a ZermeloReport from a report class and array of request parameters
+     * Build a ZermeloReport from a report class (string) and a request object.
+     *
      */
     public static function build( $reportClass, ZermeloRequest $request ) : ZermeloReport
     {

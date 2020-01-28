@@ -21,7 +21,7 @@ class Zermelo
     /**
      * Register the given reports.
      *
-     * @param  array  $resources
+     * @param  array  $reports
      * @return static
      */
     public static function reports(array $reports)
