@@ -50,3 +50,9 @@ List your routes:
 ```
 
 
+TROUBLESHOOTING
+------------------
+
+Please refer to the [Troubleshooting](documentation/Troubleshooting.md) guide. 
+
+
