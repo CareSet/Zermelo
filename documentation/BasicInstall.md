@@ -19,23 +19,25 @@ you can put 'northwind_data' for the DB_DATABASE. If you have an existing databa
     DB_PASSWORD=randomly_generate_a_password_and_put_it_here
     ```
 
-1. From the command prompt at your laravel project's root install the following commands: 
+1. From the command prompt at your laravel **project's root** install the following commands: 
 
     ```
-    composer require careset/zermelo
-    php artisan install:zermelo
+    composer require careset/zermelo_installer
+    php artisan zermelo:install
     ```
-    This will install the base reporting engine and tabular view package.
-    ```
-    php artisan install:zermelobladetabular
-    ```
-    This will create a reports directory in your resources directory containing blade view templates. This will also publish the configuration file to your app's config directory, and move assets (js, css) to public/vendor.
+    
+The installer pulls down the the zermelo package, which contains the API backend, and all avaialble view packages, 
+such as zermelobladetabular and zermelobladecard. The installer will also move zermelo assets such as Javascript and 
+CSS files to support the view packages into the public/vendor/CareSet directory.    
+   
+After running these commands, you will have a new app/Reports directory in your laravel project
+where the Zermelo report classes will be placed. 
 
-    ```
-    mkdir app/Reports
-    ```
-   This will be the directory where your reports will be created. 
-  
+The installer will also create a _zermelo_cache databse and a _zermelo_config database. The cache
+database retains a cached view of the query resulting from each report, and it's usage is configured
+in the report class. The config database holds data for report configuration, such as the socket/wrench
+varialbles that are injectable into report queries.
+
 
 ## Test your web routes (default):
 
