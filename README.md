@@ -77,18 +77,25 @@ This is a good place to start if you are just exploring the system. Read, [Runni
 ### Configuration Notes 
 1. Edit the file `config/zermelo.php` to change core zermelo setting these values are explained there and in [Configuration Documentation](documentation/ConfigFile.md)s
 2. Edit the file `config/zermelobladetabular.php` to change settings specific to zermelo blade tabular view package.
-3. Earlier in the Basic Installation you've already created an app/Reports directory. If desired, you can create a differently named report directory, but you must also change the namespace.
-	Change the REPORT_NAMESPACE setting in config/zermelo.php to something else...
-	
-    /**
-     * Namespace of the report where it will attempt to load from
-     */
-    'REPORT_NAMESPACE' =>env("REPORT_NAMESPACE","app\Reports"),
+3. Earlier in the Basic Installation you've already created an app/Reports directory. If desired, you can create a 
+differently named report directory, but you must also change the namespace.
+Change the REPORT_NAMESPACE setting in config/zermelo.php to something else...
 
-	... like "Zermelo" and then create a ~/code/zermelo-demo/app/Zermelo directory to place your example report in. Note: you will also need to change the namespace of Northwind\*Reports.php files to "namespace app\Zermelo;" if you change the REPORT\_NAMESPACE.
-4. If you ran these commands as root user, you'll have to change the ownership of the php files so they are readable
-by the webserver.
-5. If the reports don't run take a look at: `[project-root]/storage/logs/laravel.log` for errors
+```
+/**
+ * Namespace of the report where it will attempt to load from
+ */
+'REPORT_NAMESPACE' =>env("REPORT_NAMESPACE","app\Reports"),
+```
+
+... like "Zermelo" and then create a ~/code/zermelo-demo/app/Zermelo directory to place your example report in. 
+Note: you will also need to change the namespace of Northwind\*Reports.php files to "namespace app\Zermelo;" if you change the REPORT\_NAMESPACE.
+4. To configure middleware, you may add, or edit the MIDDLEWARE config setting in your config/zermelo.php file. This will
+run the configured middleware on each API request. For example, if you have enabled [Laravel's Authentication](https://laravel.com/docs/5.6/authentication#protecting-routes)
+and wish to protect the Zermelo routes using the auth middleware, you may add the string "auth" to the 
+MIDDLEWARE array in order to exeute the auth middleware on each API request to the Zermelo API. 
+Similarly, for the front-end view packages like zermelobladetabular, you may add the "auth" string to the TABULAR_MIDDLEWARE
+array in zermelobladetabular.php to enable authentication on that route.
 
 ### Update to New Version of zermelo
 In project home dir:

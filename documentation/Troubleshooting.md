@@ -24,6 +24,9 @@ the '127.0.0.1' to 'localhost', or run the provided GRANT query to grant the pro
 
 ## Post Installation
 
+My reports don't run, or I just see a white screen, or a blank screen. 
+* Take a look at: `[project-root]/storage/logs/laravel.log` for errors
+
 I'm seeing a 404 error when I browse to my report url.
 * Check URL, use `php artisan route:list` to make sure your route is there
 * Make sure your report file is in the proper directory in App and is properly namespaced.
