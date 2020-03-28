@@ -3,13 +3,11 @@
 namespace CareSet\Zermelo\Console;
 
 use Illuminate\Console\Command;
-use Illuminate\Console\DetectsApplicationNamespace;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
 
 abstract class AbstractZermeloInstallCommand extends Command
 {
-    use DetectsApplicationNamespace;
 
     protected $view_path = '';
 
