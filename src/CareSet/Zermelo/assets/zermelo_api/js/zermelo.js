@@ -219,6 +219,14 @@ var Zermelo = function( reportURI, downlaodURI, options ) {
         getUrlSearchParams: this.getUrlSearchParams,
         getPassthroughParams: function () {
             return that.options.passthrough_params ? that.options.passthrough_params : [];
+        },
+        getPassthroughParam: function(key) {
+            let params = this.getPassthroughParams();
+            if (key in params) {
+                return params[key];
+            } else {
+                console.log("Error: There is no key `"+key+"` in the parameter array.")
+            }
         }
     }
 };

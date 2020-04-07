@@ -57,11 +57,6 @@ abstract class ZermeloReport implements ZermeloReportInterface
      	*/
 	protected $_token = null;
 
-	/*
-	 * Store the column name and direction of the default sort order to pass to UI
-	 */
-	private $_default_sort_order = [];
-
 	private $_isCacheEnabled = false; //cache is always off by default. 
 
 	private $_howLongToCacheInSeconds = null;
@@ -382,10 +377,34 @@ abstract class ZermeloReport implements ZermeloReportInterface
 	* @return void
 	*
         */
-	public function setDefaultSortOrder($sort_array){
+	public function setDefaultSortOrder($sort_array)
+	{
+		// Set this variable, which gets passed to initial UI for initial default ordering
+		$this->pushViewVariable('default_sort_order', $sort_array);
 
-		return $this->setDefaultInput('order', $sort_array);
+		// Get the sort order, if any
+		$current_sort_order = $this->getInput('order') ?? [];
 
+		// Check to see if we already have this column set
+		// by the user from the UI, and only add to the sort if it's not already set
+		$translated_sort_array = [];
+		foreach ($sort_array as $sort_array_column => $sort_array_dir) {
+			$found = false;
+			foreach ( $current_sort_order as $order ) {
+				// Check to see if this colum is already being sorted on
+				if (isset($order[$sort_array_column])) {
+					$found = true;
+				}
+			}
+
+			if (!$found) {
+				// Need to translate the sort_arry key/value format into jquery datatables format so the
+				// ReportGenerator can handle them
+				$translated_sort_array[]= [$sort_array_column => $sort_array_dir];
+			}
+		}
+
+		return $this->setDefaultInput('order', array_merge($current_sort_order, $translated_sort_array));
 	}
 
 
