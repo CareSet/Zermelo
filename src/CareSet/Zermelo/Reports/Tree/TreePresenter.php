@@ -5,7 +5,7 @@
  * Date: 7/5/18
  * Time: 1:03 PM
  */
-namespace CareSet\Zermelo\Reports\Cards;
+namespace CareSet\Zermelo\Reports\Tree;
 
 use CareSet\Zermelo\Models\AbstractPresenter;
 use CareSet\Zermelo\Models\ZermeloReport;
