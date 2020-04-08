@@ -142,28 +142,7 @@ class ZermeloInstallCommand extends AbstractZermeloInstallCommand
 
         $this->info("Done.");
 
-        if ( ! $this->option('force') ) {
-            if ( $this->confirm("Would you like to use your previously installed Bootstrap CSS file?" )) {
-                $bootstrap_css_location = $this->ask("Please paste the path of your bootstrap CSS file relative to public");
-                // Write the bootstrap CSS location to the master config
-                config( [ 'zermelo.BOOTSTRAP_CSS_LOCATION' => $bootstrap_css_location ] );
-                $config_changes = true;
-            }
-        }
-
-        // Write the runtime config changes
-        if ( $config_changes ) {
-            $array = Config::get( 'zermelo' );
-            $data = var_export( $array, 1 );
-            if ( File::put( config_path( 'zermelo.php' ), "<?php\n return $data ;" ) ) {
-                $this->info( "Wrote new config file" );
-            } else {
-                $this->error("There were config changes, but there was an error writing config file.");
-            }
-        }
-
         return true;
-
     }
 
     public function runZermeloInitialCacheMigration( $zermelo_cache_db_name )

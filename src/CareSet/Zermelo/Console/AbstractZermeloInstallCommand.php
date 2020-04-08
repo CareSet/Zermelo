@@ -16,6 +16,14 @@ abstract class AbstractZermeloInstallCommand extends Command
     protected $config_file = '';
 
     /**
+     * @var bool 
+     * 
+     * Set this variable to true if there are config changes, and the config
+     * will write the new settings to your config file at the end of handle()
+     */
+    protected $config_changes = false;
+
+    /**
      * The name and signature of the console command.
      *
      * @var string
@@ -58,6 +66,19 @@ abstract class AbstractZermeloInstallCommand extends Command
         $this->info("exporting assets....");
         $this->exportAssets();
         $this->info("Done.");
+        
+        if ($this->config_changes) {
+            $path_parts = pathinfo($this->config_file);
+            $user_config_file = $path_parts['basename'];
+            $config_namespace = $path_parts['filename'];
+            $array = Config::get($config_namespace);
+            $data = var_export( $array, 1 );
+            if (File::put(config_path($user_config_file), "<?php\n return $data;")) {
+                $this->info( "Wrote new config file" );
+            } else {
+                $this->error("There were config changes, but there was an error writing config file.");
+            }
+        }
 
         $this->info("Installation Successful.");
     }
