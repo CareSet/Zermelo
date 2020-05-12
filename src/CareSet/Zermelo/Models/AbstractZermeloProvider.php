@@ -32,7 +32,7 @@ abstract class AbstractZermeloProvider extends ServiceProvider
     {
         // Only check this if we are running in the web
         if (php_sapi_name() !== 'cli') {
-            
+
             // Make sure our class is a subclass of AbstractZermelloInstallCommand
             if (in_array(AbstractZermeloInstallCommand::class, class_parents($class))) {
 
@@ -40,7 +40,7 @@ abstract class AbstractZermeloProvider extends ServiceProvider
                 foreach ($class::$views as $view) {
                     $publishedViewPath = resource_path('views') . DIRECTORY_SEPARATOR . $view;
                     if (!file_exists($publishedViewPath)) {
-                        throw new \Exception("You are missing view `$view` in your resources dierectory. You may need to run `php artisan zermel:install` at the root of your project");
+                        throw new \Exception("You are missing view `$view` in your resources dierectory. You may need to run `php artisan zermelo:install` at the root of your project");
                     }
                 }
             }
