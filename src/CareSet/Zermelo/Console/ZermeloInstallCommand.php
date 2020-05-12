@@ -14,10 +14,15 @@ class ZermeloInstallCommand extends AbstractZermeloInstallCommand
     /*
      * Automatically copy the zermelo.js library in assets/js
      */
-    protected $asset_path = __DIR__.'/../assets';
+    protected static $asset_path = __DIR__.'/../assets';
 
-    protected $config_file = __DIR__.'/../config/zermelo.php';
+    protected static $config_file = __DIR__.'/../config/zermelo.php';
 
+    /**
+     * @var string
+     * 
+     * Console command signature
+     */
     protected $signature = 'zermelo:install_api
                     {--database= : Pass in the database name}
                     {--force : Overwrite existing views and database by default}';
@@ -47,7 +52,7 @@ class ZermeloInstallCommand extends AbstractZermeloInstallCommand
 
         $zermelo_cache_db_name = config( 'zermelo.ZERMELO_CACHE_DB' );
         $zermelo_config_db_name = config( 'zermelo.ZERMELO_CONFIG_DB' );
-        
+
         // Check if our cache database exists, so we know whether to create it or not.
         try {
             $cache_db_exists = ZermeloDatabase::doesDatabaseExist($zermelo_cache_db_name);

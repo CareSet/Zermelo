@@ -8,18 +8,44 @@ use Illuminate\Support\Facades\File;
 
 abstract class AbstractZermeloInstallCommand extends Command
 {
-
-    protected $view_path = '';
-
-    protected $asset_path = '';
-
-    protected $config_file = '';
+    /**
+     * The file names of the views that need to be exported.
+     *
+     * Needs to be public so service provider can has access
+     *
+     * @var array
+     */
+    public static $views = [];
 
     /**
-     * @var bool 
-     * 
+     * @var string
+     *
+     * Path to the view directory in vendor that need to be exported to resources.
+     * Used with $views (above) to determine full path to vendor views.
+     */
+    protected static $view_path = '';
+
+    /**
+     * @var string
+     *
+     * Path to the assets in vendor that need to be exported to public
+     */
+    protected static $asset_path = '';
+
+    /**
+     * @var string
+     *
+     * Name of config file (to copy from vendor into config directory)
+     */
+    protected static $config_file = '';
+
+    /**
+     * @var bool
+     *
      * Set this variable to true if there are config changes, and the config
      * will write the new settings to your config file at the end of handle()
+     *
+     * This can be modified throughout the installation process, so not defined static
      */
     protected $config_changes = false;
 
@@ -36,13 +62,6 @@ abstract class AbstractZermeloInstallCommand extends Command
      * @var string
      */
     protected $description = '';
-
-    /**
-     * The views that need to be exported.
-     *
-     * @var array
-     */
-    protected $views = [];
 
     /**
      * Execute the console command.
@@ -66,9 +85,9 @@ abstract class AbstractZermeloInstallCommand extends Command
         $this->info("exporting assets....");
         $this->exportAssets();
         $this->info("Done.");
-        
+
         if ($this->config_changes) {
-            $path_parts = pathinfo($this->config_file);
+            $path_parts = pathinfo(self::config_file);
             $user_config_file = $path_parts['basename'];
             $config_namespace = $path_parts['filename'];
             $array = Config::get($config_namespace);
@@ -141,8 +160,8 @@ abstract class AbstractZermeloInstallCommand extends Command
      */
     protected function exportViews()
     {
-        foreach ($this->views as $value) {
-            $source = $this->view_path.'/' .$value;
+        foreach (static::$views as $value) {
+            $source = static::$view_path.'/' .$value;
             $dest = resource_path('views/'.$value );
             if ( file_exists( $dest )
                 && !$this->option('force') ) {
@@ -164,13 +183,13 @@ abstract class AbstractZermeloInstallCommand extends Command
     protected function exportConfig()
     {
         $doCopy = true;
-        $filename = basename( $this->config_file );
+        $filename = basename( static::$config_file );
 
         if ( file_exists( config_path( $filename ) ) &&
             !$this->option('force') ) {
 
             // If the configs are identical, or if the user doesn't want to... don't overwrite
-            if ( self::filesIdentical( $this->config_file, config_path( $filename )) ||
+            if ( self::filesIdentical( static::$config_file, config_path( $filename )) ||
                 !$this->confirm("The [{$filename}] config already exists. Do you want to replace it?")) {
                 $doCopy = false;
             }
@@ -178,7 +197,7 @@ abstract class AbstractZermeloInstallCommand extends Command
 
         if ($doCopy) {
             copy(
-                $this->config_file,
+                static::$config_file,
                 config_path($filename)
             );
 
@@ -189,7 +208,7 @@ abstract class AbstractZermeloInstallCommand extends Command
             // Only if we are NOT copying the new config file, AND we have an old one
             // test to see if old/current config is missing any "new" settings from the package
             if (file_exists(config_path( $filename ))) {
-                $newConfig = include $this->config_file;
+                $newConfig = include static::$config_file;
                 $currentConfig = include config_path($filename);
                 foreach ($newConfig as $key => $value) {
                     if (!isset($currentConfig[$key])) {
@@ -206,8 +225,8 @@ abstract class AbstractZermeloInstallCommand extends Command
             File::makeDirectory( public_path( 'vendor/CareSet' ), 0755, true );
         }
 
-        if ( $this->asset_path ) {
-            $new_files = File::allFiles( $this->asset_path );
+        if ( static::$asset_path ) {
+            $new_files = File::allFiles( static::$asset_path );
             $new_pathnames = [];
             foreach ( $new_files as $new_file ) {
                 $relativePathname = $new_file->getRelativePathname();
@@ -217,7 +236,7 @@ abstract class AbstractZermeloInstallCommand extends Command
                     !$this->option( 'force' ) ) {
 
                     // If the file exists, and is identical, don't bother to ask, just skip.
-                    if ( self::filesIdentical($this->asset_path . '/' . $relativePathname, public_path( 'vendor/CareSet' ) . '/' . $relativePathname) ||
+                    if ( self::filesIdentical(static::$asset_path . '/' . $relativePathname, public_path( 'vendor/CareSet' ) . '/' . $relativePathname) ||
                         !$this->confirm( "The [{$relativePathname}] asset already exists. Do you want to replace it?" ) ) {
                         continue;
                     }
@@ -230,7 +249,7 @@ abstract class AbstractZermeloInstallCommand extends Command
 
                 // If we say yes, or we're running in "force" mode, copy asset
                 copy(
-                    $this->asset_path . '/' . $relativePathname,
+                    static::$asset_path . '/' . $relativePathname,
                     public_path( 'vendor/CareSet' ) . '/' . $relativePathname
                 );
             }
