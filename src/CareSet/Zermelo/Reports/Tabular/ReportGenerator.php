@@ -345,11 +345,11 @@ class ReportGenerator extends AbstractGenerator implements GeneratorInterface
         $orderBy = $Report->getInput('order') ?? [];
 
         // This is where we want to merge in our "defaults" ??
+        // The defaults are merged into the 'order' input variable in the function ZermeloReport::setDefaultSortOrder()
+        // So we don't need to worry about it here.
         $this->orderBy($orderBy);
 
-
         $paging = $this->paginate($paging_length);
-
 
         /*
         Transform each row using $Report->MapRow()
