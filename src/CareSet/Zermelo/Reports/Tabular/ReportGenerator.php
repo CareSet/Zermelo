@@ -345,14 +345,7 @@ class ReportGenerator extends AbstractGenerator implements GeneratorInterface
         $orderBy = $Report->getInput('order') ?? [];
 
         // This is where we want to merge in our "defaults" ??
-        $associated_orderby = [];
-
-        foreach ($orderBy as $order) {
-            $orderKey = key($order);
-            $direction = $order[$orderKey];
-            $associated_orderby[$orderKey] = $direction;
-        }
-        $this->orderBy($associated_orderby);
+        $this->orderBy($orderBy);
 
 
         $paging = $this->paginate($paging_length);

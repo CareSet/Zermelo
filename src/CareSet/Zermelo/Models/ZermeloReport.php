@@ -57,7 +57,7 @@ abstract class ZermeloReport implements ZermeloReportInterface
      	*/
 	protected $_token = null;
 
-	private $_isCacheEnabled = false; //cache is always off by default. 
+	private $_isCacheEnabled = false; //cache is always off by default.
 
 	private $_howLongToCacheInSeconds = null;
 
@@ -113,7 +113,7 @@ abstract class ZermeloReport implements ZermeloReportInterface
 		$this->setHowLongToCacheInSeconds( $this->HOW_LONG_TO_CACHE_IN_SECONDS );
 
 		//the only way to communicate sockets is by indentifying them in the form input..
-		//which means that if they are not here in the Input, then they should not exist... 
+		//which means that if they are not here in the Input, then they should not exist...
         	$socketService = new SocketService();
         	if ( isset($Input['sockets']) ) {
             		$socketService->setSocketsFromApiInput( $Input[ 'sockets' ] );
@@ -148,7 +148,7 @@ abstract class ZermeloReport implements ZermeloReportInterface
      	 * @param string|null $wrenchName
 	 *
 	 * Get all of the sockets and their labels for a given wrenchName
-	 * 
+	 *
 	 * The last setting is saved before we get here in the ReportBuilder
      	 */
 	public function getAllSockets( string $wrenchName = null )
@@ -253,9 +253,9 @@ abstract class ZermeloReport implements ZermeloReportInterface
         	return $this->_isCacheEnabled;
     	}
 	/**
-	 * Turn the cache on or off. 
-	 * 
-	 * @param boolean $isCacheEnabled whether this should be on or off... 
+	 * Turn the cache on or off.
+	 *
+	 * @param boolean $isCacheEnabled whether this should be on or off...
 	 */
     	public function setIsCacheEnabled( $isCacheEnabled = false)
 	{
@@ -279,7 +279,7 @@ abstract class ZermeloReport implements ZermeloReportInterface
     	{
         	$this->_howLongToCacheInSeconds = $howLongToCacheInSeconds;
     	}
-	
+
 	/**
 	 * getCode
 	 * Retrieve code parameter used by model
@@ -308,7 +308,7 @@ abstract class ZermeloReport implements ZermeloReportInterface
 			return false;
 		}
 	}
-	
+
 
 
     	/**
@@ -367,47 +367,58 @@ abstract class ZermeloReport implements ZermeloReportInterface
 		}
 		return(true);
 	}
-	
+
 	/**
-	* setDefaultSortOrder
-	* This accepts an array of [column => 'asc'/'desc'] values... and will then call setDefaultInput to put into the right place... 
-	* for example $sort_array = [[ 'order_count' => 'desc'],['name' => 'desc']] 
-	* would return a list that is ordered with the most orders at the top, and when the order count is the same, it would alphabetize on name 
-	* after that.
-	* @return void
-	*
-        */
-	public function setDefaultSortOrder($sort_array)
+	 * setDefaultSortOrder( array $sort_array )
+	 *
+	 * @param array $sort_array - an array of arrays indicating order of default sorting
+	 *
+	 * This accepts an array of [column => 'asc'/'desc'] values... and will then call setDefaultInput to put into the right place...
+	 * for example $sort_array = [[ 'order_count' => 'desc'],['name' => 'desc']]
+	 * would return a list that is ordered with the most orders at the top, and when the order count is the same,
+	 * it would alphabetize on name after that. We use an array of arrays as the parameter type here rather than
+	 * an associative array in order to guarantee that the indicies persist and we get the actual order we want.
+	 *
+	 * @return void
+	 */
+	public function setDefaultSortOrder(array $sort_array)
 	{
 		// Set this variable, which gets passed to initial UI for initial default ordering
 		$this->pushViewVariable('default_sort_order', $sort_array);
 
-		// Get the sort order, if any
+		// Get the sort order, if any, which can come from the jQuery DataTable
 		$current_sort_order = $this->getInput('order') ?? [];
 
-		// Check to see if we already have this column set
+		// Check to see if we already have these default columns set
 		// by the user from the UI, and only add to the sort if it's not already set
-		$translated_sort_array = [];
-		foreach ($sort_array as $sort_array_column => $sort_array_dir) {
-			$found = false;
-			foreach ( $current_sort_order as $order ) {
-				// Check to see if this colum is already being sorted on
-				if (isset($order[$sort_array_column])) {
-					$found = true;
-				}
-			}
+		// The default sort_order comes in as an array of arrays, like this:
+		// [ [column1 => direction], [column2 => direction] ]
+		$defaults_sort_array = [];
+		foreach ($sort_array as $sort_pair) {
+			if (is_array($sort_pair)) {
+				foreach ($sort_pair as $sort_array_column => $sort_array_dir) {
+					$found = false;
+					foreach ($current_sort_order as $order) {
+						// Check to see if this colum is already being sorted on
+						if (isset($order[$sort_array_column])) {
+							$found = true;
+						}
+					}
 
-			if (!$found) {
-				// Need to translate the sort_arry key/value format into jquery datatables format so the
-				// ReportGenerator can handle them
-				$translated_sort_array[]= [$sort_array_column => $sort_array_dir];
+					if (!$found) {
+						// We didn't find this sort column already found, so we can add it to our default sort array
+						// If we don't find it, we don't add it because we don't want to override UI input
+						$defaults_sort_array[] = [$sort_array_column => $sort_array_dir];
+					}
+				}
+			} else {
+				throw new \Exception("Check the format of the parameters on your call to setDefaultSortOrder()");
 			}
 		}
 
-		return $this->setDefaultInput('order', array_merge($current_sort_order, $translated_sort_array));
+		// Merge our current sort order, with the existing. We've already made sure that the sort columns are unique
+		return $this->setDefaultInput('order', array_merge($current_sort_order, $defaults_sort_array));
 	}
-
-
 
 	/**
 	 * getInput
@@ -605,23 +616,23 @@ JS;
 
 
 	/**
-	 * optional code that can serve to index the cache table. 
+	 * optional code that can serve to index the cache table.
          * SQL must use the string {{_CACHE_TABLE_}} in place of the cache table in the index commands
-         * it returns either null or an array of index SQL commands that can be run against the index table. 
-	 * 
+         * it returns either null or an array of index SQL commands that can be run against the index table.
+	 *
 	 * @return array of SQL templates or false
 	 */
 	public function GetIndexSQL(): ?array
 	{
-		//by default this function returns null, which causes the cache indexer to do nothing... 
+		//by default this function returns null, which causes the cache indexer to do nothing...
 		return null;
 	}
 
 	/**
-	 * This is a convience function that is intended to make it easier to quote database parameters 
+	 * This is a convience function that is intended to make it easier to quote database parameters
 	 * That originate from the user.
 	 *
-	 * @return string of escaped SQL 
+	 * @return string of escaped SQL
 	 */
 	public function quote($quote_me): ?string
 	{
@@ -632,11 +643,11 @@ JS;
 
 
 
-	
+
 	/**
 	 * Return a unique identifier for a given SQL command
-	 * This function gets string that indicates the current state of the SQL, without considering things that could 
-	 * be temporarily modifying what is shown on the screen, (like order and filter commands from datatables) 
+	 * This function gets string that indicates the current state of the SQL, without considering things that could
+	 * be temporarily modifying what is shown on the screen, (like order and filter commands from datatables)
          * This function should be used to generate the name of the cache table, as well as data download functionality..
          * Basically, this determines when a specific data request is different.
          * There are lots of inputs to the system that might be considered..
@@ -644,7 +655,7 @@ JS;
          * So we actually use an md5 on the SQL from the report to make the key.
          * If the SQL changes, then the inputs matter enough to be cached in a different table
          * And if the SQL output does not change, then it is really the same cache..
-	 * 
+	 *
 	 * @param string $prefix a short prefix to put ahead of the md5 when we make the identifier
 	 **/
 	public function getDataIdentityKey($prefix = ''): string{
@@ -667,7 +678,7 @@ JS;
                 }
                 $identity_string =      $this->getClassName() . '-' .
                                         $this->getCode() . '-' . //note that we do this just to make table and directory listings easier to read.. the data is fully captured in the SQL
-                                        implode('-',$sql);	//which is why we do not need to add paramaters (etc) to this identity function... 
+                                        implode('-',$sql);	//which is why we do not need to add paramaters (etc) to this identity function...
 
         //lets make this into something short that can be used to make a good table name in the cache.
         	$key = $shortenedPrefix."_".md5($identity_string);
@@ -680,7 +691,7 @@ JS;
 	/**
 	 * 	Function to that provides custom Code/Input/Form to run a test report
          *	This function must either return false, or an array with the parameters to call the constructor for the report!!
-	 * 
+	 *
 	 * 	@return must return either boolean false or an array of tests where each test is formed with 'Code' => string, 'Parameters' => [], 'Input' => [])
 	 */
 	public static function testMeWithThis(){
