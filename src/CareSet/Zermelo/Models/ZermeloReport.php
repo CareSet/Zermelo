@@ -660,14 +660,13 @@ JS;
 	 **/
 	public function getDataIdentityKey($prefix = ''): string{
 
-	        $shortenedPrefix = $prefix;
-        	if ( strlen( $shortenedPrefix ) > 31 ) {
-            		$shortenedPrefix = substr( $shortenedPrefix, 0, max( strlen( $shortenedPrefix ), 31 ) );
-        	}
+		// If the prefix is greater than 31 characters, shorten it to 31
+		$shortenedPrefix = substr( $prefix, 0, min( strlen( $prefix ), 31 ) );
+
         // Get the report key, can be a maximum of 64 chars
         //   md5 = 32
         // + "_" = 1
-        // + max( ReportClassName, 31 )
+        // + min( ReportClassName, 31 )
         // = 64
 
         //when any of the following strings change then it really is a different
