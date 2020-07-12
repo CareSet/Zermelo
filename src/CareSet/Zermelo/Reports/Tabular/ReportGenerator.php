@@ -74,7 +74,8 @@ class ReportGenerator extends AbstractGenerator implements GeneratorInterface
 		if (count($original_array_key) < count($mapped_header)){
 			$diff = array_diff($mapped_header,$original_array_key);
 			$diff_text = var_export($diff,true);
-            		throw new UnexpectedMapRowException("Zermelo Report Error: There are more values returned in the row than went into MapRow. These field names have been added:  $diff_text");
+			$original_text = var_export($original_array_key,true);
+            		throw new UnexpectedMapRowException("Zermelo Report Error: There are more values returned in the row than went into MapRow. These field names have been added:  $diff_text, was expecting $original_text");
 		}else{
             		throw new UnexpectedMapRowException("Zermelo Report Error: There are fewer values returned in the row than went into MapRow");
 		}
