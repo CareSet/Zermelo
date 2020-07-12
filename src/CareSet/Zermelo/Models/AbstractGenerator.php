@@ -48,7 +48,9 @@ class AbstractGenerator
 
     public function orderBy(array $orders)
     {
-        foreach ($orders as $key=>$direction) {
+        foreach ($orders as $order) {
+            $key = key($order);
+            $direction = $order[$key];
             $this->cache->getTable()->orderBy($key, $direction);
         }
     }
