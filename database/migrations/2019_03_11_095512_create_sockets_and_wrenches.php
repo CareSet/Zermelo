@@ -32,7 +32,8 @@ class CreateSocketsAndWrenches extends Migration
             $table->string('socket_label', 1024);
             $table->boolean( 'is_default_socket' );
             $table->integer( 'socketsource_id');
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent();
         });
 //
 //        CREATE TABLE `socketsource` (
@@ -45,7 +46,8 @@ class CreateSocketsAndWrenches extends Migration
         Schema::create('socketsource', function (Blueprint $table) {
             $table->increments('id');
             $table->string( 'socketsource_name', 1024 );
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent();
         });
 //
 //        CREATE TABLE `socket_user` (
@@ -62,7 +64,8 @@ class CreateSocketsAndWrenches extends Migration
             $table->integer('user_id');
             $table->integer('wrench_id');
             $table->integer('current_chosen_socket_id');
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent();
         });
 
 //
@@ -78,9 +81,10 @@ class CreateSocketsAndWrenches extends Migration
             $table->increments('id');
             $table->string( 'wrench_lookup_string', 200 );
             $table->string( 'wrench_label', 200 );
-            $table->timestamps();
-	    $table->unique('wrench_label');
-	    $table->unique('wrench_lookup_string');
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent();
+	        $table->unique('wrench_label');
+	        $table->unique('wrench_lookup_string');
         });
     }
 
