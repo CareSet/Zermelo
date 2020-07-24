@@ -30,7 +30,7 @@ class CreateSocketsAndWrenches extends Migration
             $table->integer( 'wrench_id' );
             $table->string( 'socket_value', 1024 );
             $table->string('socket_label', 1024);
-            $table->boolean( 'is_default_socket' );
+            $table->boolean( 'is_default_socket' )->default(0);
             $table->integer( 'socketsource_id');
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent();

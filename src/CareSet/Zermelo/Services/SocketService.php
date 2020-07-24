@@ -52,20 +52,20 @@ class SocketService
     }
 
    /*
-	Get all of the sockets for a given wrenchString aand 
-	return then as an associative array... 
+	Get all of the sockets for a given wrenchString aand
+	return then as an associative array...
    */
     public function fetchAllSocketsForWrenchKey( $key )
     {
         $wrench = Wrench::where( 'wrench_lookup_string', $key )->first();
         if ( $wrench !== null ) {
 
-		//I know their is an Eloquent way to do this.. not work the bother...  
+		//I know their is an Eloquent way to do this.. not work the bother...
 		$sockets = Socket::where('wrench_id', $wrench->id)->get();
 
 		$socket_list_to_return = [];
 
-		//lets build a simple flat list with the expected contents... 
+		//lets build a simple flat list with the expected contents...
 		foreach($sockets as $this_socket){
 			$socket_list_to_return[$this_socket->id] = [
 						'socket_label' => $this_socket->socket_label,
@@ -129,51 +129,54 @@ class SocketService
     /**
      * Check the default socket in sockets table to make sure that
      * each wrench as one, and only one, default socket
-     * TODO, make a whole logging and warning system : https://github.com/CareSet/Zermelo/issues/107 
-     * 
+     * TODO, make a whole logging and warning system : https://github.com/CareSet/Zermelo/issues/107
+     *
      */
     public static function checkIsDefaultSocket()
     {
 
 	//Note with lots of sockets 80k and a few hundred wrenches...
-	//the code below causes the entire system to crash. 
-	//the code calls the socket objects many many times. 
-	//This needs to be converted into a single raw SQL statement. The following SQL statement should have no results: 
+	//the code below causes the entire system to crash.
+	//the code calls the socket objects many many times.
+	//This needs to be converted into a single raw SQL statement. The following SQL statement should have no results:
 
 /*
-SELECT wrench_id 
-FROM socket 
+SELECT wrench_id
+FROM socket
 GROUP BY `wrench_id`
 HAVING SUM(is_default_socket) > 1
-UNION 
-SELECT wrench_id 
+UNION
+SELECT wrench_id
 FROM socket
 GROUP BY wrench_id
 HAVING SUM(is_default_socket) = 0
 */
 
-	//until then lets protect ourselves from this massive performance hit not running the code below
-	return(true); 
+	// We have adjusted the below code to fetch wrenches, and Eager-Load (join) the sockets along
+        // with them, so performance should no longer be an issue. This hasn't been fully tested on large data
+        // until then lets protect ourselves from this massive performance hit not running the code below
+        return(true);
 
-	
+
 
         // Fetch all the sockets
-        $sockets = Socket::all();
+        // Get all the wrenches with sockets eager-loaded (joined)
+        $wrenches = Wrench::all();
 
         // Count the default sockets for each
         $default_hist = [];
-        foreach ($sockets as $socket) {
+        foreach ($wrenches as $wrench) {
+            foreach ($wrench->sockets as $socket) {
+                if (is_object($socket->wrench)) { //to account for cases where we have sockets without wrenches
+                    if (!isset($default_hist[$socket->wrench->wrench_label])) {
+                        $default_hist[$socket->wrench->wrench_label] = 0;
+                    }
 
-	    if(is_object($socket->wrench)){ //to account for cases where we have sockets without wrenches
-            	if (!isset($default_hist[$socket->wrench->wrench_label])) {
-                	$default_hist[$socket->wrench->wrench_label] = 0;
-            	}
-	
-
-     		if ($socket->is_default_socket == 1) {
-               		$default_hist[$socket->wrench->wrench_label]++;
-            	}
-	    }
+                    if ($socket->is_default_socket == 1) {
+                        $default_hist[$socket->wrench->wrench_label]++;
+                    }
+                }
+            }
         }
 
         $message = "";

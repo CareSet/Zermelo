@@ -12,6 +12,8 @@ class Socket extends AbstractZermeloModel
 {
     protected $table = 'socket';
 
+    protected $fillable = ['wrench_id', 'socket_value', 'socket_label', 'is_default_socket', 'socketsource_id'];
+
     public function wrench()
     {
         return $this->belongsTo( Wrench::class );
