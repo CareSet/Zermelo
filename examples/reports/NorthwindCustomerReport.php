@@ -59,7 +59,7 @@ On this interface test:</p>
     * Additional URI parameters are passed as
     *	$this->getCode() - which will give the first url segment after the report name
     *   $this->getParameters() - which will give an array of every later url segment after the getCode value
-    *   $this->getInputs() - which will give _GET parameters (etc?)
+    *   $this->getInput() - which will give _GET parameters (etc?)
     **/
     public function GetSQL()
     {
