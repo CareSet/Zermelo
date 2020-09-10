@@ -3,6 +3,17 @@ Zermelo Reporting Engine
 
 A PHP reporting engine that works especially well with Laravel, built with love at [CareSet Systems](http://careset.com)
 
+Reporting Approach
+------------------
+
+The basic idea in Zermelo is to let report authors think exclusively in SQL SELECT statements, and to allow Zermelo to handle the translation of the data that results from queries into complex and rich web interfaces. 
+There are plenty of good tools available to help build SELECT statements, and there are thousands of excellent resources available to learn how to use the SELECT query functions in SQL. 
+And if you know how to use SQL SELECT statements, then with Zermelo, you can automatically create complex and interactive web-based reports.
+
+Generally, this happens using the ability of SQL to have aliases for the output of specific variables. For most of the reporting engines, you can have one or many SQL queries that output into specific aliased columns that Zermelo understands.
+And then the reporting engine will automatically populate a web-based data view with the data output. For instance, the card-based layout engine allows you to populate rows of data into BootStrap Cards. Almost every portion of the Bootstrap Card can be populated by using column names that correspond to the css classes supported inside the [bootstrap card component](https://getbootstrap.com/docs/4.0/components/card/#kitchen-sink).
+
+The exception to this approach is the tabular data viewer. Here, you can output anything you want from your SELECT statement and Zermelo will do its best to create a online auto-paging tabular view of your data using the [DataTables](https://datatables.net/) javascript project. 
 
 Core Reporting features
 ------------------
