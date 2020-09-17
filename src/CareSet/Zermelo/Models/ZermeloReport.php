@@ -57,8 +57,20 @@ abstract class ZermeloReport implements ZermeloReportInterface
      	*/
 	protected $_token = null;
 
+	/**
+	 * @var bool
+	 *
+	 * Specify whether the cache is enabled, or not. NOTE: Reports are always
+	 * run from the "cache" but disabling this will regenerate the cache on each load,
+	 * and not retain the result of the report query in the cache table
+	 */
 	private $_isCacheEnabled = false; //cache is always off by default.
 
+	/**
+	 * @var null
+	 *
+	 * When cache is enabled, how long to retain the results of the report query in the cache table
+	 */
 	private $_howLongToCacheInSeconds = null;
 
 	private $_socketService = null;
@@ -81,6 +93,15 @@ abstract class ZermeloReport implements ZermeloReportInterface
      	 */
     	protected $HOW_LONG_TO_CACHE_IN_SECONDS = 600;
 
+		/**
+		 * @var bool
+		 *
+		 * This enables the sql print feature for this report, which enables the route
+		 * for printing the SQL that generates a report. There is also a global
+		 * configuration zermelo.SQL_PRINT_ENABLE in the zeremelo config file which also
+		 * needs to be enabled FIRST if you want to enable on the report level.
+		 */
+    	protected $SQL_PRINT_ENABLED = false;
 
     	/**
      	 * $INDICIES
@@ -239,6 +260,24 @@ abstract class ZermeloReport implements ZermeloReportInterface
     		return class_basename(get_called_class());
         	// return Str::plural(Str::snake(class_basename(get_called_class()), '-'));
     	}
+
+		/**
+		 * @return bool
+		 *
+		 * Return true if the print function is enabled both in the config file AND
+		 * in the child report, return false OW
+		 *
+		 * There is only a getter because this will be set by an attribute by the same
+		 * name in the child class, and we also check the configuration in zermelo config
+		 */
+		public function isSQLPrintEnabled(): bool
+		{
+			if (config('zermelo.SQL_PRINT_ENABLED', false)) {
+				return $this->SQL_PRINT_ENABLED;
+			}
+
+			return false;
+		}
 
     	/**
      	 * Should we enable the cache on this table?

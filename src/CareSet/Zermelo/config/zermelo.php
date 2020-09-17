@@ -44,6 +44,25 @@ return [
     // Any middleware you want to run on zermelo routes (ie: 'auth')
     'MIDDLEWARE' => ['api'],
 
+    // Get the middleware for web routes that are in zermelo core, like the SQL pretty-printer
+    'WEB_MIDDLEWARE' => ['web'],
+
+    /**
+     * The prefix for the web route that displays the doctrine sql-formatter view, which
+     * lists the queries generated for the report that is specified after the prefix.
+     *
+     * The route is disabled by default for security reasons.
+     *
+     * The default middleware for this route is the web middleware.
+     */
+    'SQL_PRINT_PREFIX' => env("SQL_PREFIX","ZermeloSQL"),
+
+    'SQL_PRINT_ENABLED' => env("SQL_PRINTER_ENABLED",false),
+
+    'SQL_PRINT_VIEW_TEMPLATE' => env("SQL_PRINT_VIEW_TEMPLATE","Zermelo::layouts.sql"),
+
+    'BOOTSTRAP_CSS_LOCATION' => env("BOOTSTRAP_CSS_LOCATION","/vendor/CareSet/zermelo_api/bootstrap-4.3.1/css/bootstrap.min.css"),
+
     /**
      * List of valid tags to be used with RESTRICT_TAGS
      */

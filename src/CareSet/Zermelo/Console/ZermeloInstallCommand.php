@@ -11,6 +11,18 @@ use Illuminate\Support\Facades\File;
 
 class ZermeloInstallCommand extends AbstractZermeloInstallCommand
 {
+    /**
+     * The views that need to be exported.
+     *
+     * @var array
+     */
+    public static $views = [
+        'zermelo/sql.blade.php',
+        'zermelo/layouts/sql.blade.php',
+    ];
+
+    protected static $view_path = __DIR__.'/../../../../views';
+
     /*
      * Automatically copy the zermelo.js library in assets/js
      */
@@ -20,7 +32,7 @@ class ZermeloInstallCommand extends AbstractZermeloInstallCommand
 
     /**
      * @var string
-     * 
+     *
      * Console command signature
      */
     protected $signature = 'zermelo:install_api

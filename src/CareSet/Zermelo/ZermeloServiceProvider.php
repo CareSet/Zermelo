@@ -58,7 +58,7 @@ Class ZermeloServiceProvider extends \Illuminate\Support\ServiceProvider
 	}//end register function..
 
 
-	public $is_socket_ok = false; //start assuming it is not. 
+	public $is_socket_ok = false; //start assuming it is not.
 	public $is_socket_checked = false;
     /**
      * @param Router $router
@@ -97,7 +97,9 @@ Class ZermeloServiceProvider extends \Illuminate\Support\ServiceProvider
         // during composer package discovery, or installation
         if (php_sapi_name() !== 'cli') {
             $this->registerApiRoutes();
+            $this->registerWebRoutes();
             $this->registerReports();
+            $this->loadViewsFrom( resource_path( 'views/zermelo' ), 'Zermelo');
         }
     }
 
@@ -153,12 +155,26 @@ Class ZermeloServiceProvider extends \Illuminate\Support\ServiceProvider
             Route::group( ['prefix' => $tree_api_prefix ], function() {
                 $this->loadRoutesFrom(__DIR__.'/routes/api.tree.php');
             });
-
         });
     }
 
     /**
-     * Get the Nova route group configuration array.
+     * Get the WEB route configurations
+     */
+    protected function registerWebRoutes()
+    {
+        Route::group($this->webRouteConfiguration(), function() {
+
+            // Load the pretty-print SQL routes from web.sql.php using the configured prefix
+            $sql_print_prefix = config( 'zermelo.SQL_PRINT_PREFIX' );
+            Route::group([ 'prefix' => $sql_print_prefix ], function () {
+                $this->loadRoutesFrom(__DIR__.'/routes/web.sql.php');
+            });
+        });
+    }
+
+    /**
+     * Get the API route group configuration array.
      *
      * @return array
      */
@@ -171,6 +187,24 @@ Class ZermeloServiceProvider extends \Illuminate\Support\ServiceProvider
             'domain' => config('zermelo.domain', null),
             'as' => 'zermelo.api.',
             'prefix' => config( 'zermelo.API_PREFIX' ),
+            'middleware' => $middleware,
+        ];
+    }
+
+    /**
+     * Get the web route group configuration array.
+     *
+     * @return array
+     */
+    protected function webRouteConfiguration()
+    {
+        $middleware = config('zermelo.WEB_MIDDLEWARE',[ 'web' ]);
+
+        return [
+            'namespace' => 'CareSet\Zermelo\Http\Controllers',
+            //  'domain' => config('zermelo.domain', null),
+            'as' => 'zermelo.web.',
+            'prefix' => '',
             'middleware' => $middleware,
         ];
     }
