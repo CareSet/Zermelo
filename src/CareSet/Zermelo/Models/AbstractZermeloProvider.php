@@ -40,7 +40,7 @@ abstract class AbstractZermeloProvider extends ServiceProvider
                 foreach ($class::$views as $view) {
                     $publishedViewPath = resource_path('views') . DIRECTORY_SEPARATOR . $view;
                     if (!file_exists($publishedViewPath)) {
-                        throw new \Exception("You are missing view `$view` in your resources dierectory. You may need to run `php artisan zermelo:install` at the root of your project");
+                        throw new \Exception("You are missing view `$view` in your resources directory. You may need to run `php artisan zermelo:install` at the root of your project");
                     }
                 }
             }
