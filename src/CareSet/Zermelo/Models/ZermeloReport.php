@@ -218,7 +218,7 @@ abstract class ZermeloReport implements ZermeloReportInterface
             		}
 
         	} else {
-			throw new Exception("Zermelo SocketWrench Error: No wrench name provided");
+			throw new Exception("Zermelo SocketWrench Error: getSocket function called, but No wrench name provided");
 		}
 
         	return $socket->socket_value;
