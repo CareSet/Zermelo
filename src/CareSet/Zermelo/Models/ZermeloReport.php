@@ -214,7 +214,7 @@ abstract class ZermeloReport implements ZermeloReportInterface
 
             		// Then, make sure we make socket options available to view
             		if ( $socket->wrench ) {
-                		$this->_activeWrenches[] = $socket->wrench;
+                		$this->_activeWrenches[$socket->wrench->id] = $socket->wrench;
             		}
 
         	} else {
