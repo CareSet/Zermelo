@@ -119,6 +119,14 @@ class SocketService
                     'is_default_socket' => 1
                 ])->first();
             }
+
+            // Finally, if there's no DEFAULT socket for this wrench, fetch the first one
+            if ( $foundSocket === null ) {
+                $foundSocket = Socket::where([
+                    'wrench_id' => $wrench->id
+                ])->orderBy('id', 'asc')->first();
+            }
+
         } else {
             throw new \Exception("Zermelo SocketWrench Error: No Wrench found for lookup string=`$key`");
         }
