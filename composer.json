@@ -1,5 +1,5 @@
 {
-    "name": "careset/zermelo",	
+    "name": "careset/zermelo",
     "description": "Zermelo, a PHP reporting engine for Laravel",
     "type": "library",
     "license": "Apache-2.0",
@@ -13,7 +13,8 @@
 		"vega"
     ],
     "require": {
-        "php": ">=7.2.0"
+        "php": ">=7.2.0",
+        "doctrine/sql-formatter": "1.1.*"
     },
     "autoload": {
         "psr-4" : {

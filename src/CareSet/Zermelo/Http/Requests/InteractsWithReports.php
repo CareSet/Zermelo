@@ -38,7 +38,15 @@ trait InteractsWithReports
     {
         // report_key is a request parameter defined by the route (we are inside a request object)
         return tap(Zermelo::reportForKey($this->report_key), function ($report) {
-            abort_if(is_null($report), 404);
+            if(is_null($report)){
+			$debug = config('app.debug');
+			if($debug){ //lets show the user a specific error
+				throw new \ErrorException("Zermelo returned a null value when trying to create a report from key |$this->report_key| this usually means there is no existing report by that name");
+			}else{
+				//in a production environment, we just show a 404 message
+				abort(404);
+			}
+		}
         });
     }
 

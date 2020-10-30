@@ -212,7 +212,8 @@ abstract class AbstractZermeloInstallCommand extends Command
                 $currentConfig = include config_path($filename);
                 foreach ($newConfig as $key => $value) {
                     if (!isset($currentConfig[$key])) {
-                        $this->error("Your current configuration file is missing required setting `{$key}`. Please refer to the package config `{$this->config_file}` to copy the default setting value.");
+			$config_file = self::$config_file;
+                        $this->error("Your current configuration file is missing required setting `{$key}`. Please refer to the package config `$config_file` to copy the default setting value.");
                     }
                 }
             }

@@ -14,4 +14,6 @@ interface ZermeloReportInterface
     public function pushViewVariable($name, $value);
 
     public function setToken($token);
+
+    public function isSQLPrintEnabled();
 }
