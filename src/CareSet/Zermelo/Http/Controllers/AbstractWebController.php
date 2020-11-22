@@ -78,8 +78,11 @@ abstract class AbstractWebController extends BaseController
     {
         // Auth stuff
         $user = Auth::guard()->user();
-        if ( $user ) {
-            $report->setToken( $user->getRememberToken() );
+        if ($user) {
+            // Since this is a custom careset column on the database for JWT, make sure the property is set,
+            if (isset($user->last_token)) {
+                $report->setToken($user->last_token);
+            }
         }
 
         // Get the overall Zermelo API prefix /zapi
