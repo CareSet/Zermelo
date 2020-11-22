@@ -139,7 +139,7 @@ var Zermelo = function( reportURI, downlaodURI, options ) {
 
         // Get an associative array of parameters from the address bar
         // We need to convert our array of key/value pairs into an associative array
-        let passthrough_params = [];
+        let passthrough_params = {};
         $.each( that.getUrlSearchParams(), function (key, option) {
             for (var i in option) {
                 passthrough_params[i] = option[i];
@@ -217,8 +217,12 @@ var Zermelo = function( reportURI, downlaodURI, options ) {
         getSearchFilters: this.getSearchFilters,
         clearSearchFilters: this.clearSearchFilters,
         getUrlSearchParams: this.getUrlSearchParams,
+        getAllApiParams : function () {
+            var api_params = $.extend({}, this.getPassthroughParams(), {'token':that.options.token});
+            return api_params;
+        },
         getPassthroughParams: function () {
-            return that.options.passthrough_params ? that.options.passthrough_params : [];
+            return that.options.passthrough_params ? that.options.passthrough_params : {};
         },
         getPassthroughParam: function(key) {
             let params = this.getPassthroughParams();
