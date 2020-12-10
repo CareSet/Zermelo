@@ -28,7 +28,7 @@ nbproject
 
 .env
 composer.lock
- 
+
 #ignore vagrant
 .vagrant/
 
@@ -42,3 +42,5 @@ composer.lock
 
 #json auth files like from google.
 *.auth.json
+
+vendor/*
