@@ -46,7 +46,8 @@ class TabularApiController extends AbstractApiController
         $summaryGenerator = new ReportSummaryGenerator( $cache );
         $header = $summaryGenerator->runSummary();
         $header = array_map( function( $element ) {
-            return $element['title'];
+            // Replace spaces with '_' in the header
+            return preg_replace('/\s+/', '_', $element['title']);
         }, $header );
         $reportGenerator = new ReportGenerator( $cache );
         $collection = $reportGenerator->getCollection();
