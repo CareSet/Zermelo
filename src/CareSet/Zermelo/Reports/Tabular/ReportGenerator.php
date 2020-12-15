@@ -277,14 +277,8 @@ class ReportGenerator extends AbstractGenerator implements GeneratorInterface
         }
 
         $orderBy = $Report->getInput('order') ?? [];
-        $associated_orderby = [];
 
-        foreach ($orderBy as $order) {
-            $orderKey = key($order);
-            $direction = $order[$orderKey];
-            $associated_orderby[$orderKey] = $direction;
-        }
-        $this->orderBy($associated_orderby);
+        $this->orderBy($orderBy);
 
         $table = $this->cache->getTable();
 

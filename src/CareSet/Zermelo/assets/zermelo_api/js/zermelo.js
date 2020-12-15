@@ -10,6 +10,7 @@ var Zermelo = function( reportURI, downlaodURI, options ) {
 
     this.downloadURI = downlaodURI;
     this.reportURI = reportURI;
+    this.downloadFileType = 'excel';
 
     /**
      *  These are optional parameters passed in at instantiation
@@ -125,6 +126,17 @@ var Zermelo = function( reportURI, downlaodURI, options ) {
     };
 
     /**
+     * Set the download file type to excel or csv
+     * @param download_file_type
+     *
+     */
+    this.setDownloadFileType = function(download_file_type) {
+        if (download_file_type == 'excel' || download_file_type == 'csv') {
+            this.downloadFileType = download_file_type
+        }
+    }
+
+    /**
      * This will return a URL that contains both address-bar GET parameters
      * and AJAX filters that have been applied via datatables
      */
@@ -134,7 +146,8 @@ var Zermelo = function( reportURI, downlaodURI, options ) {
         let api_data = {
            // "_token" : that.options._token, // CSRF token
             "filter": that.searchFilters, // Search filters
-            "sockets": that.sockets // Pass sockets for "Data Options"
+            "sockets": that.sockets, // Pass sockets for "Data Options"
+            "download_file_type": that.downloadFileType
         };
 
         // Get an associative array of parameters from the address bar
@@ -171,34 +184,17 @@ var Zermelo = function( reportURI, downlaodURI, options ) {
         // Get the FULL download URI, including parameters
         let downloadURI = that.getDownloadURI();
 
-        // Send GET request to server with all of our paramters
-        $.get( downloadURI, function( data, textStatus, jqXHR ) {
-
-            // When the server returns, create a link to our downloaded blob and "click" it
-            const a = document.createElement("a");
-            document.body.appendChild(a);
-            a.style = "display: none";
-            const blob = new Blob([data], {type: "octet/stream"});
-            const url = window.URL.createObjectURL(blob);
-            a.href = url;
-            var header = jqXHR.getResponseHeader('Content-Disposition');
-            var filename = header.match(/filename="(.+)"/)[1];
-            a.download = filename;
-            a.click();
-            window.URL.revokeObjectURL(url);
-
-        }).done( function() {
-
-            // Tell our client that the download is done in case they want to do something
-            that.do('download.done');
-        });
+        // Open the download in a new 'tab'
+        window.open(downloadURI, '_blank');
 
         // Functions available to this method
         return {
-
             // Pass your callback to done for callback to be called when the download is done
             done: function( callback ) {
                 that.on('download.done', callback);
+
+                // Tell our client that the download is done in case they want to do something
+                that.do('download.done');
             }
         }
     };
@@ -211,6 +207,9 @@ var Zermelo = function( reportURI, downlaodURI, options ) {
         serverDownloadRequest: this.serverDownloadRequest,
         pushSocket: this.pushSocket,
         setSockets: this.setSockets,
+        setDownloadFileType: function(download_file_type) {
+            return that.setDownloadFileType(download_file_type)
+        },
         getDownloadURI: this.getDownloadURI,
         pushGlobalSearchFilter: this.pushGlobalSearchFilter,
         pushColumnSearchFilter: this.pushColumnSearchFilter,

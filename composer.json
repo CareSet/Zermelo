@@ -14,7 +14,8 @@
     ],
     "require": {
         "php": ">=7.2.0",
-        "doctrine/sql-formatter": "1.1.*"
+        "doctrine/sql-formatter": "1.1.*",
+        "phpoffice/phpspreadsheet": "^1.15"
     },
     "autoload": {
         "psr-4" : {
@@ -32,4 +33,3 @@
         "sort-packages": true
     }
 }
-
