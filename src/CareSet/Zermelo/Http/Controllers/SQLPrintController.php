@@ -41,7 +41,7 @@ class SQLPrintController extends AbstractWebController
         // before we show the report SQL, make sure SQL printing is enabled,
         // If not, throw an error
         if (!$report->isSQLPrintEnabled()) {
-            abort(403, 'SQL Printing Is Not Enabled.');
+            abort(403, 'SQL Printing Is Not Enabled In This Report.');
         }
 
         $bootstrap_css_location = asset(config('zermelo.BOOTSTRAP_CSS_LOCATION','/css/bootstrap.min.css'));
