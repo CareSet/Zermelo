@@ -268,15 +268,14 @@ abstract class ZermeloReport implements ZermeloReportInterface
 		 * in the child report, return false OW
 		 *
 		 * There is only a getter because this will be set by an attribute by the same
-		 * name in the child class, and we also check the configuration in zermelo config
+		 * name in the child class.
+		 *
+		 * This function is called in the SQLPrintController, which is where we also check the
+		 * configuration variable in zermelo config for the global 'enable' of SQL printing
 		 */
 		public function isSQLPrintEnabled(): bool
 		{
-			if (config('zermelo.SQL_PRINT_ENABLED', false)) {
-				return $this->SQL_PRINT_ENABLED;
-			}
-
-			return false;
+			return $this->SQL_PRINT_ENABLED;
 		}
 
     	/**

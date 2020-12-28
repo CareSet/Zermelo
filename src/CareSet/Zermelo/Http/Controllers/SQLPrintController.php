@@ -38,10 +38,19 @@ class SQLPrintController extends AbstractWebController
      */
     public function onBeforeShown(ZermeloReportInterface $report)
     {
-        // before we show the report SQL, make sure SQL printing is enabled,
+        // before we show the report SQL, make sure SQL printing is enabled GLOBALLY,
         // If not, throw an error
-        if (!$report->isSQLPrintEnabled()) {
-            abort(403, 'SQL Printing Is Not Enabled In This Report.');
+        $sqlPrintEnabledGlobally = config('zermelo.SQL_PRINT_ENABLED', false);
+        if ($sqlPrintEnabledGlobally === true) {
+            // before we show the report SQL, make sure SQL printing is enabled on the report,
+            // If not, throw an error
+            if (!$report->isSQLPrintEnabled()) {
+                // Not enabled on report
+                abort(403, 'SQL Printing Is Not Enabled In This Report.');
+            }
+        } else {
+            // Not enabled globally
+            abort(403, 'SQL Printing Is Not Enabled.');
         }
 
         $bootstrap_css_location = asset(config('zermelo.BOOTSTRAP_CSS_LOCATION','/css/bootstrap.min.css'));
