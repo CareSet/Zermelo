@@ -508,6 +508,45 @@ CREATE TABLE `socket_user` (
   `updated_at` datetime NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
 
+
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `socket`
+--
+
+CREATE TABLE `socket` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `wrench_id` int(11) NOT NULL,
+  `socket_value` varchar(1024) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `socket_label` varchar(1024) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `is_default_socket` tinyint(1) NOT NULL,
+  `socketsource_id` int(11) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `autosocket`
+--
+
+CREATE TABLE `autosocket` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `wrench_id` int(11) NOT NULL,
+  `socket_value` varchar(1024) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `socket_label` varchar(1024) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `is_default_socket` tinyint(1) NOT NULL,
+  `socketsource_id` int(11) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+
 -- --------------------------------------------------------
 
 --
@@ -533,6 +572,15 @@ ALTER TABLE `socket`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `wrench_value` (`socket_value`,`socket_label`),
   ADD KEY `wrench_id` (`wrench_id`);
+
+--
+-- Indexes for table `autosocket`
+--
+ALTER TABLE `autosocket`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `wrench_value` (`socket_value`,`socket_label`),
+  ADD KEY `wrench_id` (`wrench_id`);
+
 
 --
 -- Indexes for table `socketsource`
