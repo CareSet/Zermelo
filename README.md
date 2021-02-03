@@ -195,6 +195,13 @@ Implement this function to return a string that will be placed in a script tag b
 report. Do not include script tags. This function should return JS code only. The string is not escaped, and is
 passed raw to the report.
 
+#### Turn on the SQL Print view
+**isSQLPrintEnabled()**
+Will turn on the ability to visit the report using the /ZermeloSQL/ url and instead of running the report,
+a helpful debugging screen will be presented, showing what SQL would have been returned by GetSQL() in a pretty-printed manner.
+This is very helpful for debugging inputs. 
+It does require that SQL view be enabled in the /config/zermelo.php file to work, however. 
+
 ### API functions available in GetSQL()
 
 **getInput($key = null)**
@@ -455,6 +462,10 @@ JS;
     */
    public function howLongToCacheInSeconds(){
         return(1200); //twenty minutes by default
+   }
+
+   public function isSQLPrintEnabled(): bool{
+			return(false);
    }
 
 
