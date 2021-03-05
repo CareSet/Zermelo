@@ -1,0 +1,9 @@
+@media print {
+  	table tr.tablesorter-ignoreRow {
+    		display: none;
+  	}
+  	a.wiki{
+		display: none;
+  	}	
+
+}

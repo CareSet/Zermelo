@@ -1,0 +1,96 @@
+.loader-spinner-wrapper
+{
+    margin-top: 100px;
+}
+.loader-spinner {
+    border: 16px solid #f3f3f3; /* Light grey */
+    border-top: 16px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    animation: loader-spinner-frame 2s linear infinite;
+}
+@keyframes loader-spinner-frame {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+
+@media only screen and (min-width: 1200px)
+{
+    #feedback_dialog .modal-dialog,
+    #feedback_confirmation_dialog .modal-dialog {
+        width: 700px;
+    }
+}
+.modal-header-feedback {
+    color:#fff;
+    padding:9px 15px;
+    border-bottom:1px solid #eee;
+    background-color: #547c9d;
+    -webkit-border-top-left-radius: 5px;
+    -webkit-border-top-right-radius: 5px;
+    -moz-border-radius-topleft: 5px;
+    -moz-border-radius-topright: 5px;
+     border-top-left-radius: 5px;
+     border-top-right-radius: 5px;
+}
+
+#feedback_hover > a > span {
+    color: #fff;
+    height: 70px;
+    /* width: 30px; */
+    /* vertical-align: top; */
+    text-align: top;
+    /* margin-top: 0px; */
+    /* padding-top: 0px; */
+    font-size: 13px;
+    margin-left: 10px;
+    padding-right: 0px;
+    margin-right: -40px;
+}
+
+#feedback_hover {
+    z-index:10000;
+    float: left;
+    position: fixed;
+    /*top: calc(50px + 47px);*/
+    top: 56px;
+    right: 0;
+}
+
+.rotate {
+  display: inline-block;
+/* Safari */
+-webkit-transform: rotate(-90deg);
+/* Firefox */
+-moz-transform: rotate(-90deg);
+/* IE */
+-ms-transform: rotate(-90deg);
+/* Opera */
+-o-transform: rotate(-90deg);
+/* Internet Explorer */
+filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+}
+
+#feedback_hover a {
+    background: #547c9d;
+    border-radius: 5px 0 0 5px;
+    box-shadow: 0 0 3px rgba(0, 0, 0, .3);
+    border: 3px solid #fff;
+    border-right: 0;
+    display: block;
+    /*padding: 20px 12px;*/
+    transition: all .2s ease-in-out;
+}
+
+#feedback_hover a:hover {
+    padding: 0px 10px 0px 5px;
+    
+}
+
+.feedback-image:after{
+  content: "";
+  display: block;
+  padding-bottom: 100%;
+}
