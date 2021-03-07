@@ -236,19 +236,21 @@ abstract class AbstractZermeloInstallCommand extends Command
     protected function exportAsset($asset_source_filename, $asset_target_filename)
     {
         $source_exists = file_exists($asset_source_filename);
-        if ($source_exists) {
-            if (!$this->option('force')) {
-                // If the file exists, and is identical, don't bother to ask, just skip.
-                if (self::filesIdentical($asset_source_filename, $asset_target_filename) ||
-                    !$this->confirm("The asset `{$asset_target_filename}` already exists. Do you want to replace it?")) {
-                    return false;
-                }
+        $target_exists = file_exists($asset_target_filename);
+        if ($source_exists && $target_exists &&
+            !$this->option('force')) {
+
+            // If the file exists, and is identical, don't bother to ask, just skip.
+            if (!file_exists($asset_target_filename) ||
+                self::filesIdentical($asset_source_filename, $asset_target_filename) ||
+                !$this->confirm("The asset `{$asset_target_filename}` already exists. Do you want to replace it?")) {
+                return false;
             }
         } else {
             if (!$source_exists) {
                 $this->info("`$asset_source_filename` may not exist");
+                return false;
             }
-            return false;
         }
 
         $dirname = pathinfo($asset_target_filename, PATHINFO_DIRNAME);
