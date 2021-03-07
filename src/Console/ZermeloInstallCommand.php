@@ -73,12 +73,26 @@ class ZermeloInstallCommand extends AbstractZermeloInstallCommand
             base_path() . '/vendor/twbs/bootstrap/dist/js/bootstrap.bundle.min.js' => '/core/bootstrap/bootstrap.bundle.min.js',
             base_path() . '/vendor/twbs/bootstrap/dist/css/bootstrap.min.css' => '/core/bootstrap/bootstrap.min.css',
             base_path() . '/vendor/moment/moment/min/moment.min.js' => '/core/js/moment.min.js',
-            base_path() . '/vendor/fortawesome/font-awesome/css/all.min.css' => '/core/font-awesome/all.min.css'
+            base_path() . '/vendor/fortawesome/font-awesome/webfonts' => '/core/font-awesome/webfonts',
+            base_path() . '/vendor/fortawesome/font-awesome/css/all.min.css' => '/core/font-awesome/css/all.min.css',
+
         ];
 
         foreach ($additional_core_sources as $source => $dest) {
             $target = public_path(self::$asset_target_path) . $dest;
-            $this->exportAsset($source, $target);
+            if (is_dir($source)) {
+                $new_files = File::allFiles($source);
+                $new_pathnames = [];
+                foreach ($new_files as $new_file) {
+                    $relativePathname = $new_file->getRelativePathname();
+                    $new_pathnames[] = $relativePathname;
+                    $asset_target_filename = $target . '/' . $relativePathname;
+                    $asset_source_filename = $source . '/' . $relativePathname;
+                    $file_was_copied = $this->exportAsset($asset_source_filename, $asset_target_filename);
+                }
+            } else {
+                $this->exportAsset($source, $target);
+            }
         }
 
         // Install the Database, and core views

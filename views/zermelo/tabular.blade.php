@@ -137,10 +137,9 @@
 		</div>
 	</div>
 </div>
-<script type="text/javascript" src="/vendor/CareSet/zermelo/core/js/jquery-3.6.0.min.js"></script>
+<script type="text/javascript" src="/vendor/CareSet/zermelo/core/js/jquery.min.js"></script>
 <script type="text/javascript" src="/vendor/CareSet/zermelo/zermelobladetabular/datatables/datatables.js"></script>
-<script type="text/javascript" src="/vendor/CareSet/zermelo/core/js/popper.min.js"></script>
-<script type="text/javascript" src="/vendor/CareSet/zermelo/core/bootstrap-4.6.0/js/bootstrap.js"></script>
+<script type="text/javascript" src="/vendor/CareSet/zermelo/core/bootstrap/bootstrap.bundle.min.js"></script>
 <script type="text/javascript" src="/vendor/CareSet/zermelo/core/js/moment.min.js"></script>
 <script type="text/javascript" src="/vendor/CareSet/zermelo/core/js/daterangepicker.js"></script>
 <script type="text/javascript" src="/vendor/CareSet/zermelo/core/js/jquery.doubleScroll.js"></script>
