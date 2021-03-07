@@ -1,31 +1,27 @@
 <!doctype html>
 <html lang="en">
 <head>
+	<title>{{ $report->getReportName() }}</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="Cube is a map of the healthcare system">
+	<meta name="author" content="CareSet Team">
 
-    	<title>{{ $report->getReportName() }}</title>
-    	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-    	<meta name="description" content="Cube is a map of the healthcare system">
-    	<meta name="author" content="CareSet Team">
+    <!-- standard styles -->
+	<link rel="stylesheet" type="text/css" href='{{ $bootstrap_css_location }}' />
+	<link href='{{ asset("vendor/CareSet/zermelo/core/font-awesome/css/all.min.css") }}' rel="stylesheet" />
+	<link type="text/css" rel="stylesheet" href="/vendor/CareSet/zermelo/zermelobladegraph/css/taxonomyChooser.css">
 
+	<!-- custom css -->
+	<link type="text/css" rel="stylesheet" href="/vendor/CareSet/zermelo/zermelobladegraph/css/colors.css"/>
+	<link type="text/css" rel="stylesheet" href="/vendor/CareSet/zermelo/zermelobladegraph/css/noselect.css"/>
+	<link type="text/css" rel="stylesheet" href="/vendor/CareSet/zermelo/zermelobladegraph/css/print.css"/>
+	<link type="text/css" rel="stylesheet" href="/vendor/CareSet/zermelo/zermelobladegraph/css/floating.feedback.css"/>
 
+	<!-- standard javascript -->
+	<script type="text/javascript" src="/vendor/CareSet/zermelo/core/js/jquery.min.js"></script>
+	<script type="text/javascript" src="/vendor/CareSet/zermelo/core/bootstrap/bootstrap.bundle.min.js"></script>
 
-    	<!-- standard styles -->
-	<link type="text/css" rel="stylesheet" href="/vendor/CareSet/zermelo/core/bootstrap.4.6.0/css/bootstrap.min.css">
-    	<link type="text/css" rel="stylesheet" href="/vendor/CareSet/zermelo/core/fontawesome-free-5.10.2-web/css/all.css">
-
-    	<link type="text/css" rel="stylesheet" href="/vendor/CareSet/zermelo/zermelobladegraph/css/colors.css">
-    	<link type="text/css" rel="stylesheet" href="/vendor/CareSet/zermelo/zermelobladegraph/css/taxonomyChooser.css">
-	        <!-- custom css -->
-        <link type="text/css" rel="stylesheet" href="/vendor/CareSet/zermelo/zermelobladegraph/css/colors.css"/>
-        <link type="text/css" rel="stylesheet" href="/vendor/CareSet/zermelo/zermelobladegraph/css/noselect.css"/>
-        <link type="text/css" rel="stylesheet" href="/vendor/CareSet/zermelo/zermelobladegraph/css/print.css"/>
-        <link type="text/css" rel="stylesheet" href="/vendor/CareSet/zermelo/zermelobladegraph/css/floating.feedback.css"/>
-
-    	<!-- standard javascript -->
-    	<script type="text/javascript" language="javascript" src="/vendor/CareSet/zermelo/core/js/jquery-3.6.0.min.js"></script>
-	<script type="text/javascript" src="/vendor/CareSet/zermelo/core/bootstrap.4.6.0/js/bootstrap.min.js"></script>
-
-  <script type='text/javascript' language='javascript' src='/vendor/CareSet/zermelo/zermelobladegraph/js/d3.3.5.17.min.js'></script>
+	<script type='text/javascript' language='javascript' src='/vendor/CareSet/zermelo/zermelobladegraph/js/d3.3.5.17.min.js'></script>
 	<script type="text/javascript" src="/vendor/CareSet/zermelo/zermelobladegraph/js/saveSvgAsPng.js"></script>
 
 
@@ -35,7 +31,7 @@
   	<script type="text/javascript" src="/vendor/CareSet/zermelo/zermelobladegraph/js/html2canvas.js"></script>
 
 	<!-- font awesome js -->
-	<script type="text/javascript" language="javascript" src="/vendor/CareSet/zermelo/core/fontawesome-free-5.10.2-web/js/all.js"></script>
+	<script type="text/javascript" language="javascript" src="/vendor/CareSet/zermelo/core/font-awesome/js/all.min.js"></script>
 
 
 <!-- end dust_html.tpl -->

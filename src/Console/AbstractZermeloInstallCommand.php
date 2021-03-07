@@ -276,7 +276,7 @@ abstract class AbstractZermeloInstallCommand extends Command
             $target_path = public_path(self::$asset_target_path) . $target;
             // If the source is a directory, copy all the files in that directory
             // NOTE this routine does not recurse into subdirectories.
-            if (is_dir($source)) {
+            if (is_dir($source_path)) {
                 $new_files = File::allFiles($source_path);
                 $new_pathnames = [];
                 foreach ($new_files as $new_file) {

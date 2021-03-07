@@ -40,10 +40,6 @@ Class ZermeloServiceProvider extends \Illuminate\Support\ServiceProvider
          *  - Exports Assets
          */
         $this->commands([
-            ZermeloBladeCardInstallCommand::class,
-            ZermeloBladeGraphInstallCommand::class,
-            ZermeloBladeTabularInstallCommand::class,
-            ZermeloBladeTreeCardInstallCommand::class,
             ZermeloInstallCommand::class,
             ZermeloDebugCommand::class,
 	    	ZermeloReportCheckCommand::class,

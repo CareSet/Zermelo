@@ -50,13 +50,18 @@ class ZermeloInstallCommand extends AbstractZermeloInstallCommand
      * @var string[]
      */
     protected static $assets = [
-        // Core assets
+        // Core assets brought into vendor by composer
         '/vendor/components/jquery/jquery.min.js' => '/core/js/jquery.min.js',
         '/vendor/twbs/bootstrap/dist/js/bootstrap.bundle.min.js' => '/core/bootstrap/bootstrap.bundle.min.js',
         '/vendor/twbs/bootstrap/dist/css/bootstrap.min.css' => '/core/bootstrap/bootstrap.min.css',
         '/vendor/moment/moment/min/moment.min.js' => '/core/js/moment.min.js',
         '/vendor/fortawesome/font-awesome/webfonts' => '/core/font-awesome/webfonts',
         '/vendor/fortawesome/font-awesome/css/all.min.css' => '/core/font-awesome/css/all.min.css',
+        '/vendor/fortawesome/font-awesome/js/all.min.js' => '/core/font-awesome/js/all.min.js',
+
+        // Core assets that live in the zermelo repo
+        '/vendor/careset/zermelo/assets/core/css' => '/core/css',
+        '/vendor/careset/zermelo/assets/core/js' => '/core/js',
 
         // Graph Assets
         '/vendor/careset/zermelo/assets/zermelobladegraph/css' => '/zermelobladegraph/css',
