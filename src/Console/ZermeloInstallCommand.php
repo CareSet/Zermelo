@@ -73,6 +73,7 @@ class ZermeloInstallCommand extends AbstractZermeloInstallCommand
             base_path() . '/vendor/twbs/bootstrap/dist/js/bootstrap.bundle.min.js' => '/core/bootstrap/bootstrap.bundle.min.js',
             base_path() . '/vendor/twbs/bootstrap/dist/css/bootstrap.min.css' => '/core/bootstrap/bootstrap.min.css',
             base_path() . '/vendor/moment/moment/min/moment.min.js' => '/core/js/moment.min.js',
+            base_path() . '/vendor/fortawesome/font-awesome/css/all.min.css' => '/core/font-awesome/all.min.css'
         ];
 
         foreach ($additional_core_sources as $source => $dest) {
