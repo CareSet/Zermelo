@@ -269,27 +269,28 @@ abstract class AbstractZermeloInstallCommand extends Command
 
     protected function exportAssets()
     {
-        if (!empty(static::$asset_target_path &&
-            !empty(static::$asset_path))) {
+        $this->info("Installing Zermelo Assets");
 
-            if (!File::exists(public_path(self::$asset_target_path))) {
-                File::makeDirectory(public_path(self::$asset_target_path), 0755, true);
-            }
-
-            // Build the full path using the relative path provided by subclass
-            $assets_source_path = __DIR__ . '/../../assets' . static::$asset_path;
-            $assets_target_path = public_path(self::$asset_target_path) . static::$asset_path;
-            if ($assets_source_path) {
-                $this->info("Moving assets from `$assets_source_path` to `$assets_target_path`");
-                $new_files = File::allFiles($assets_source_path);
+        foreach (static::$assets as $source => $target) {
+            $source_path = base_path() . $source;
+            $target_path = public_path(self::$asset_target_path) . $target;
+            // If the source is a directory, copy all the files in that directory
+            // NOTE this routine does not recurse into subdirectories.
+            if (is_dir($source)) {
+                $new_files = File::allFiles($source_path);
                 $new_pathnames = [];
                 foreach ($new_files as $new_file) {
+                    if (is_dir($new_file)) {
+                        continue;
+                    }
                     $relativePathname = $new_file->getRelativePathname();
                     $new_pathnames[] = $relativePathname;
-                    $asset_target_filename = $assets_target_path . '/' . $relativePathname;
-                    $asset_source_filename = $assets_source_path . '/' . $relativePathname;
+                    $asset_target_filename = $target_path . '/' . $relativePathname;
+                    $asset_source_filename = $source_path . '/' . $relativePathname;
                     $file_was_copied = $this->exportAsset($asset_source_filename, $asset_target_filename);
                 }
+            } else {
+                $this->exportAsset($source_path, $target_path);
             }
         }
     }

@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use phpDocumentor\Reflection\Types\Static_;
 
 class ZermeloInstallCommand extends AbstractZermeloInstallCommand
 {
@@ -18,17 +19,53 @@ class ZermeloInstallCommand extends AbstractZermeloInstallCommand
      * @var array
      */
     public static $views = [
+        // SQL Pretty-Printing views
         'zermelo/sql.blade.php',
         'zermelo/layouts/sql_layout.blade.php',
+        // Card views
+        'zermelo/card.blade.php',
+        'zermelo/layouts/card_layout.blade.php',
+        // Graph views
+        'zermelo/d3graph.blade.php',
+        'zermelo/layouts/d3graph_layout.blade.php',
+        // Tabular views
+        'zermelo/tabular.blade.php',
+        'zermelo/layouts/tabular_layout.blade.php',
+        // Tree-card views
+        'zermelo/tree_card.blade.php',
+        'zermelo/layouts/tree_card_layout.blade.php',
     ];
 
+    /**
+     * Base directory indicating where the $views are located
+     *
+     * @var string
+     */
     protected static $view_path = __DIR__ . '/../../views';
 
-    /*
-     * Automatically copy the zermelo.js library in assets/js
-     * this is the source path in this repo relative to 'assets' directory
+    /**
+     * Map of assets (CSS and Javascript) that need to be exported to public,
+     * in the format 'source => target'
+     *
+     * @var string[]
      */
-    protected static $asset_path = '/core';
+    protected static $assets = [
+        // Core assets
+        '/vendor/components/jquery/jquery.min.js' => '/core/js/jquery.min.js',
+        '/vendor/twbs/bootstrap/dist/js/bootstrap.bundle.min.js' => '/core/bootstrap/bootstrap.bundle.min.js',
+        '/vendor/twbs/bootstrap/dist/css/bootstrap.min.css' => '/core/bootstrap/bootstrap.min.css',
+        '/vendor/moment/moment/min/moment.min.js' => '/core/js/moment.min.js',
+        '/vendor/fortawesome/font-awesome/webfonts' => '/core/font-awesome/webfonts',
+        '/vendor/fortawesome/font-awesome/css/all.min.css' => '/core/font-awesome/css/all.min.css',
+
+        // Graph Assets
+        '/vendor/careset/zermelo/assets/zermelobladegraph/css' => '/zermelobladegraph/css',
+        '/vendor/careset/zermelo/assets/zermelobladegraph/js' => '/zermelobladegraph/js',
+
+        // Tabular Assets
+        '/vendor/careset/zermelo/assets/zermelobladetabular/datatables' => '/zermelobladetabular/datatables',
+        '/vendor/careset/zermelo/assets/zermelobladetabular/js' => '/zermelobladetabular/js',
+    ];
 
     protected static $config_file = __DIR__.'/../../config/zermelo.php';
 
@@ -50,68 +87,50 @@ class ZermeloInstallCommand extends AbstractZermeloInstallCommand
 
     const CONFIG_MIGRATIONS_PATH = 'vendor/careset/zermelo/database/migrations';
 
-    protected $zermelo_install_commands = [
-        'zermelo:install_zermelobladetabular',
-        'zermelo:install_zermelobladecard',
-        'zermelo:install_zermelobladetreecard',
-        'zermelo:install_zermelobladegraph',
-    ];
-
     public function handle()
     {
         // Tell the system that the installer is running
         Config::set('zermelo:install_api.running', true);
 
-        $this->info("Installing Zermelo API engine");
-        // Do view, config and asset installing first for core and SQL printing
-        parent::handle();
+        $this->info("Creating directories....");
+        $this->createDirectories();
+        $this->info("Done.");
 
-        // These core sources are brought into the project using composer, so they
-        // need to be copied from the /vendor directory into /public
-        $additional_core_sources = [
-            base_path() . '/vendor/components/jquery/jquery.min.js' => '/core/js/jquery.min.js',
-            base_path() . '/vendor/twbs/bootstrap/dist/js/bootstrap.bundle.min.js' => '/core/bootstrap/bootstrap.bundle.min.js',
-            base_path() . '/vendor/twbs/bootstrap/dist/css/bootstrap.min.css' => '/core/bootstrap/bootstrap.min.css',
-            base_path() . '/vendor/moment/moment/min/moment.min.js' => '/core/js/moment.min.js',
-            base_path() . '/vendor/fortawesome/font-awesome/webfonts' => '/core/font-awesome/webfonts',
-            base_path() . '/vendor/fortawesome/font-awesome/css/all.min.css' => '/core/font-awesome/css/all.min.css',
+        $this->info("Exporting views....");
+        $this->exportViews();
+        $this->info("Done.");
 
-        ];
+        $this->info("exporting config....");
+        if (!empty(static::$config_file)) {
+            $this->exportConfig();
+        }
+        $this->info("Done.");
 
-        foreach ($additional_core_sources as $source => $dest) {
-            $target = public_path(self::$asset_target_path) . $dest;
-            if (is_dir($source)) {
-                $new_files = File::allFiles($source);
-                $new_pathnames = [];
-                foreach ($new_files as $new_file) {
-                    $relativePathname = $new_file->getRelativePathname();
-                    $new_pathnames[] = $relativePathname;
-                    $asset_target_filename = $target . '/' . $relativePathname;
-                    $asset_source_filename = $source . '/' . $relativePathname;
-                    $file_was_copied = $this->exportAsset($asset_source_filename, $asset_target_filename);
-                }
+        $this->info("exporting assets....");
+        $this->exportAssets();
+        $this->info("Done.");
+
+        if ($this->config_changes) {
+            $path_parts = pathinfo(self::config_file);
+            $user_config_file = $path_parts['basename'];
+            $config_namespace = $path_parts['filename'];
+            $array = Config::get($config_namespace);
+            $data = var_export( $array, 1 );
+            if (File::put(config_path($user_config_file), "<?php\n return $data;")) {
+                $this->info( "Wrote new config file" );
             } else {
-                $this->exportAsset($source, $target);
+                $this->error("There were config changes, but there was an error writing config file.");
             }
         }
 
         // Install the Database, and core views
-        $install_core = $this->install_core();
+        $this->info("Installing Zermelo Database");
+        $install_core = $this->installDatabase();
 
-        // Call all of the other installers
-        $force = $this->option('force');
-        $this->info("Installing Zermelo Components");
-        foreach ($this->zermelo_install_commands as $zermelo_install_command) {
-            if (Arr::has(Artisan::all(), $zermelo_install_command)) {
-                $this->info("Running `$zermelo_install_command`");
-                Artisan::call($zermelo_install_command, ['--force' => $force], $this->getOutput());
-            } else {
-                $this->line("$zermelo_install_command not available");
-            }
-        }
+        $this->info("Installation Successful.");
     }
 
-    protected function install_core()
+    protected function installDatabase()
     {
         $this->info("Setting up cache and config databases...");
 
