@@ -6,7 +6,7 @@
 
 <link rel="stylesheet" type="text/css" href='{{ $bootstrap_css_location }}'/>
 <link rel="stylesheet" type="text/css" href='{{ asset("vendor/CareSet/zermelobladecard/datatables/datatables.min.css") }}'/>
-<link href='{{ asset("vendor/CareSet/zermelobladecard/fontawesome-free-5.10.2-web/css/all.css") }}' rel="stylesheet" />
+<link href='{{ asset("vendor/CareSet/zermelo/core/font-awesome/css/all.min.css") }}' rel="stylesheet" />
 <style type="text/css">
     h1.card-title {
         display: inline-block;

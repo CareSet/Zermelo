@@ -51,9 +51,10 @@ class ZermeloInstallCommand extends AbstractZermeloInstallCommand
      */
     protected static $assets = [
         // Core assets brought into vendor by composer
-        '/vendor/components/jquery/jquery.min.js' => '/core/js/jquery.min.js',
+        // Bootstrap bundle contains Popper.js so we don't need to add it
         '/vendor/twbs/bootstrap/dist/js/bootstrap.bundle.min.js' => '/core/bootstrap/bootstrap.bundle.min.js',
         '/vendor/twbs/bootstrap/dist/css/bootstrap.min.css' => '/core/bootstrap/bootstrap.min.css',
+        '/vendor/components/jquery/jquery.min.js' => '/core/js/jquery.min.js',
         '/vendor/moment/moment/min/moment.min.js' => '/core/js/moment.min.js',
         '/vendor/fortawesome/font-awesome/webfonts' => '/core/font-awesome/webfonts',
         '/vendor/fortawesome/font-awesome/css/all.min.css' => '/core/font-awesome/css/all.min.css',

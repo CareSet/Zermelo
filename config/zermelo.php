@@ -61,7 +61,7 @@ return [
 
     'SQL_PRINT_VIEW_TEMPLATE' => env("SQL_PRINT_VIEW_TEMPLATE","Zermelo::layouts.sql_layout"),
 
-    'BOOTSTRAP_CSS_LOCATION' => env("BOOTSTRAP_CSS_LOCATION","/vendor/CareSet/zermelo_api/bootstrap-4.3.1/css/bootstrap.min.css"),
+    'BOOTSTRAP_CSS_LOCATION' => env("BOOTSTRAP_CSS_LOCATION","/vendor/CareSet/zermelo/core/bootstrap/bootstrap.min.css"),
 
     /**
      * List of valid tags to be used with RESTRICT_TAGS

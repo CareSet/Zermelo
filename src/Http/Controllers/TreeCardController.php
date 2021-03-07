@@ -20,7 +20,7 @@ class TreeCardController
             $presenter->setToken( $user->getRememberToken() );
         }
 
-        $view = config("zermelobladetreecard.VIEW_TEMPLATE");
+        $view = config("zermelo.TREE_CARD_VIEW_TEMPLATE");
 
         return view( $view, [ 'presenter' => $presenter ] );
     }

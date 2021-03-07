@@ -3,7 +3,7 @@
 
 <title>{{ $report->getReportName()  }}</title>
 
-<link rel="stylesheet" type="text/css" href="/css/bootstrap.4.3.1.min.css"/>
+<link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css"/>
 </head>
 <body>
 

@@ -31,8 +31,8 @@
 
 
 
-<script type="text/javascript" src="/js/jquery-3.4.1.min.js"></script>
-<script type="text/javascript" src="/js/bootstrap.4.3.1.min.js"></script>
+<script type="text/javascript" src="/vendor/CareSet/core/js/jquery.min.js"></script>
+<script type="text/javascript" src="/vendor/CareSet/core/botstrap/bootstrap.bundle.min.js"></script>
 
 <script type="text/javascript">
 
