@@ -1,6 +1,6 @@
 <?php
 
-namespace CareSet\ZermeloBladeCard\Http\Controllers;
+namespace CareSet\Zermelo\Http\Controllers;
 
 use CareSet\Zermelo\Http\Controllers\AbstractWebController;
 use CareSet\Zermelo\Http\Requests\CardsReportRequest;

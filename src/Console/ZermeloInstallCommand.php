@@ -4,6 +4,7 @@ namespace CareSet\Zermelo\Console;
 
 use CareSet\Zermelo\Models\DatabaseCache;
 use CareSet\Zermelo\Models\ZermeloDatabase;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
@@ -18,24 +19,25 @@ class ZermeloInstallCommand extends AbstractZermeloInstallCommand
      */
     public static $views = [
         'zermelo/sql.blade.php',
-        'zermelo/layouts/sql.blade.php',
+        'zermelo/layouts/sql_layout.blade.php',
     ];
 
-    protected static $view_path = __DIR__.'/../../../../views';
+    protected static $view_path = __DIR__ . '/../../views';
 
     /*
      * Automatically copy the zermelo.js library in assets/js
+     * this is the source path in this repo relative to 'assets' directory
      */
-    protected static $asset_path = __DIR__.'/../assets';
+    protected static $asset_path = '/core';
 
-    protected static $config_file = __DIR__.'/../config/zermelo.php';
+    protected static $config_file = __DIR__.'/../../config/zermelo.php';
 
     /**
      * @var string
      *
      * Console command signature
      */
-    protected $signature = 'zermelo:install_api
+    protected $signature = 'zermelo:install
                     {--database= : Pass in the database name}
                     {--force : Overwrite existing views and database by default}';
 
@@ -44,18 +46,44 @@ class ZermeloInstallCommand extends AbstractZermeloInstallCommand
      *
      * @var string
      */
-    protected $description = 'Install the backend Zermelo API';
+    protected $description = 'Install all available Zermelo packages';
 
     const CONFIG_MIGRATIONS_PATH = 'vendor/careset/zermelo/database/migrations';
+
+    protected $zermelo_install_commands = [
+        'zermelo:install_zermelobladetabular',
+        'zermelo:install_zermelobladecard',
+        'zermelo:install_zermelobladetreecard',
+        'zermelo:install_zermelobladegraph',
+    ];
 
     public function handle()
     {
         // Tell the system that the installer is running
         Config::set('zermelo:install_api.running', true);
 
-        // Do view, config and asset installing first
+        $this->info("Installing Zermelo API engine");
+        // Do view, config and asset installing first for core and SQL printing
         parent::handle();
 
+        // Install the Database, and core views
+        $install_core = $this->install_core();
+
+        // Call all of the other installers
+        $force = $this->option('force');
+        $this->info("Installing Zermelo Components");
+        foreach ($this->zermelo_install_commands as $zermelo_install_command) {
+            if (Arr::has(Artisan::all(), $zermelo_install_command)) {
+                $this->info("Running `$zermelo_install_command`");
+                Artisan::call($zermelo_install_command, ['--force' => $force], $this->getOutput());
+            } else {
+                $this->line("$zermelo_install_command not available");
+            }
+        }
+    }
+
+    protected function install_core()
+    {
         $this->info("Setting up cache and config databases...");
 
         // If there are any config changes from the installation command, we track with this flag in case
@@ -98,7 +126,7 @@ class ZermeloInstallCommand extends AbstractZermeloInstallCommand
         $create_zermelo_config_db = true;
         if ($config_db_exists === true) {
             $create_zermelo_config_db = false;
-		    $this->info("The database $zermelo_config_db_name already exists... using it");
+            $this->info("The database $zermelo_config_db_name already exists... using it");
         }
 
         $create_cache_failed = false;

@@ -1,6 +1,6 @@
 <?php
 
-namespace CareSet\ZermeloBladeGraph\Console;
+namespace CareSet\Zermelo\Console;
 
 use CareSet\Zermelo\Console\AbstractZermeloInstallCommand;
 
@@ -8,14 +8,12 @@ class ZermeloBladeGraphInstallCommand extends AbstractZermeloInstallCommand
 {
     public static $views = [
         'zermelo/d3graph.blade.php',
-        'zermelo/layouts/d3graph.blade.php',
+        'zermelo/layouts/d3graph_layout.blade.php',
     ];
 
     protected static $view_path = __DIR__.'/../../views';
 
-    protected static $asset_path = __DIR__.'/../../assets';
-
-    protected static $config_file = __DIR__.'/../../config/zermelobladegraph.php';
+    protected static $asset_path = '/zermelobladegraph';
 
     /**
      * The name and signature of the console command.

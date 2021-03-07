@@ -65,7 +65,7 @@
 @if ($report->hasActiveWrenches())
   <button type="button" class="btn btn-primary btn-block view-data-options"> Data Options </button>
 @endif
-              
+
 <br>
 <div class="accordion" id="menuAccordion">
   <div class="card">
@@ -1647,7 +1647,7 @@ function strlenFromPHP(the_string) {
 <div class='visible-print-block'>
 <p class='text-center'>
 <small>
-Copyright © CareSet 2019
+Copyright © CareSet {{ date('Y') }}
 </small>
 <p>
 </div>

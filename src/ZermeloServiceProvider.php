@@ -9,6 +9,10 @@ use CareSet\Zermelo\Console\MakeCardsReportCommand;
 use CareSet\Zermelo\Console\ZermeloReportCheckCommand;
 use CareSet\Zermelo\Models\ZermeloDatabase;
 use CareSet\Zermelo\Services\SocketService;
+use CareSet\Zermelo\Console\ZermeloBladeCardInstallCommand;
+use CareSet\Zermelo\Console\ZermeloBladeGraphInstallCommand;
+use CareSet\Zermelo\Console\ZermeloBladeTabularInstallCommand;
+use CareSet\Zermelo\Console\ZermeloBladeTreeCardInstallCommand;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
@@ -36,8 +40,12 @@ Class ZermeloServiceProvider extends \Illuminate\Support\ServiceProvider
          *  - Exports Assets
          */
         $this->commands([
-            	ZermeloInstallCommand::class,
-            	ZermeloDebugCommand::class,
+            ZermeloBladeCardInstallCommand::class,
+            ZermeloBladeGraphInstallCommand::class,
+            ZermeloBladeTabularInstallCommand::class,
+            ZermeloBladeTreeCardInstallCommand::class,
+            ZermeloInstallCommand::class,
+            ZermeloDebugCommand::class,
 	    	ZermeloReportCheckCommand::class,
         ]);
 
@@ -139,21 +147,21 @@ Class ZermeloServiceProvider extends \Illuminate\Support\ServiceProvider
         Route::group( $this->routeConfiguration(), function () {
 
             // Load the core zermelo api routes including sockets
-            $this->loadRoutesFrom(__DIR__.'/routes/api.zermelo.php');
+            $this->loadRoutesFrom(__DIR__.'/../routes/api.sockets.php');
 
             $tabular_api_prefix = config('zermelo.TABULAR_API_PREFIX','Zermelo');
             Route::group( ['prefix' => $tabular_api_prefix ], function() {
-                $this->loadRoutesFrom(__DIR__.'/routes/api.tabular.php');
+                $this->loadRoutesFrom(__DIR__.'/../routes/api.tabular.php');
             });
 
             $graph_api_prefix = config('zermelo.GRAPH_API_PREFIX','ZermeloGraph');
             Route::group( ['prefix' => $graph_api_prefix ], function() {
-                $this->loadRoutesFrom(__DIR__.'/routes/api.graph.php');
+                $this->loadRoutesFrom(__DIR__.'/../routes/api.graph.php');
             });
 
             $tree_api_prefix = config('zermelo.TREE_API_PREFIX','ZermeloTree');
             Route::group( ['prefix' => $tree_api_prefix ], function() {
-                $this->loadRoutesFrom(__DIR__.'/routes/api.tree.php');
+                $this->loadRoutesFrom(__DIR__.'/../routes/api.tree.php');
             });
         });
     }
@@ -168,7 +176,23 @@ Class ZermeloServiceProvider extends \Illuminate\Support\ServiceProvider
             // Load the pretty-print SQL routes from web.sql.php using the configured prefix
             $sql_print_prefix = config( 'zermelo.SQL_PRINT_PREFIX','ZermeloSQL' );
             Route::group([ 'prefix' => $sql_print_prefix ], function () {
-                $this->loadRoutesFrom(__DIR__.'/routes/web.sql.php');
+                $this->loadRoutesFrom(__DIR__.'/../routes/web.sql.php');
+            });
+
+            Route::group([ 'prefix' => config('zermelo.CARD_URI_PREFIX', 'ZermeloCard') ], function () {
+                $this->loadRoutesFrom(__DIR__.'/../routes/web.card.php');
+            });
+
+            Route::group([ 'prefix' => config('zermelo.GRAPH_URI_PREFIX', 'ZermeloGraph') ], function () {
+                $this->loadRoutesFrom(__DIR__.'/../routes/web.graph.php');
+            });
+
+            Route::group([ 'prefix' => config('zermelo.TABULAR_URI_PREFIX', 'Zermelo') ], function () {
+                $this->loadRoutesFrom(__DIR__.'/../routes/web.tabular.php');
+            });
+
+            Route::group([ 'prefix' => config('zermelo.TREECARD_URI_PREFIX', 'ZermeloTreeCard') ], function () {
+                $this->loadRoutesFrom(__DIR__.'/../routes/web.tree_card.php');
             });
         });
     }

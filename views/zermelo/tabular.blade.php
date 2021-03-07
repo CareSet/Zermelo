@@ -137,15 +137,15 @@
 		</div>
 	</div>
 </div>
-<script type="text/javascript" src="/vendor/CareSet/zermelobladetabular/js/jquery-3.4.1.min.js"></script>
-<script type="text/javascript" src="/vendor/CareSet/zermelobladetabular/datatables/datatables.js"></script>
-<script type="text/javascript" src="/vendor/CareSet/zermelobladetabular/js/popper.min.js"></script>
-<script type="text/javascript" src="/vendor/CareSet/zermelobladetabular/bootstrap-4.3.1/js/bootstrap.js"></script>
-<script type="text/javascript" src="/vendor/CareSet/zermelobladetabular/js/moment.min.js"></script>
-<script type="text/javascript" src="/vendor/CareSet/zermelobladetabular/js/daterangepicker.js"></script>
-<script type="text/javascript" src="/vendor/CareSet/zermelobladetabular/js/jquery.doubleScroll.js"></script>
-<script type="text/javascript" src="/vendor/CareSet/zermelobladetabular/js/jquery.dataTables.yadcf.js"></script>
-<script type="text/javascript" src="/vendor/CareSet/zermelo_api/js/zermelo.js"></script>
+<script type="text/javascript" src="/vendor/CareSet/zermelo/core/js/jquery-3.6.0.min.js"></script>
+<script type="text/javascript" src="/vendor/CareSet/zermelo/zermelobladetabular/datatables/datatables.js"></script>
+<script type="text/javascript" src="/vendor/CareSet/zermelo/core/js/popper.min.js"></script>
+<script type="text/javascript" src="/vendor/CareSet/zermelo/core/bootstrap-4.6.0/js/bootstrap.js"></script>
+<script type="text/javascript" src="/vendor/CareSet/zermelo/core/js/moment.min.js"></script>
+<script type="text/javascript" src="/vendor/CareSet/zermelo/core/js/daterangepicker.js"></script>
+<script type="text/javascript" src="/vendor/CareSet/zermelo/core/js/jquery.doubleScroll.js"></script>
+<script type="text/javascript" src="/vendor/CareSet/zermelo/zermelobladetabular/js/jquery.dataTables.yadcf.js"></script>
+<script type="text/javascript" src="/vendor/CareSet/zermelo/core/js/zermelo.js"></script>
 
 <script type="text/javascript">
 

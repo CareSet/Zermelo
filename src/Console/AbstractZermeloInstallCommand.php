@@ -28,9 +28,18 @@ abstract class AbstractZermeloInstallCommand extends Command
     /**
      * @var string
      *
-     * Path to the assets in vendor that need to be exported to public
+     * Source path of the assets in vendor that need to be exported to public
+     * relative to assets in this repository's 'assets' directory
      */
     protected static $asset_path = '';
+
+    /**
+     * @var string
+     *
+     * Target path of where the asset_path will be placed. When this is called, we
+     * wrap in public_path() helper, so we don't need to specify 'public' direcotry
+     */
+    protected static $asset_target_path = 'vendor/CareSet/zermelo';
 
     /**
      * @var string
@@ -79,7 +88,9 @@ abstract class AbstractZermeloInstallCommand extends Command
         $this->info("Done.");
 
         $this->info("exporting config....");
-        $this->exportConfig();
+        if (!empty(static::$config_file)) {
+            $this->exportConfig();
+        }
         $this->info("Done.");
 
         $this->info("exporting assets....");
@@ -222,37 +233,48 @@ abstract class AbstractZermeloInstallCommand extends Command
 
     protected function exportAssets()
     {
-        if ( !File::exists( public_path( 'vendor/CareSet' ) ) ) {
-            File::makeDirectory( public_path( 'vendor/CareSet' ), 0755, true );
-        }
+        if (!empty(static::$asset_target_path &&
+            !empty(static::$asset_path))) {
 
-        if ( static::$asset_path ) {
-            $new_files = File::allFiles( static::$asset_path );
-            $new_pathnames = [];
-            foreach ( $new_files as $new_file ) {
-                $relativePathname = $new_file->getRelativePathname();
-                $new_pathnames[] = $relativePathname;
+            if (!File::exists(public_path(self::$asset_target_path))) {
+                File::makeDirectory(public_path(self::$asset_target_path), 0755, true);
+            }
 
-                if ( file_exists( public_path( 'vendor/CareSet' ) . '/' . $relativePathname ) &&
-                    !$this->option( 'force' ) ) {
+            // Build the full path using the relative path provided by subclass
+            $assets_source_path = __DIR__ . '/../../assets' . static::$asset_path;
+            $assets_target_path = public_path(self::$asset_target_path) . static::$asset_path;
+            if ($assets_source_path) {
+                $this->info("Moving assets from `$assets_source_path` to `$assets_target_path`");
+                $new_files = File::allFiles($assets_source_path);
+                $new_pathnames = [];
+                foreach ($new_files as $new_file) {
+                    $relativePathname = $new_file->getRelativePathname();
+                    $new_pathnames[] = $relativePathname;
+                    $asset_target_filename = $assets_target_path . '/' . $relativePathname;
+                    $asset_source_filename = $assets_source_path . '/' . $relativePathname;
 
-                    // If the file exists, and is identical, don't bother to ask, just skip.
-                    if ( self::filesIdentical(static::$asset_path . '/' . $relativePathname, public_path( 'vendor/CareSet' ) . '/' . $relativePathname) ||
-                        !$this->confirm( "The [{$relativePathname}] asset already exists. Do you want to replace it?" ) ) {
-                        continue;
+                    if (file_exists($asset_target_filename) &&
+                        !$this->option('force')) {
+
+                        // If the file exists, and is identical, don't bother to ask, just skip.
+                        if (self::filesIdentical($asset_source_filename, $asset_target_filename) ||
+                            !$this->confirm("The [{$relativePathname}] asset already exists. Do you want to replace it?")) {
+                            continue;
+                        }
                     }
-                }
 
-                $dirname = pathinfo( public_path( 'vendor/CareSet' ) . '/' . $relativePathname, PATHINFO_DIRNAME );
-                if ( !File::exists( $dirname ) ) {
-                    File::makeDirectory( $dirname, 0755, true );
-                }
+                    $dirname = pathinfo($asset_target_filename, PATHINFO_DIRNAME);
+                    if (!File::exists($dirname)) {
+                        $this->info("Creating dir `$dirname`");
+                        File::makeDirectory($dirname, 0755, true);
+                    }
 
-                // If we say yes, or we're running in "force" mode, copy asset
-                copy(
-                    static::$asset_path . '/' . $relativePathname,
-                    public_path( 'vendor/CareSet' ) . '/' . $relativePathname
-                );
+                    // If we say yes, or we're running in "force" mode, copy asset
+                    copy(
+                        $asset_source_filename,
+                        $asset_target_filename
+                    );
+                }
             }
         }
     }

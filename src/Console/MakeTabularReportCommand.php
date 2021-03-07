@@ -1,6 +1,6 @@
 <?php
 
-namespace CareSet\ZermeloBladeTabular\Console;
+namespace CareSet\Zermelo\Console;
 
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;

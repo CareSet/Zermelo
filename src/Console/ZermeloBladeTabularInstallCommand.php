@@ -1,6 +1,6 @@
 <?php
 
-namespace CareSet\ZermeloBladeTabular\Console;
+namespace CareSet\Zermelo\Console;
 
 use CareSet\Zermelo\Console\AbstractZermeloInstallCommand;
 use Illuminate\Support\Facades\Config;
@@ -15,14 +15,12 @@ class ZermeloBladeTabularInstallCommand extends AbstractZermeloInstallCommand
      */
     public static $views = [
         'zermelo/tabular.blade.php',
-        'zermelo/layouts/tabular.blade.php',
+        'zermelo/layouts/tabular_layout.blade.php',
     ];
 
     protected static $view_path = __DIR__.'/../../views';
 
-    protected static $asset_path = __DIR__.'/../../assets';
-
-    protected static $config_file = __DIR__.'/../../config/zermelobladetabular.php';
+    protected static $asset_path = '/zermelobladetabular';
 
     /**
      * The name and signature of the console command.

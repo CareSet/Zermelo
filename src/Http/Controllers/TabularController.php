@@ -1,11 +1,10 @@
 <?php
 
-namespace CareSet\ZermeloBladeTabular\Http\Controllers;
+namespace CareSet\Zermelo\Http\Controllers;
 
 use CareSet\Zermelo\Http\Controllers\AbstractWebController;
 use CareSet\Zermelo\Interfaces\ZermeloReportInterface;
 use CareSet\Zermelo\Models\Presenter;
-use CareSet\ZermeloBladeTabular\TabularPresenter;
 
 class TabularController extends AbstractWebController
 {
@@ -16,7 +15,7 @@ class TabularController extends AbstractWebController
      */
     public  function getViewTemplate()
     {
-        return config("zermelobladetabular.TABULAR_VIEW_TEMPLATE");
+        return config("zermelo.TABULAR_VIEW_TEMPLATE");
     }
 
     /**

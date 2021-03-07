@@ -1,6 +1,6 @@
 <?php
 
-namespace CareSet\ZermeloBladeTreeCard\Http\Controllers;
+namespace CareSet\Zermelo\Http\Controllers;
 
 use CareSet\Zermelo\Http\Requests\CardsReportRequest;
 use CareSet\ZermeloBladeTreeCard\TreeCardPresenter;

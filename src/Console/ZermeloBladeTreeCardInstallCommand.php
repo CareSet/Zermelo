@@ -1,6 +1,6 @@
 <?php
 
-namespace CareSet\ZermeloBladeTreeCard\Console;
+namespace CareSet\Zermelo\Console;
 
 use CareSet\Zermelo\Console\AbstractZermeloInstallCommand;
 
@@ -13,14 +13,12 @@ class ZermeloBladeTreeCardInstallCommand extends AbstractZermeloInstallCommand
      */
     public static $views = [
         'zermelo/tree_card.blade.php',
-        'zermelo/layouts/tree_card.blade.php',
+        'zermelo/layouts/tree_card_layout.blade.php',
     ];
 
     protected static $view_path = __DIR__.'/../../views';
 
-    protected static $asset_path = __DIR__.'/../../assets';
-
-    protected static $config_file = __DIR__.'/../../config/zermelobladetreecard.php';
+    protected static $asset_path = null;
 
     /**
      * The name and signature of the console command.

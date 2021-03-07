@@ -59,7 +59,7 @@ return [
 
     'SQL_PRINT_ENABLED' => env("SQL_PRINTER_ENABLED",false),
 
-    'SQL_PRINT_VIEW_TEMPLATE' => env("SQL_PRINT_VIEW_TEMPLATE","Zermelo::layouts.sql"),
+    'SQL_PRINT_VIEW_TEMPLATE' => env("SQL_PRINT_VIEW_TEMPLATE","Zermelo::layouts.sql_layout"),
 
     'BOOTSTRAP_CSS_LOCATION' => env("BOOTSTRAP_CSS_LOCATION","/vendor/CareSet/zermelo_api/bootstrap-4.3.1/css/bootstrap.min.css"),
 
@@ -77,7 +77,7 @@ return [
      * The template the controller will use to render the report
      * This is used in WebController implementation of ControllerInterface@show method
      */
-    "CARD_VIEW_TEMPLATE"=>env("CARD_VIEW_TEMPLATE","Zermelo::layouts.card.layout"),
+    "CARD_VIEW_TEMPLATE"=>env("CARD_VIEW_TEMPLATE","Zermelo::layouts.card_layout"),
 
     /**
      * Middleware on the card web routes
@@ -110,7 +110,7 @@ return [
      * The template the controller will use to render the report
      * This is used in WebController implementation of ControllerInterface@show method
      */
-    'GRAPH_VIEW_TEMPLATE'=>env("GRAPH_VIEW_TEMPLATE","Zermelo::layouts.d3graph.layout"),
+    'GRAPH_VIEW_TEMPLATE'=>env("GRAPH_VIEW_TEMPLATE","Zermelo::layouts.d3graph_layout"),
 
     /**
      * Path where the Report display.
@@ -129,13 +129,13 @@ return [
      * The template the controller will use to render the report
      * This is used in WebController implementation of ControllerInterface@show method
      */
-    "TABULAR_VIEW_TEMPLATE"=>env("TABULAR_VIEW_TEMPLATE","Zermelo::layouts.tabular.layout"),
+    "TABULAR_VIEW_TEMPLATE"=>env("TABULAR_VIEW_TEMPLATE","Zermelo::layouts.tabular_layout"),
 
     /**
      * The template the controller will use to render the report
      * This is used in WebController implementation of ControllerInterface@show method
      */
-    "TREECARD_VIEW_TEMPLATE"=>env("VIEW_TEMPLATE","Zermelo::layouts.tree_card.layout"),
+    "TREECARD_VIEW_TEMPLATE"=>env("VIEW_TEMPLATE","Zermelo::layouts.tree_card_layout"),
 
     /**
      * Middleware on the card web routes
@@ -148,7 +148,7 @@ return [
      * Note: the API routes are auto generated with this same URI path with the api-prefixed to the url
      * /Zermelo/(ReportName) (see config/zermelo.php for api prefix setting)
      */
-    'TREECARD_URI_PREFIX'=>env("URI_PREFIX","ZermeloTreeCard"),
+    'TREECARD_URI_PREFIX'=>env("TREECARD_URI_PREFIX","ZermeloTreeCard"),
 
     /**
      * Database path where all the cache table will be stored.
