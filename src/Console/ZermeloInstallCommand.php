@@ -66,6 +66,20 @@ class ZermeloInstallCommand extends AbstractZermeloInstallCommand
         // Do view, config and asset installing first for core and SQL printing
         parent::handle();
 
+        // These core sources are brought into the project using composer, so they
+        // need to be copied from the /vendor directory into /public
+        $additional_core_sources = [
+            base_path() . '/vendor/components/jquery/jquery.min.js' => '/core/js/jquery.min.js',
+            base_path() . '/vendor/twbs/bootstrap/dist/js/bootstrap.bundle.min.js' => '/core/bootstrap/bootstrap.bundle.min.js',
+            base_path() . '/vendor/twbs/bootstrap/dist/css/bootstrap.min.css' => '/core/bootstrap/bootstrap.min.css',
+            base_path() . '/vendor/moment/moment/min/moment.min.js' => '/core/js/moment.min.js',
+        ];
+
+        foreach ($additional_core_sources as $source => $dest) {
+            $target = public_path(self::$asset_target_path) . $dest;
+            $this->exportAsset($source, $target);
+        }
+
         // Install the Database, and core views
         $install_core = $this->install_core();
 

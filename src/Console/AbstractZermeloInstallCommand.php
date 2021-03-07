@@ -123,7 +123,9 @@ abstract class AbstractZermeloInstallCommand extends Command
      */
     public static function filesIdentical( $path_1, $path_2 )
     {
-        if ( md5_file( $path_1 ) === md5_file( $path_2 ) ) {
+        if (file_exists($path_1) &&
+            file_exists($path_2) &&
+            md5_file( $path_1 ) === md5_file( $path_2 ) ) {
             return true;
         }
 
@@ -231,6 +233,38 @@ abstract class AbstractZermeloInstallCommand extends Command
         }
     }
 
+    protected function exportAsset($asset_source_filename, $asset_target_filename)
+    {
+        $source_exists = file_exists($asset_source_filename);
+        if ($source_exists) {
+            if (!$this->option('force')) {
+                // If the file exists, and is identical, don't bother to ask, just skip.
+                if (self::filesIdentical($asset_source_filename, $asset_target_filename) ||
+                    !$this->confirm("The asset `{$asset_target_filename}` already exists. Do you want to replace it?")) {
+                    return false;
+                }
+            }
+        } else {
+            if (!$source_exists) {
+                $this->info("`$asset_source_filename` may not exist");
+            }
+            return false;
+        }
+
+        $dirname = pathinfo($asset_target_filename, PATHINFO_DIRNAME);
+        if (!File::exists($dirname)) {
+            $this->info("Creating dir `$dirname`");
+            File::makeDirectory($dirname, 0755, true);
+        }
+
+        // If we say yes, or we're running in "force" mode, copy asset
+        // copy() returns true or false
+        return copy(
+            $asset_source_filename,
+            $asset_target_filename
+        );
+    }
+
     protected function exportAssets()
     {
         if (!empty(static::$asset_target_path &&
@@ -252,28 +286,7 @@ abstract class AbstractZermeloInstallCommand extends Command
                     $new_pathnames[] = $relativePathname;
                     $asset_target_filename = $assets_target_path . '/' . $relativePathname;
                     $asset_source_filename = $assets_source_path . '/' . $relativePathname;
-
-                    if (file_exists($asset_target_filename) &&
-                        !$this->option('force')) {
-
-                        // If the file exists, and is identical, don't bother to ask, just skip.
-                        if (self::filesIdentical($asset_source_filename, $asset_target_filename) ||
-                            !$this->confirm("The [{$relativePathname}] asset already exists. Do you want to replace it?")) {
-                            continue;
-                        }
-                    }
-
-                    $dirname = pathinfo($asset_target_filename, PATHINFO_DIRNAME);
-                    if (!File::exists($dirname)) {
-                        $this->info("Creating dir `$dirname`");
-                        File::makeDirectory($dirname, 0755, true);
-                    }
-
-                    // If we say yes, or we're running in "force" mode, copy asset
-                    copy(
-                        $asset_source_filename,
-                        $asset_target_filename
-                    );
+                    $file_was_copied = $this->exportAsset($asset_source_filename, $asset_target_filename);
                 }
             }
         }
