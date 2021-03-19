@@ -58,6 +58,16 @@ abstract class ZermeloReport implements ZermeloReportInterface
 	protected $_token = null;
 
 	/**
+	 * With this property, the report developer can specify
+	 * the source for the cache database. You may want to use this
+	 * if you're data is ending up in a specific, known location, and
+	 * you want to point your report at it.
+	 *
+	 * @var array|null
+	 */
+	private $_cacheDatabaseSource = null;
+
+		/**
 	 * @var bool
 	 *
 	 * Specify whether the cache is enabled, or not. NOTE: Reports are always
@@ -77,6 +87,21 @@ abstract class ZermeloReport implements ZermeloReportInterface
 
 	private $_activeWrenches = []; // Array wrenches that are "in use" for this report
 	private $_activeSockets = []; // Array of sockets that are "currently selected" for the active wrenches
+
+
+		/**
+		 * Specify a location where we want our report to point to, overriding the
+		 * automatically-generated cache table name. With this property, the report developer can specify
+		 * the source for the cache database. You may want to use this
+		 * if you're data is ending up in a specific, known location, and
+		 * you want to point your report at it.
+		 * Format:
+		 * [
+		 * 		'database' => 'my_database',
+		 * 		'table' => 'my_table'
+		 * ]
+		 */
+		protected $CACHE_DATABASE_SOURCE = null;
 
     	/**
      	 * Should we enable the cache on this table?
@@ -130,6 +155,7 @@ abstract class ZermeloReport implements ZermeloReportInterface
 		$this->_code = $Code;
 		$this->_parameters = $Parameters;
 		$this->_input = $Input;
+		$this->setCacheDatabaseSource($this->CACHE_DATABASE_SOURCE);
 		$this->setIsCacheEnabled( $this->CACHE_ENABLED );
 		$this->setHowLongToCacheInSeconds( $this->HOW_LONG_TO_CACHE_IN_SECONDS );
 
@@ -276,6 +302,16 @@ abstract class ZermeloReport implements ZermeloReportInterface
 		public function isSQLPrintEnabled(): bool
 		{
 			return $this->SQL_PRINT_ENABLED;
+		}
+
+		public function getCacheDatabaseSource()
+		{
+			return $this->_cacheDatabaseSource;
+		}
+
+		public function setCacheDatabaseSource(array $cacheDatabaseSource)
+		{
+			$this->_cacheDatabaseSource = $cacheDatabaseSource;
 		}
 
     	/**

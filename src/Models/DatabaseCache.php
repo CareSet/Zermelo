@@ -3,6 +3,7 @@
 namespace CareSet\Zermelo\Models;
 
 use Carbon\Carbon;
+use CareSet\Zermelo\Exceptions\InvalidDatabaseTableException;
 use CareSet\Zermelo\Interfaces\ZermeloReportInterface;
 use Illuminate\Support\Facades\DB;
 
@@ -17,29 +18,63 @@ class DatabaseCache
     protected $key = null;
     protected $connectionName = null;
 
-    public function __construct(ZermeloReport $report, $connectionName)
+    public function __construct(ZermeloReport $report, $connectionName = null)
     {
         $this->report = $report;
-        $this->connectionName = $connectionName;
 
-        $clear_cache = filter_var($report->getInput('clear_cache'), FILTER_VALIDATE_BOOLEAN) == true ? true : false;
-        $this->setDoClearCache($clear_cache);
+        // by default use the zermelo cache DB
+        if ($connectionName === null) {
+            $this->connectionName = zermelo_cache_db();
+        } else {
+            $this->connectionName = $connectionName;
+        }
 
-        // Generate the prefix, but make sure it's not longer than 32 chars
-        $this->key = $this->keygen($this->report->getClassName());
-        $this->cache_table = ZermeloDatabase::connection($this->connectionName)->table("{$this->key}");
+        // If the report overrides the database cache source, use that connection instead
+        $cacheDatabaseSource = $report->getCacheDatabaseSource();
+        if ($cacheDatabaseSource !== null) {
+            if (isset($cacheDatabaseSource['database']) &&
+                isset($cacheDatabaseSource['table'])) {
+                // We have all the required parameters to override the cache database,
+                // so let's set this object up to do that.
+                // In this case, we never regenerate the cache table
+                $this->connectionName = $cacheDatabaseSource['database'];
+                // The default cache table from the config file is configured by default, but
+                // if we're overriding we have to explicitly configure the new cache DB for access
+                try {
+                    ZermeloDatabase::configure($this->connectionName);
+                } catch (\Exception $e) {
+                    throw new InvalidDatabaseTableException("You attempted to override the cache database with `{$this->connectionName}` but the database does not exist or you do not have permission to access it");
+                }
 
-        if ($this->exists() === false ||
-            $report->isCacheEnabled() === false ||
-            $this->getDoClearCache() == true ||
-            $this->isCacheExpired() === true) {
-            //if any of the above is true, then we need to re-run the create table.
-            $this->createTable();
-            $this->generatedThisRequest = true;
+                $this->key = $cacheDatabaseSource['table'];
+                $this->cache_table = ZermeloDatabase::connection($this->connectionName)->table("{$this->key}");
+            }
+        } else {
+            // Under normal operation, where no overriding of cache is taking place,
+            // we generate the cache table name based on a random key
+            $clear_cache = filter_var($report->getInput('clear_cache'), FILTER_VALIDATE_BOOLEAN) == true ? true : false;
+            $this->setDoClearCache($clear_cache);
+
+            // Generate the prefix, but make sure it's not longer than 32 chars
+            $this->key = $this->keygen($this->report->getClassName());
+            $this->cache_table = ZermeloDatabase::connection($this->connectionName)->table("{$this->key}");
+
+            if ($this->exists() === false ||
+                $report->isCacheEnabled() === false ||
+                $this->getDoClearCache() == true ||
+                $this->isCacheExpired() === true) {
+                //if any of the above is true, then we need to re-run the create table.
+                $this->createTable();
+                $this->generatedThisRequest = true;
+            }
         }
 
         // Get the column names from the cache/result table
-        $this->columns = ZermeloDatabase::getTableColumnDefinition($this->getTableName(), $this->connectionName);
+        try {
+            $this->columns = ZermeloDatabase::getTableColumnDefinition($this->getTableName(), $this->connectionName);
+        } catch (\Exception $e) {
+            throw new InvalidDatabaseTableException("You attempted access a table `{$this->getTableName()}` on database `{$this->connectionName}` but the table does not exist or you do not have permission to access it");
+        }
 
         return true;
     }
@@ -142,7 +177,7 @@ class DatabaseCache
         }
 
         /*
-	It is possible for single sql text field to contain multiple SQL queries seperated by semicolons. 
+	It is possible for single sql text field to contain multiple SQL queries seperated by semicolons.
 	But we really want an array with elements of single SQL statements
         break up each queries by semi colon,
         we will run each query separately
@@ -184,7 +219,7 @@ class DatabaseCache
         $queries = $this->getIndividualQueries();
 
 	if ($queries) {
-    	    //just in case someone uses an associated array... 
+    	    //just in case someone uses an associated array...
 	    $indexed_queries = array_values($queries);
             foreach ($indexed_queries as $index => $query) {
 
@@ -204,13 +239,13 @@ class DatabaseCache
 				//they are common problems with Zermelo reports..
 				//so lets catch them and make sure that they are clear to end users..
 				$messages_to_filter = [
-					
-				'Insert value list does not match column list:' => 
+
+				'Insert value list does not match column list:' =>
 "Zermelo Error: SQL Column Number Mismatch. 
 It looks like there was more than one SQL statement in this report, but the two reports did not have exactly the same number of columns... which they must for the reporting engine to work. 
 The specific error message from the database was:
 ",
-				"Data too long for column 'link_type'" => 
+				"Data too long for column 'link_type'" =>
 "Zermelo Error: The first link_type column needs to have the longest name. 
 It should not be that way, but it is... 
 The specific error message from the database was: 
