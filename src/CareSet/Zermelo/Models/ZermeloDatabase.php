@@ -34,7 +34,8 @@ class ZermeloDatabase
         ] );
 
         // Set the max concat length for cache DB to be A LOT
-        DB::connection( $database )->statement( DB::raw( "SET SESSION group_concat_max_len = 1000000;" ) );
+        // This will also throw an exception if the DB doesn't exist
+        DB::connection($database)->statement(DB::raw("SET SESSION group_concat_max_len = 1000000;"));
     }
 
     public static function hasTable( $table_name, $connectionName )
@@ -106,7 +107,7 @@ class ZermeloDatabase
             $db = null;
         }
 
-	//now that this is done, lets restore the previous database 
+	//now that this is done, lets restore the previous database
 //       config(["database.connections.mysql.database" => $previous_mysql_database]);
 
 
