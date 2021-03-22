@@ -304,11 +304,25 @@ abstract class ZermeloReport implements ZermeloReportInterface
 			return $this->SQL_PRINT_ENABLED;
 		}
 
+	/**
+	 * @return array|null
+	 *
+	 * Get the cache datatbase source, if overriding the cache database.
+	 *
+	 * SEE $CACHE_DATABASE_SOURCE
+	 */
 		public function getCacheDatabaseSource()
 		{
 			return $this->_cacheDatabaseSource;
 		}
 
+	/**
+	 * @param array $cacheDatabaseSource
+	 *
+	 * Set the cache datatbase source, if overriding the cache database.
+	 *
+	 * SEE $CACHE_DATABASE_SOURCE
+	 */
 		public function setCacheDatabaseSource(array $cacheDatabaseSource)
 		{
 			$this->_cacheDatabaseSource = $cacheDatabaseSource;
