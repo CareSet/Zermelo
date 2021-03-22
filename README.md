@@ -188,6 +188,18 @@ rather than re-running the original query. This can cause confusing results (i.e
 **howLongToCacheInSeconds()**
 If cache is enabled, we use this setting to configure how long we wish to retain the cached report, before re-running the original query. 
 
+**getCacheDatabaseSource()**
+Specify a location where we want our report to point to, overriding the automatically-generated cache table name. 
+With this property, the report developer can specify the source for the cache database. 
+You may want to use this if you're data is ending up in a specific, known location, 
+and you want to point your report at it. You can either implement this function in your report,
+or set the property $CACHE_DATABASE_SOURCE using this structure:
+
+    protected $CACHE_DATABASE_SOURCE = [
+        'database' => '_zermelo_cache_overload',
+        'table' => 'northwind_cust_overload'
+    ];
+
 #### Add custom Javascript 
 
 **GetReportJS()**
