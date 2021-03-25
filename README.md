@@ -207,6 +207,13 @@ Implement this function to return a string that will be placed in a script tag b
 report. Do not include script tags. This function should return JS code only. The string is not escaped, and is
 passed raw to the report.
 
+#### Turn on the SQL Print view
+**isSQLPrintEnabled()**
+Will turn on the ability to visit the report using the /ZermeloSQL/ url and instead of running the report,
+a helpful debugging screen will be presented, showing what SQL would have been returned by GetSQL() in a pretty-printed manner.
+This is very helpful for debugging inputs. 
+It does require that SQL view be enabled in the /config/zermelo.php file to work, however. 
+
 ### API functions available in GetSQL()
 
 **getInput($key = null)**
@@ -469,6 +476,10 @@ JS;
         return(1200); //twenty minutes by default
    }
 
+   public function isSQLPrintEnabled(): bool{
+			return(false);
+   }
+
 
 }
 
@@ -520,6 +531,45 @@ CREATE TABLE `socket_user` (
   `updated_at` datetime NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
 
+
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `socket`
+--
+
+CREATE TABLE `socket` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `wrench_id` int(11) NOT NULL,
+  `socket_value` varchar(1024) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `socket_label` varchar(1024) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `is_default_socket` tinyint(1) NOT NULL,
+  `socketsource_id` int(11) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `autosocket`
+--
+
+CREATE TABLE `autosocket` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `wrench_id` int(11) NOT NULL,
+  `socket_value` varchar(1024) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `socket_label` varchar(1024) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `is_default_socket` tinyint(1) NOT NULL,
+  `socketsource_id` int(11) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+
 -- --------------------------------------------------------
 
 --
@@ -545,6 +595,15 @@ ALTER TABLE `socket`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `wrench_value` (`socket_value`,`socket_label`),
   ADD KEY `wrench_id` (`wrench_id`);
+
+--
+-- Indexes for table `autosocket`
+--
+ALTER TABLE `autosocket`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `wrench_value` (`socket_value`,`socket_label`),
+  ADD KEY `wrench_id` (`wrench_id`);
+
 
 --
 -- Indexes for table `socketsource`
