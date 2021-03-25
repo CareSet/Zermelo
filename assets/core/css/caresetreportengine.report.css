@@ -1,0 +1,325 @@
+.loader {
+	text-align: center;
+	border: 16px solid #f3f3f3; /* Light grey */
+	border-top: 16px solid #007bff; /* Blue */
+	border-radius: 50%;
+	width: 120px;
+	height: 120px;
+	animation: spin 2s linear infinite;
+}
+
+div.dataTables_wrapper div.dataTables_processing {
+	border: none;
+	background: transparent;
+}
+
+@keyframes spin {
+	0% { transform: rotate(0deg); }
+	100% { transform: rotate(360deg); }
+}
+
+footer.fixed {
+	position: fixed;
+	left: 0;
+	bottom: 0;
+	width: 100%;
+	background-color: white;
+	border-top: 2px solid #dee2e6
+}
+
+footer.centered {
+	text-align: center;
+}
+
+#emptyTableString {
+	text-align: left;
+}
+
+.no-padding-left {
+	padding-left: 0px;
+}
+
+.hide {
+	display: none;
+}
+
+.inuse, .ui-slider-range .inuse, .yadcf-filter-range-number-slider .inuse {
+	background: #8BBEF0;
+}
+
+.yadcf-filter-reset-button {
+	display: inline-block;
+}
+
+.yadcf-filter-reset-button.range-number-slider-reset-button{
+	position: relative;
+	top: -6px;
+}
+
+.yadcf-filter {
+	padding-right: 4px;
+	padding-left: 4px;
+	padding-bottom: 3px;
+	padding-top: 3px;
+}
+
+.yadcf-filter > option{
+    background: white;
+}
+
+.ui-autocomplete .ui-menu-item {
+	font-size:13px;
+}
+
+#ui-datepicker-div {
+	font-size:13px;
+}
+.yadcf-filter-wrapper {
+	display: inline-block;
+	white-space: nowrap;
+	margin-left: 2px;
+}
+
+.yadcf-filter-range-number {
+	width: 40px;
+}
+
+.yadcf-filter-range-number-seperator {
+	margin-left: 10px;
+	margin-right: 10px;
+}
+
+.yadcf-filter-range-date {
+	width: 80px;
+}
+
+.yadcf-filter-range-date-seperator {
+	margin-left: 10px;
+	margin-right: 10px;
+}
+
+.yadcf-filter-wrapper-inner {
+	display: inline-block;
+	border: 1px solid #ABADB3;
+}
+
+.yadcf-number-slider-filter-wrapper-inner {
+	display: inline-block;
+	width: 200px;
+	margin-bottom: 7px;
+}
+
+.yadcf-filter-range-number-slider .ui-slider-handle {
+	width: 10px;
+	height: 10px;
+	margin-top: 1px;
+}
+
+.yadcf-filter-range-number-slider .ui-slider-range {
+	position: relative;
+	height: 5px;
+}
+
+.yadcf-filter-range-number-slider {
+	height: 5px;
+	margin-left: 6px;
+	margin-right: 6px;
+}
+
+.yadcf-filter-range-number-slider {
+    overflow: visible;
+}
+
+.yadcf-number-slider-filter-wrapper-inner .yadcf-filter-range-number-slider-min-tip {
+	font-size: 13px;
+	font-weight: normal;
+	position: absolute;
+	outline-style: none;
+}
+
+.yadcf-number-slider-filter-wrapper-inner .yadcf-filter-range-number-slider-max-tip {
+	font-size: 13px;
+	font-weight: normal;
+	position:absolute;
+	outline-style: none;
+}
+
+.yadcf-number-slider-filter-wrapper-inner .yadcf-filter-range-number-slider-min-tip-inner {
+	position:absolute;
+	top: 11px;
+}
+
+.yadcf-number-slider-filter-wrapper-inner .yadcf-filter-range-number-slider-max-tip-inner {
+	position:absolute;
+	top: 11px;
+}
+
+.yadcf-exclude-wrapper {
+	display: inline-block;
+	vertical-align: middle;
+	margin-right: 5px;
+}
+.yadcf-label.small {
+	font-size: 10px;
+}
+
+
+
+.force_visual {
+    height:100%;
+    width:100%;
+	position: relative;
+}
+
+
+text.node-label
+{
+	font-size:12px;
+	font-weight:bold;
+	text-shadow: 0px 0px 4px #fff;
+}
+
+#report_graph div.tooltip {
+  position: absolute;
+  text-align: center;
+  margin: 10px;
+  padding: 10px;
+  width: 200px;
+  font: 12px sans-serif;
+  background: black;
+  border: 0px;
+  border-radius: 8px;
+  pointer-events: none;
+  color:white;
+}
+
+.node.transparent, .link.transparent, g.transparent
+{
+	/*visibility: hidden;*/
+	opacity: 0.2 !important;
+}
+
+.large.tooltip-inner {
+	max-width: 350px;
+	width: 350px;
+}
+
+.dt-buttons a.btn {
+	line-height: 32px;
+	height: 32px;
+	margin: 0px;
+	padding: 0px 20px 0px 20px;
+}
+.dt-buttons a.btn svg
+{
+	position:absolute;
+    top:50%;
+    bottom:50%;
+    transform:translate(-50%, -50%);
+}
+.dt-buttons a.toggled
+{
+	background-color: orange;
+}
+/*
+	Create a margin at the bottom of the scroll body in case there's a static
+	fixed text at the bottom of the page.
+ */
+.dataTables_scrollBody {
+	margin-bottom: 30px;
+}
+
+/* Override buttons within button group because bootstrap always adds a radius to dropdown-toggle, which makes
+ColVis dropdown look strange
+ */
+.btn-group > button:not(:last-of-type) {
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
+}
+
+.dataTables_filter, .dataTables_length
+{
+	display: inline-block;
+	margin-left: 10px;
+}
+
+.dataTables_filter label, .dataTables_length label
+{
+	margin: 0px;
+	padding: 0px;
+	height:32px;
+	line-height: 32px;
+}
+.dataTables_filter label input, .dataTables_length label select
+{
+	height:32px;
+}
+
+.full_screen {
+    display: block;
+    position: fixed;
+    width: 100% !important;
+    height: 100% !important;
+    top: 0px;
+    right: 0px;
+    left: 0px;
+    bottom: 0px;
+	padding: 15px;
+    overflow: auto;
+	background-color: white;
+}
+td.text-bold {
+	font-weight: bold;
+}
+td.text-italic {
+	font-style: italic;
+}
+
+td.details-control
+{
+	text-align: center;
+	cursor: pointer;
+	vertical-align: middle !important;
+}
+td.details-control::before
+{
+	font-family: "Font Awesome 5 Free";
+	font-weight: 900;
+	content: "\f055";
+	color: blue;
+}
+tr.details td.details-control:before  {
+	font-family: "Font Awesome 5 Free";
+	font-weight: 900;
+	content: "\f056";
+	color: red;
+}
+
+tr div.row_detail {
+	padding: 10px 20px 10px 20px;
+}
+
+div.dataTables_info
+{
+	display:inline-block;
+	margin:0px;
+	padding:0px !important;
+}
+div.dataTables_paginate
+{
+	display: inline-block;
+    vertical-align: middle;
+    margin-left: 10px !important;
+}
+div.gui-buttons
+{
+    position: absolute;
+    right: 10px;
+    top: 10px;
+}
+
+div.gui-buttons > button
+{
+    padding: 0px 10px 0px 10px;
+    line-height: 20px;
+}

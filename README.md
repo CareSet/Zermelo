@@ -61,7 +61,7 @@ Look in [Basic Installation](documentation/BasicInstall.md) for complete install
 For a quick start, assuming your Laravel instance already has access to the DB that it needs
 
 ```bash
-    $ composer require careset/zermelo_installer
+    $ composer require careset/zermelo
     $ php artisan zermelo:install
 ```
 This will install and configure zermelo, and create an app/Reports for you to add reports too.
@@ -111,7 +111,7 @@ array in zermelobladetabular.php to enable authentication on that route.
 ### Update to New Version of zermelo
 In project home dir:
 
-	$ composer update careset/zermelo*
+	$ composer update careset/zermelo
 	$ php artisan zermelo:install
 
 When you install the zermelobladetabular package, Just Say No to 'replace' all those files EXCEPT:
@@ -122,7 +122,7 @@ When you install the zermelobladetabular package, Just Say No to 'replace' all t
 You can uninstall the composer packages by running 'composer remove' to remove the requirements in composer.json, and
 to remove the packages from the vendor directory. In project home dir:
 
-    $ composer remove careset/zermelo*  
+    $ composer remove careset/zermelo 
     $ composer clear-cache
     
 
