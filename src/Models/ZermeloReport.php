@@ -323,7 +323,7 @@ abstract class ZermeloReport implements ZermeloReportInterface
 	 *
 	 * SEE $CACHE_DATABASE_SOURCE
 	 */
-		public function setCacheDatabaseSource(array $cacheDatabaseSource)
+		public function setCacheDatabaseSource(array $cacheDatabaseSource = null)
 		{
 			$this->_cacheDatabaseSource = $cacheDatabaseSource;
 		}
