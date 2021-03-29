@@ -2,17 +2,14 @@
 
 namespace CareSet\Zermelo;
 
+use CareSet\Zermelo\Console\MakeGraphReportCommand;
+use CareSet\Zermelo\Console\MakeTabularReportCommand;
 use CareSet\Zermelo\Console\ZermeloDebugCommand;
 use CareSet\Zermelo\Console\ZermeloInstallCommand;
-use CareSet\Zermelo\Console\ZermeloMakeDemoCommand;
 use CareSet\Zermelo\Console\MakeCardsReportCommand;
 use CareSet\Zermelo\Console\ZermeloReportCheckCommand;
 use CareSet\Zermelo\Models\ZermeloDatabase;
 use CareSet\Zermelo\Services\SocketService;
-use CareSet\Zermelo\Console\ZermeloBladeCardInstallCommand;
-use CareSet\Zermelo\Console\ZermeloBladeGraphInstallCommand;
-use CareSet\Zermelo\Console\ZermeloBladeTabularInstallCommand;
-use CareSet\Zermelo\Console\ZermeloBladeTreeCardInstallCommand;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
@@ -20,11 +17,6 @@ use Illuminate\Support\Facades\Route;
 
 Class ZermeloServiceProvider extends \Illuminate\Support\ServiceProvider
 {
-    protected function presentations()
-    {
-        return [];
-    }
-
     /*
      * Registration happens before boot, so this is where we gather static configuration
      * and register things to be used later.
@@ -43,6 +35,9 @@ Class ZermeloServiceProvider extends \Illuminate\Support\ServiceProvider
             ZermeloInstallCommand::class,
             ZermeloDebugCommand::class,
 	    	ZermeloReportCheckCommand::class,
+            MakeTabularReportCommand::class,
+            MakeCardsReportCommand::class,
+            MakeGraphReportCommand::class
         ]);
 
         /*
