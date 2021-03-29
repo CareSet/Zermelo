@@ -12,23 +12,17 @@
 	<div style='display: none' id='json_error_message' class="alert alert-danger" role="alert"></div>
 	<div style='display: none' id='json_info_message' class="alert alert-info" role="alert"></div>
 
-	@if ($report->is_fluid())
-		<div class='container-fluid'>
-			@else
-				<div class='container'>
-					@endif
-
-					<div id='div_for_cards'>
+                                    @if ($report->is_fluid())
+                                        <div class='container-fluid' id='div_for_cards'>
+                                    @else
+                                        <div class='container' id='div_for_cards'>
+                                    @endif
 
 
 
 
 
-					</div>
-
-
-
-				</div>
+					</div> <!-- end of div_for_cards -->
 
 
 				<div id="bottom_locator" style="
@@ -265,22 +259,38 @@
 
 																//well now a change has occured... we need a newline for sure and possibly a new label..
 																//real_card_new_row = `<div class="w-100"></div>`;
+
+
+                                                                                                                                        if(block_count % 2 == 0){
+                                                                                                                                            is_block_even = true;
+                                                                                                                                            block_test_message = ''; //for testing
+                                                                                                                                            extra_block_row_class = ' alternate_row ';
+                                                                                                                                            current_row_style = ' ';
+                                                                                                                                        }else{
+                                                                                                                                            is_block_even = false;
+                                                                                                                                            block_test_message = ''; //for testing
+                                                                                                                                            extra_block_row_class = '';
+                                                                                                                                            current_row_style = '';
+                                                                                                                                        }
+
+
+
 																real_card_new_row = `</div> <!-- end row --> <div class="row"> `;
-																if(isset(this_card.card_layout_block_label)){ //we have a label... so we will use it to seperate the card blocks
-																	//is there a link or not?
-																	if(isset(this_card.card_layout_block_url)){ //then we also have a url for the label
-																		group_label_open_a = `<a target='_blank' href='${this_card.card_layout_block_url}'>`;
-																		group_label_close_a = `</a>`;
-																	}else{ //we have the label but no url here...
-																		group_label_open_a = '';
-																		group_label_close_a = '';
-																	}
-																	//we have a label, with or without a link..
-																	real_card_group_label = `
+											if(isset(this_card.card_layout_block_label)){ //we have a label... so we will use it to seperate the card blocks
+												//is there a link or not?
+												if(isset(this_card.card_layout_block_url)){ //then we also have a url for the label
+													group_label_open_a = `<a target='_blank' href='${this_card.card_layout_block_url}'>`;
+													group_label_close_a = `</a>`;
+												}else{ //we have the label but no url here...
+													group_label_open_a = '';
+													group_label_close_a = '';
+												}
+												//we have a label, with or without a link..
+																real_card_group_label = `
 </div> <!-- end the row -->	<div class="zermelo-card-group-label">
-																<h3> ${group_label_open_a} ${this_card.card_layout_block_label} ${group_label_close_a} </h3>
+																<h3> ${group_label_open_a} ${this_card.card_layout_block_label} ${group_label_close_a} ${block_test_message}</h3>
 																</div> <!-- end the big column -->
-																<div class='row'>
+																<div class='row ${extra_block_row_class}' style=' ${current_row_style} '>
 																`;
 																}else{
 																	//there was no label... so we just need to have a newline between the rows...
@@ -292,13 +302,8 @@
 																//reset the last block id to this new one
 																last_block_id = this_card.card_layout_block_id;
 
-																if( block_count % 2 == 0){
-																	//this is an 'even' row and needs to be colored differently..
-																	block_class = ' text-white bg-secondary ';
-																}else{
-																	//change it back!!
-																	block_class = ' bg-light ';
-																}
+																block_class = ' bg-light ';
+																
 
 															}
 														}else{ //then this is the very first card.. lets setup our variables...
