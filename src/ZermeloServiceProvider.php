@@ -51,7 +51,7 @@ Class ZermeloServiceProvider extends \Illuminate\Support\ServiceProvider
             );
         } else {
             $this->mergeConfigFrom(
-                __DIR__.'/config/zermelo.php', 'zermelo'
+                __DIR__.'/../config/zermelo.php', 'zermelo'
             );
         }
 	}//end register function..
