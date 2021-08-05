@@ -5,7 +5,7 @@
 
 	So this report is identical to NorthwindOrderIndexReport except that it does not have any indexes
 
-	Note that you really need to use the inflate function in the MyWind test daataset to really see any usefulness here. 
+	Note that you really need to use the inflate function in the DURC test daataset to really see any usefulness here. 
 
 */
 namespace App\Reports;
@@ -89,17 +89,17 @@ SELECT
 	employee.id AS employee_id,
 	customer.id AS customer_id, 
 	order.id AS order_id
-FROM MyWind_northwind_data.`order` 
-JOIN MyWind_northwind_model.employee ON 
+FROM DURC_northwind_data.`order` 
+JOIN DURC_northwind_model.employee ON 
 	employee.id =
     	employee_id
-JOIN MyWind_northwind_model.customer ON 
+JOIN DURC_northwind_model.customer ON 
 	customer.id =
     	customer_id
-JOIN MyWind_northwind_data.orderDetail ON 
+JOIN DURC_northwind_data.orderDetail ON 
 	orderDetail.order_id =
     	`order`.id
-JOIN MyWind_northwind_model.product ON 	
+JOIN DURC_northwind_model.product ON 	
 	orderDetail.product_id =
     	product.id 
 GROUP BY `order`.id

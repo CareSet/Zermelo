@@ -36,7 +36,7 @@ On this interface test:</p>
 	<li> TEst that you can hide and unhide columns </li>
 	<li> test that column hiding stays on when the print view is used </li>
 	<li> Test that maximizing and minimizing the description (i.e. this list goes away and then comes back) works correctly </li>
-		
+
 </ul>
 ";
 		return($html);
@@ -49,7 +49,7 @@ On this interface test:</p>
 <br><br>
 ";
 		return($html);
-	}	
+	}
 
     }
 
@@ -70,40 +70,40 @@ On this interface test:</p>
 		//this means that there was no customer_id passed in on the url...
 		//so we have a SQL that will return all of the customers information
         $sql = "
-SELECT 
-	customer.id AS customer_id, 
-	companyName, 
-	lastName, 
-	firstName, 
-	emailAddress, 
-	jobTitle, 
-	businessPhone, 
-	homePhone, 
+SELECT
+	customer.id AS customer_id,
+	companyName,
+	lastName,
+	firstName,
+	emailAddress,
+	jobTitle,
+	businessPhone,
+	homePhone,
 	mobilePhone
-FROM MyWind_northwind_model.customer
+FROM DURC_northwind_model.customer
 ";
 
 		//lets order this report by companyName to start:
-		//this nessecary, instead of an ORDER BY on the SQL 
+		//this nessecary, instead of an ORDER BY on the SQL
 		//because the ORDER BY will impact the SQL -> cache table
 		//but this controls the cache table -> front end connection
-		$this->setDefaultSortOrder('companyName','desc' );
+        $this->setDefaultSortOrder([['companyName' =>'desc']]);
 
 
 	}else{
 		//here we know that $customer_id is numeric, and we should search the database for a mathing customer
         $sql = "
 SELECT
-	customer.id AS customer_id, 
-	companyName, 
-	lastName, 
-	firstName, 
-	emailAddress, 
-	jobTitle, 
-	businessPhone, 
-	homePhone, 
+	customer.id AS customer_id,
+	companyName,
+	lastName,
+	firstName,
+	emailAddress,
+	jobTitle,
+	businessPhone,
+	homePhone,
 	mobilePhone
-FROM MyWind_northwind_model.customer
+FROM DURC_northwind_model.customer
 WHERE customer.id = '$customer_id'
 ";
 
