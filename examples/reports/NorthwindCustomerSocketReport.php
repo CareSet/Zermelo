@@ -69,7 +69,7 @@ SELECT
 	homePhone, 
 	mobilePhone,
 	stateProvince
-FROM MyWind_northwind_model.customer
+FROM DURC_northwind_model.customer
 ";
 
 		$where_then_and = ' WHERE ';
@@ -97,7 +97,7 @@ SELECT
 	homePhone, 
 	mobilePhone,
 	stateProvince
-FROM MyWind_northwind_model.customer
+FROM DURC_northwind_model.customer
 WHERE customer.id = '$customer_id'
 ";
 

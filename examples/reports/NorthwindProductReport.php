@@ -40,7 +40,7 @@ List of things to test:</p>
     public function GetSQL()
     {
         $sql = "SELECT productCode, productName, standardCost, listPrice
-                FROM MyWind_northwind_model.product";
+                FROM DURC_northwind_model.product";
     	return $sql;
     }
 

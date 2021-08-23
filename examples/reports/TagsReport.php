@@ -45,7 +45,7 @@ Things to test</p>
     public function GetSQL()
     {
 	//replace with your own SQL
-        $sql = "SELECT * FROM MyWind_aaa.tags_report";
+        $sql = "SELECT * FROM DURC_aaa.tags_report";
     	return $sql;
     }
 

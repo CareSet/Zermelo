@@ -48,7 +48,7 @@ Things to test</p>
         $sql = "
 SELECT 
 `url_field` AS should_auto_format_url
-FROM MyWind_aaa.tags_report
+FROM DURC_aaa.tags_report
 ";
 
     	return $sql;
