@@ -2,6 +2,7 @@
 #CareSet defaults
 *.yaml
 notgit/
+.idea
 
 #cruft blocks
 .DS_Store
