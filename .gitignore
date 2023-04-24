@@ -1,8 +1,13 @@
+/backup/*.txt
+#do not backup the data, just the schemas
 
 #CareSet defaults
 *.yaml
 notgit/
-.idea
+
+#ignore log files
+/log/*.txt
+/log/*.log
 
 #cruft blocks
 .DS_Store
@@ -27,21 +32,55 @@ nbproject
 *~
 *.sass-cache
 
+# Laravel 5.5 defaults
+/bootstrap/cache
+/node_modules
+/public/hot
+/public/vendor
+/resources/views/vendor
+/public/storage
+/storage/*.key
+/vendor
+/.idea
+/.vagrant
+Homestead.json
+Homestead.yaml
+npm-debug.log
+yarn-error.log
 .env
 composer.lock
-
+ 
 #ignore vagrant
 .vagrant/
 
 #ignore local data files
 *.data
-
-#ignore log files
-/log/*.txt
-/log/*.log
-/cronlog/*
+data/*
+public/imgdata/*
 
 #json auth files like from google.
 *.auth.json
 
-vendor/*
+# ignore compiled python files
+*.pyc 
+
+#Laravel 10 .gitignore
+/.phpunit.cache
+/node_modules
+/public/build
+/public/hot
+/public/storage
+/storage/*.key
+/vendor
+.env
+.env.backup
+.env.production
+.phpunit.result.cache
+Homestead.json
+Homestead.yaml
+auth.json
+npm-debug.log
+yarn-error.log
+/.fleet
+/.idea
+/.vscode
