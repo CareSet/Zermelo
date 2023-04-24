@@ -16,7 +16,7 @@ class GraphController extends AbstractWebController
 
     public  function getReportApiPrefix()
     {
-        return config('zermelo.GRAPH_URI_PREFIX');
+        return config('zermelo.GRAPH_API_PREFIX');
     }
 
     /**
