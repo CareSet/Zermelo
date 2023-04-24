@@ -11,7 +11,7 @@ class {{ report_name }} extends AbstractGraphReport
 
     // define the report description
     public function getReportDescription(): string {  
-		$desc = "{{ report_name }} Description"); 
+		$desc = "{{ report_name }} Description"; 
 		return($desc);
 	}
 
