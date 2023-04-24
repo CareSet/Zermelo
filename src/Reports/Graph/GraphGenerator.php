@@ -29,6 +29,8 @@ class GraphGenerator extends AbstractGenerator
     public function toJson(): array
     {
 
+	$pdo = ZermeloDatabase::connection($this->cache->getConnectionName())->getPdo();
+
         $report_description = $this->report->getReportDescription();
         $report_name = $this->report->getReportName();
 	$cache_db = '_zermelo_cache'; //should be coming from config TODO
@@ -47,7 +49,8 @@ FROM $this->cache_db.{$this->cache->getNodeTypesTable()}
 ";
         //lets load the node_types from the database...
         $node_types = [];
-        $node_types_result = ZermeloDatabase::connection($this->cache->getConnectionName())->select(DB::raw($node_types_sql));
+	$node_types_result = $pdo->query($node_types_sql);
+	$node_types_result->setFetchMode(\PDO::FETCH_OBJ);
         foreach ($node_types_result as $this_row) {
 
             //handle the differeces between json and mysql/php here for is_img
@@ -77,7 +80,8 @@ FROM $this->cache_db.{$this->cache->getLinkTypesTable()}
 ";
         //lets load the link_types from the database...
         $link_types = [];
-        $link_types_result = ZermeloDatabase::connection($this->cache->getConnectionName())->select(DB::raw($link_types_sql));
+	$link_types_result = $pdo->query($link_types_sql);
+	$link_types_result->setFetchMode(\PDO::FETCH_OBJ);
         foreach ($link_types_result as $this_row) {
 
             $link_types[$this_row->my_index] = [
@@ -100,7 +104,8 @@ FROM $this->cache_db.{$this->cache->getNodeGroupsTable()}
 
         //lets load the link_types from the database...
         $node_groups = [];
-        $node_groups_result = ZermeloDatabase::connection($this->cache->getConnectionName())->select(DB::raw($group_sql));
+	$node_groups_result = $pdo->query($group_sql);
+	$node_groups_result->setFetchMode(\PDO::FETCH_OBJ);
         foreach ($node_groups_result as $this_row) {
 
             $node_groups[$this_row->my_index] = [
@@ -136,7 +141,8 @@ ORDER BY nodes.id ASC
 ";
         //lets load the link_types from the database...
         $nodes = [];
-        $nodes_result = ZermeloDatabase::connection($this->cache->getConnectionName())->select(DB::raw($nodes_sql));
+	$nodes_result = $pdo->query($nodes_sql);
+	$nodes_result->setFetchMode(\PDO::FETCH_OBJ);
         foreach ($nodes_result as $this_row) {
 
             if (is_null($this_row->img)) {
@@ -170,7 +176,8 @@ ORDER BY nodes.id ASC
         // Retrieve the links from the DB
         $links_sql = "SELECT * FROM $this->cache_db.`{$this->cache->getLinksTable()}`";
         $links = [];
-        $links_result = ZermeloDatabase::connection($this->cache->getConnectionName())->select(DB::raw($links_sql));
+	$links_result = $pdo->query($links_sql);
+	$links_result->setFetchMode(\PDO::FETCH_OBJ);
         foreach ($links_result as $this_row) {
 
             $links[] = [
@@ -189,7 +196,8 @@ ORDER BY nodes.id ASC
             FROM $this->cache_db.{$this->cache->getSummaryTable()}";
 
         $summary = [];
-        $summary_result = ZermeloDatabase::connection($this->cache->getConnectionName())->select(DB::raw($summary_sql));
+	$summary_result = $pdo->query($summary_sql);
+	$summary_result->setFetchMode(\PDO::FETCH_OBJ);
         foreach ($summary_result as $this_row) {
             $summary[][$this_row->summary_key] = $this_row->summary_value;
         }
