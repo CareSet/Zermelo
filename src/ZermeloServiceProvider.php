@@ -34,7 +34,7 @@ Class ZermeloServiceProvider extends \Illuminate\Support\ServiceProvider
         $this->commands([
             ZermeloInstallCommand::class,
             ZermeloDebugCommand::class,
-	    	ZermeloReportCheckCommand::class,
+	    ZermeloReportCheckCommand::class,
             MakeTabularReportCommand::class,
             MakeCardsReportCommand::class,
             MakeGraphReportCommand::class
