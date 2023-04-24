@@ -19,6 +19,8 @@ class ZermeloInstallCommand extends AbstractZermeloInstallCommand
      * @var array
      */
     public static $views = [
+	// Multiple views use the shared menu
+	'zermelo/menu.blade.php',
         // SQL Pretty-Printing views
         'zermelo/sql.blade.php',
         'zermelo/layouts/sql_layout.blade.php',
