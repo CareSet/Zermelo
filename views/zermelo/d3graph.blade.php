@@ -847,61 +847,51 @@ $("#debug_link").on('click', function(){
 
         node.on('mousedown', function (d) {
 
-            //it is not a requirement to have a actual url..
-            //if you put the blank string... we just do nothing..
-            if (d.json_url.length == 0) {
-                console.log('no json_url found, not attempting to build node card');
-                return;
-            }
-
             this_url = d.json_url;
+		console.log(this_url);
 
             $('#node_left_panel').fadeOut("fast");
             //populate REST-born data for the custom node panel
-            $.getJSON(this_url, function (data) {
+            if (d.json_url.length != 0) {
+           	$.getJSON(this_url, function (data) {
 
-                /*
-                    //the old way
-                                        dust.render(this_dust, data, function(err, out){
-                              $('#node_left_panel').html(out);
-                              $('#node_left_panel').fadeIn("slow");
-                                                 });
-                */
-
-
-		if(isset(data.card_img_top)){
-			card_img = `<img class='card-img-top' src="${data.card_img_top}">`;
-		}else{
-			card_img = '';
-		}
+			// if there is a img in the data.. use it..
+			if(isset(data.card_img_top)){
+				card_img = `<img class='card-img-top' src="${data.card_img_top}">`;
+			}else{
+				card_img = '';
+			}
 
 
-                //the new way just uses literal templates https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals
-                card_html = `
+                	//the new way just uses literal templates https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals
+                	card_html = `
 <div class='card' style='width: 97%; padding .25rem;'>
 	${card_img}
 	${data.card_body}
 </div>
 `;
 
-                $('#node_left_panel').html(card_html);
-                $('#node_left_panel').fadeIn("slow");
+            	});
+
+	    }else{
+                console.log('no json_url found, not attempting to build node card');
+		//if we are here then there was no json url in the node data..
+		//we just should display the node name and id.
+		
+                card_html = `
+<div class='card' style='width: 97%; padding .25rem;'>
+	<h6>Node Id:</h6> <p>${d.id}</p>
+	<h6>Node Name:</h6> <p>${d.name}</p>
+</div>
+`;
+		
+
+	    }
+
+            $('#node_left_panel').html(card_html);
+            $('#node_left_panel').fadeIn("slow");
 
 
-                // TODO reimplement?
-                /*
-                        //this js exists because is_admin = true...
-
-                        this_admin_dust = 'admin.' + this_dust;
-                                            dust.render(this_admin_dust, data, function(err, out){
-                                  $('#node_admin_left_panel').html(out);
-                                  $('#node_admin_left_panel').fadeIn("slow");
-                                                     });
-
-                */
-
-
-            });
             //populate the generic node panel from the existing node data
             //first we need printable versions of the type and group
 
@@ -1057,6 +1047,10 @@ $("#debug_link").on('click', function(){
 
         $('#loading_div').toggle();
         $('#viz').toggle();
+	dynamic_resize();
+	//for reasons, we need to a resize the window to get the chart to resize.. so lets do that now
+	//with this self-calling function
+	//TODO this does not belong here!! Where does it go??
 
     }, 'json').fail(function () {
         //this means the json did not load...
