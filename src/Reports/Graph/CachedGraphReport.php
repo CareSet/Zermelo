@@ -509,7 +509,7 @@ CREATE TABLE $this->cache_db.$this->summary_table (
             	$pdo->exec($this_sql);
 	    }
 	    catch( \Exception $e){
-		echo "<h1>Attempting to create Zermelo cache. SQL Failed. Offending SQL:</h1><pre>$this_sql</pre>";
+		echo "<h1>Attempting to create Zermelo graph cache. SQL Failed. Offending SQL:</h1><pre>$this_sql</pre>";
 		echo "<h1>Error Message: </h1>";
 		echo "<pre>" . $e->getMessage() . "</pre>";
 		//throw $e;
