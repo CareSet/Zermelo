@@ -729,6 +729,17 @@ JS;
 
 	}
 
+	/**
+	 * Get the PDO quickly. 
+	 *
+	 * @return PDO object for this connection
+	 */
+	public function getPdo()
+	{
+		return \DB::connection()->getPdo();
+	}
+
+
 
 
 

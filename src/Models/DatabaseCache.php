@@ -228,7 +228,11 @@ class DatabaseCache
                 if (strpos(strtoupper($query), "SELECT", 0) === 0) {
                     if ($index == 0) {
                         //for the first query, we use a CREATE TABLE statement
-			$create_table_sql = "CREATE TABLE {$temp_cache_table->from} AS {$query}";
+			$create_table_sql = "
+CREATE TABLE {$temp_cache_table->from} 
+ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci AS 
+{$query}
+";
 			$pdo->exec($create_table_sql);
                         //ZermeloDatabase::connection($this->connectionName)->getPdo()->exec("CREATE TABLE {$temp_cache_table->from} AS {$query}");
                     } else {

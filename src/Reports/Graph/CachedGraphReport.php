@@ -256,16 +256,16 @@ class CachedGraphReport extends DatabaseCache
 	$sql['create the node cache table'] = "
 CREATE TABLE $this->cache_db.$this->nodes_table (
   `id` int(11) NOT NULL,
-  `node_id` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
-  `node_name` varchar(1000) CHARACTER SET utf8 DEFAULT NULL,
+  `node_id` varchar(190) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `node_name` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `node_size` bigint(20) DEFAULT NULL,
-  `node_type` varchar(1000) CHARACTER SET utf8 NOT NULL DEFAULT '',
-  `node_group` varchar(255) CHARACTER SET utf8 NOT NULL DEFAULT '',
+  `node_type` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `node_group` varchar(190) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `node_latitude` decimal(17,7) NOT NULL DEFAULT 0,
   `node_longitude` decimal(17,7) NOT NULL DEFAULT 0,
-  `node_json_url` varchar(2000) CHARACTER SET utf8 NOT NULL DEFAULT '',
-  `node_img` varchar(1000) CHARACTER SET utf8 NOT NULL DEFAULT ''
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
+  `node_json_url` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `node_img` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT ''
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 ";
 	
 	//now we make rules to ensure that we have a SQL crash here if the node uniqueness rules are not followed.
@@ -376,7 +376,7 @@ CREATE TABLE $this->cache_db.`$this->links_table` (
   `target` int(11) NOT NULL DEFAULT 0,
   `weight` decimal(15,5) NOT NULL,
   `link_type` int(11) NOT NULL DEFAULT 0
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 ";
 
 	$sql["primary key to prevent duplicates later on"] ="
@@ -468,7 +468,7 @@ ALTER TABLE $this->cache_db.`$this->links_table`
 CREATE TABLE $this->cache_db.$this->summary_table (
   `summary_key` varchar(39) NOT NULL,
   `summary_value` varchar(255) DEFAULT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 ";
 
         $sql["create the summary table with the group count"] =
@@ -505,7 +505,16 @@ CREATE TABLE $this->cache_db.$this->summary_table (
         // The connection is a DB Connection to our CACHE DATABASE using the credentials
         // The connection is created in CareSet\Zermelo\Models\ZermeloDatabsse
         foreach ($sql as $this_sql) {
-            $pdo->exec($this_sql);
+	    try{
+            	$pdo->exec($this_sql);
+	    }
+	    catch( \Exception $e){
+		echo "<h1>Attempting to create Zermelo graph cache. SQL Failed. Offending SQL:</h1><pre>$this_sql</pre>";
+		echo "<h1>Error Message: </h1>";
+		echo "<pre>" . $e->getMessage() . "</pre>";
+		//throw $e;
+		exit();
+	    }
         }
 
 
